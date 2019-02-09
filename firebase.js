@@ -1,4 +1,4 @@
-import firebase from 'firebase';
+import * as firebase from 'firebase';
 import '@firebase/firestore';
 
 var config = {
@@ -11,7 +11,6 @@ var config = {
 };
 
 firebase.initializeApp(config);
-export default firebase;
 
 const db = firebase.firestore();
 export const invites = db.collection('invites')

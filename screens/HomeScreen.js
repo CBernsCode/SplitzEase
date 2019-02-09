@@ -12,10 +12,22 @@ import { WebBrowser } from 'expo';
 
 import { MonoText } from '../components/StyledText';
 
+import { invites } from '../firebase.js'
+
 export default class HomeScreen extends React.Component {
   static navigationOptions = {
     header: null,
   };
+
+  componentDidMount = () => {
+    // This is an example of how to grab an invite
+    invites.doc('N8Ur2NvmqBBUmynPQvZ3').get().then(doc => {
+      let defObj = { hostname: "", hostid: "", partymembers: []}
+      let data = { ... defObj, ...doc.data() }
+      console.log(data);
+    })
+  }
+
 
   render() {
     return (
