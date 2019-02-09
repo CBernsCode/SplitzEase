@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "SplitCheck",
-    "slug": "splitcheck",
+    "name": "SplitzEase",
+    "slug": "splitzease",
     "privacy": "public",
     "sdkVersion": "32.0.0",
     "platforms": [
@@ -10,11 +10,12 @@
     ],
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "primaryColor": "#ab6088",
+    "icon": "./assets/images/logo.png",
     "splash": {
-      "image": "./assets/images/splash.png",
+      "image": "./assets/images/logo.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#fcf8b3"
     },
     "updates": {
       "fallbackToCacheTimeout": 0
