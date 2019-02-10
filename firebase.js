@@ -14,6 +14,7 @@ firebase.initializeApp(config);
 
 const db = firebase.firestore();
 export const invites = db.collection('invites')
+export const checks = db.collection('checks')
 
 export function getInvite(id){
   invites.doc(id).get().then(doc => {

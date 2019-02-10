@@ -7,6 +7,7 @@ import HomeScreen from '../screens/HomeScreen';
 import OrdersScreen from '../screens/OrdersScreen';
 import LinksScreen from '../screens/LinksScreen';
 import SettingsScreen from '../screens/SettingsScreen';
+import Checks from '../containers/Checks';
 
 const HomeStack = createStackNavigator({
   Home: HomeScreen,
@@ -72,9 +73,24 @@ SettingsStack.navigationOptions = {
   ),
 };
 
+const CheckStack = createStackNavigator({
+  Checks: Checks,
+});
+
+CheckStack.navigationOptions = {
+  tabBarLabel: 'Checks',
+  tabBarIcon: ({ focused }) => (
+    <TabBarIcon
+      focused={focused}
+      name={Platform.OS === 'ios' ? 'ios-options' : 'md-options'}
+    />
+  ),
+};
+
 export default createBottomTabNavigator({
   HomeStack,
   OrdersStack,
   LinksStack,
   SettingsStack,
+  CheckStack
 });
