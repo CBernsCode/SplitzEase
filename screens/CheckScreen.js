@@ -30,30 +30,24 @@ export default class CheckScreen extends React.Component {
   }
 }
 
+
+
 const check_data = [
-    {
-      key: '0000000001',
-      amountDue: '24.00',
-      description: "1x BLT",
-    },
-    {
-      key: '0000000002',
-    },
-    {
-      key: '0000000003',
-    },
-    {
-      key: '0000000004',
-    },
-    {
-      key: '0000000005',
-    },
-    {
-      key: '0000000006',
-    },
-    {
-      key: '0000000007',
-    },
+  {
+    key: '0000000001',
+    restaurant: 'Applebee\'s',
+    description: "1x BLT",
+
+    amount: '22.00',
+    tax: '2.00',
+    total: '24.00',
+  },
+  {
+    key: '0000000002',
+  },
+  {
+    key: '0000000003',
+  },
 ];
 
 class Body extends React.PureComponent {
@@ -167,12 +161,4 @@ const styles = StyleSheet.create({
       paddingLeft: 10,
       paddingTop: 10,
   },
-
-  // titleBarText: {
-  //   fontFamily: 'PingFangSC-Thin',
-  //   fontSize: 50,
-  //   justifyContent: 'center',
-  //   margin: 3,
-  //   padding: 5,
-  // },
 });

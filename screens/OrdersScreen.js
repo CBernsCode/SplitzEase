@@ -31,15 +31,13 @@ export default class OrderScreen extends React.Component {
 
 
 
-const check_data = [
+const order_data = [
   {
     key: '0000000001',
+    host: 'user_id',
     restaurant: 'Applebee\'s',
-    description: "1x BLT",
-
-    amount: '22.00',
-    tax: '2.00',
-    total: '24.00',
+    accepted: 'true',
+    
   },
   {
     key: '0000000002',
@@ -54,15 +52,15 @@ class Body extends React.Component {
     console.log(this.props);
     return (
         <FlatList
-          data={check_data}
-          renderItem={({item}) => <Check id={item.key} restaurant={item.restaurant} description={item.description} amount={item.amount} tax={item.tax} total={item.total} {...item}/>}
+          data={order_data}
+          renderItem={({item}) => <Order id={item.key} restaurant={item.restaurant} description={item.description} amount={item.amount} tax={item.tax} total={item.total} {...item}/>}
           style={styles.body}
         />
     );
   }
 }
 
-class Check extends React.Component {
+class Order extends React.Component {
   render() {
     return (
       <View></View>
