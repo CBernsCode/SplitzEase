@@ -10,12 +10,12 @@
     ],
     "version": "1.0.0",
     "orientation": "portrait",
-    "primaryColor": "#ab6088",
+    "primaryColor": "#f1f8fd",
     "icon": "./assets/images/logo.png",
     "splash": {
       "image": "./assets/images/logo.png",
       "resizeMode": "contain",
-      "backgroundColor": "#fcf8b3"
+      "backgroundColor": "#f1f8fd"
     },
     "updates": {
       "fallbackToCacheTimeout": 0
