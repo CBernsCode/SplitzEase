@@ -1,91 +1,73 @@
 import * as React from 'react';
-import { Button, FlatList, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Button, Card, FlatList, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { Constants } from 'expo';
+import Colors from '../constants/Colors';
 
-export default class OrdersScreen extends React.Component {
+/*
+  Orders Screen
+    [ ] Should be used for pending invites
+*/
+
+export default class OrderScreen extends React.Component {
     static navigationOptions = {
       title: 'Orders',
+      headerStyle: {
+        backgroundColor: Colors.altSecondary,
+      },
+      headerTintColor: Colors.primaryHeader,
+      headerTitleStyle: {
+        fontWeight: 'bold',
+      },
     };
-
   render() {
     return (
       <View style={styles.container}>
-        <Body />
+        <Body {...this.props}/>
+        <View style={styles.fab}><Button style={styles.fabButton} color={Colors.fabButton} title='+' onPress={() => console.log("this should open a modal menu to create a new order")}/></View>
       </View>
     );
   }
 }
 
+
+
 const order_data = [
-    {
-      key: '0000000001',
-      amountDue: 24,
-      description: "1x BLT",
-    },
-    {
-      key: '0000000002',
-    },
-    {
-      key: '0000000003',
-    },
-    {
-      key: '0000000004',
-    },
-    {
-      key: '0000000005',
-    },
-    {
-      key: '0000000006',
-    },
-    {
-      key: '0000000007',
-    },
+  {
+    key: '0000000001',
+    host: 'user_id',
+    restaurant: 'Applebee\'s',
+    accepted: 'true',
+    
+  },
+  {
+    key: '0000000002',
+  },
+  {
+    key: '0000000003',
+  },
 ];
 
 class Body extends React.Component {
   render() {
+    console.log(this.props);
     return (
         <FlatList
-            style = {styles.body}
-            data = {order_data}
-            renderItem = {
-                (it => (
-                    <Order {...it}/>
-                ))
-            }
+          data={order_data}
+          renderItem={({item}) => <Order id={item.key} restaurant={item.restaurant} description={item.description} amount={item.amount} tax={item.tax} total={item.total} {...item}/>}
+          style={styles.body}
         />
     );
   }
-
-
 }
 
 class Order extends React.Component {
-  constructor(props) {
-    super(props);
-  }
-
   render() {
     return (
-        <View style={styles.orderWrapper}>
-            <View style={styles.order}>
-                <Text style={styles.orderHeader}>Order #{this.props.id || ""}</Text>
-                <Text style={styles.tabbedText}>Amount Due:</Text>
-                <Text style={{ marginLeft: 20 }}>{this.props.amountDue || "$0.00"}</Text>
-                <Text style={styles.tabbedText}>Description:</Text>
-                <Text style={{ marginLeft: 20 }}>{this.props.description || "" }</Text>
-                {/*<Button title="Pay" />*/}
-            </View>
-      </View>
+      <View></View>
     );
   }
 }
 
-Order.defaultProps = {
-  amountDue: '$0.00',
-  description: 'Some food that was ordered.',
-  id: '',
-};
 
 const styles = StyleSheet.create({
   body: {
@@ -96,7 +78,25 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     paddingTop: Constants.statusBarHeight,
-    backgroundColor: '#fcf8b3',
+    backgroundColor: Colors.mainSecondary,
+  },
+
+  fab: {
+    backgroundColor: Colors.fabButton,
+    bottom: 20,
+    color: Colors.fabButtonText,
+    fontSize: 20,
+    height: 30,
+    justifyContent: 'center',
+    margin: 5,
+    position: 'absolute',
+    right: 20,
+    width: 30,
+  },
+
+  fabButton: {
+    height: 5,
+    width: 5,
   },
 
   horizontalRule: {
@@ -107,7 +107,7 @@ const styles = StyleSheet.create({
   },
 
   order: {
-    backgroundColor: '#f1f8fd',
+    backgroundColor: Colors.altSecondary,
     borderRadius: 20,
     margin: 10,
     paddingBottom: 50,
@@ -115,7 +115,7 @@ const styles = StyleSheet.create({
   },
 
   orderHeader: {
-    backgroundColor: '#ab6088',
+    backgroundColor: Colors.primary,
     borderRadius: 20,
     color: '#f1f8fd',
     padding: 10,
