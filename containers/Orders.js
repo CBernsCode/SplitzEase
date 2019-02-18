@@ -1,7 +1,7 @@
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 
-import CheckScreen from '../screens/CheckScreen';
+import OrdersScreen from '../screens/OrdersScreen';
 import {
   AcctActions,
   CheckActions,
@@ -24,4 +24,4 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(CheckScreen);
+)(OrdersScreen);

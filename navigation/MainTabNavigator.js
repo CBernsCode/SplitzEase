@@ -9,6 +9,8 @@ import SettingsScreen from '../screens/SettingsScreen';
 import LoginScreen from '../screens/LoginScreen';
 
 import Checks from '../containers/Checks';
+import Account from '../containers/Account';
+import Orders from '../containers/Orders';
 import Colors from '../constants/Colors';
 
 const LoginStack = createStackNavigator({
@@ -33,7 +35,7 @@ LoginStack.navigationOptions = {
 };
 
 const AccountStack = createStackNavigator({
-  Account: AccountScreen,
+  Account: Account,
 });
 
 AccountStack.navigationOptions = {
@@ -54,7 +56,7 @@ AccountStack.navigationOptions = {
 };
 
 const OrderStack = createStackNavigator({
-  Orders: OrdersScreen,
+  Orders: Orders,
 });
 
 OrderStack.navigationOptions = {

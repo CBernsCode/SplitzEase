@@ -1,7 +1,4 @@
-import {
-  USER_LOGIN,
-  USER_LOGOUT
-} from '../constants/actions/Account';
+import * as AcctActTypes from '../constants/actions/Account'
 
 // something that sets the shape of the reducer/store object
 const defObj = {
@@ -15,12 +12,12 @@ const defObj = {
 
 export default function acctReducer(state = defObj, action) {
   switch (action.type) {
-    case USER_LOGIN:
+    case AcctActTypes.USER_LOGIN:
       return {
         ...state,
         ...action.payload
       }
-    case USER_LOGOUT:
+    case AcctActTypes.USER_LOGOUT:
       return {
         ...defObj
       }

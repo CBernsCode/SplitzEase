@@ -1,6 +1,4 @@
-import {
-  UPDATE_CHECK
-} from '../constants/actions/Check';
+import * as CheckActTypes from '../constants/actions/Check';
 
 const defObj = {
   id: "",
@@ -9,7 +7,7 @@ const defObj = {
 
 export default function checkReducer(state = defObj, action){
   switch (action.type) {
-    case UPDATE_CHECK:
+    case CheckActTypes.UPDATE_CHECK:
       return {
         ...action.payload
       }
