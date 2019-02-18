@@ -1,11 +1,9 @@
-import {
-  UPDATE_CHECK
-} from '../constants/actions/Check';
+import * as CheckActTypes from '../constants/actions/Check';
 
 import { checks } from '../firebase';
 
 // This is for an async function
-export function getCheck(id){
+getCheck = id => {
   // we need to do some stuff then dispatch a function
   return (dispatch) => {
     // Use check reference to get a check reference
@@ -19,7 +17,7 @@ export function getCheck(id){
 }
 
 // This is for an async function
-export function payCheck(id, amount){
+payCheck = (id, amount) => {
   return (dispatch) => {
     checks.get(id)
       .then(check => {
@@ -48,6 +46,11 @@ export function payCheck(id, amount){
 
 // This is a sync function
 // we only pass stuff to the reducer synchronously
-export function upadateCheck(payload) {
-  return { type: UPDATE_CHECK, payload }
+upadateCheck = payload => {
+  return { type: CheckActTypes.UPDATE_CHECK, payload }
+}
+
+export default {
+  getCheck,
+  payCheck,
 }

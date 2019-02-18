@@ -9,6 +9,12 @@ import Colors from '../constants/Colors';
     [ ] Should be used to display unpaid orders
 */
 
+const sampleFriend = {
+  added: Date.now(),
+  name: "Dave",
+  id: Math.random()
+}
+
 export default class CheckScreen extends React.Component {
   static navigationOptions = {
     title: 'Checks',
@@ -26,6 +32,10 @@ export default class CheckScreen extends React.Component {
     return (
       <View style={styles.container}>
         <Body />
+        <Button
+          color={Colors.button}
+          title="Add Friend"
+          onPress={() => this.props.frndActions.addFriend('21312', sampleFriend)} />
       </View>
     );
   }

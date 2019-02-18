@@ -11,16 +11,20 @@ var config = {
 };
 
 firebase.initializeApp(config);
-
 const db = firebase.firestore();
 export const invites = db.collection('invites')
 export const checks = db.collection('checks')
+export const friends = db.collection('friends')
 
-export function getInvite(id){
-  invites.doc(id).get().then(doc => {
-    let defObj = { hostname: "", hostid: "", partymembers: []}
-    let data = { ... defObj, ...doc.data() }
-    console.log(data);
-  })
+export function getInvite(id) {
+  invites.doc(id).get()
+    .then(doc => {
+      let defObj = { hostname: "", hostid: "", partymembers: [] }
+      let data = { ...defObj, ...doc.data() }
+      console.log(data)
+    })
+    .catch ((error) => {
+        console.error(error);
+    });
 }
 

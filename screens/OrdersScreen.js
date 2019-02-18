@@ -32,6 +32,7 @@ export default class OrderScreen extends React.Component {
       },
     };
   render() {
+    console.log(this.props)
     return (
       <View style={styles.container}>
         <Body {...this.props}/>
@@ -61,7 +62,6 @@ const order_data = [
 
 class Body extends React.PureComponent {
   render() {
-    console.log(this.props);
     return (
         <FlatList
           data={order_data}
