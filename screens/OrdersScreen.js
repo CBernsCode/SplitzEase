@@ -1,20 +1,32 @@
 import * as React from 'react';
-import { Button, Card, FlatList, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Button, FlatList, ScrollView, StyleSheet, Text, View } from 'react-native';
+
 import { Constants } from 'expo';
+import { invites } from '../firebase.js'
 import Colors from '../constants/Colors';
 
 /*
   Orders Screen
     [ ] Should be used for pending invites
+
+  componentDidMount = () => {
+    // This is an example of how to grab an invite
+    invites.doc('N8Ur2NvmqBBUmynPQvZ3').get().then(doc => {
+      let defObj = { hostname: "", hostid: "", partymembers: []}
+      let data = { ... defObj, ...doc.data() }
+      console.log(data);
+    })
+  }
 */
 
 export default class OrderScreen extends React.Component {
     static navigationOptions = {
-      title: 'Orders',
+      title: 'Invites',
       headerStyle: {
-        backgroundColor: Colors.altSecondary,
+        backgroundColor: Colors.primaryHeader,
+        elevation: 0,
       },
-      headerTintColor: Colors.primaryHeader,
+      headerTintColor: Colors.text,
       headerTitleStyle: {
         fontWeight: 'bold',
       },
@@ -36,7 +48,7 @@ const order_data = [
   {
     key: '0000000001',
     host: 'user_id',
-    restaurant: 'Applebee\'s',
+    restaurant: 'Applebees',
     accepted: 'true',
     
   },
@@ -48,12 +60,12 @@ const order_data = [
   },
 ];
 
-class Body extends React.Component {
+class Body extends React.PureComponent {
   render() {
     return (
         <FlatList
           data={order_data}
-          renderItem={({item}) => <Order id={item.key} restaurant={item.restaurant} description={item.description} amount={item.amount} tax={item.tax} total={item.total} {...item}/>}
+          renderItem={({item}) => <Order id={item.key} restaurant={item.restaurant} />}
           style={styles.body}
         />
     );
@@ -63,7 +75,14 @@ class Body extends React.Component {
 class Order extends React.Component {
   render() {
     return (
-      <View></View>
+      <View style={styles.order}>
+        <Text style={styles.orderHeader}>Order Number: {this.props.id || '0000000000'}</Text>
+        <Text style={styles.tabbedText}>{this.props.host || 'Host'} has invited you to order food from {this.props.restaurant || 'some restaurant'}!</Text>
+        <View style={styles.horizontalView}>
+          <Button color={Colors.cardAffirmButton} title='Accept' onPress={() => console.log('User accepted invite!')}></Button>
+          <Button color ={Colors.cardNegaButton} title='Decline' onPress={() => console.log('User declined invite!')}></Button>
+        </View>
+      </View>
     );
   }
 }
@@ -78,7 +97,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     paddingTop: Constants.statusBarHeight,
-    backgroundColor: Colors.mainSecondary,
+    backgroundColor: Colors.background,
   },
 
   fab: {
@@ -106,18 +125,24 @@ const styles = StyleSheet.create({
     marginTop: 5,
   },
 
+  horizontalView: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    margin: 10,
+  },
+
   order: {
-    backgroundColor: Colors.altSecondary,
+    backgroundColor: Colors.cardBackground,
     borderRadius: 20,
     margin: 10,
-    paddingBottom: 50,
+    paddingBottom: 10,
     overflow: 'hidden',
   },
 
   orderHeader: {
-    backgroundColor: Colors.primary,
+    backgroundColor: Colors.cardHeader,
     borderRadius: 20,
-    color: '#f1f8fd',
+    color: Colors.cardHeaderText,
     padding: 10,
   },
 

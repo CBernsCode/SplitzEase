@@ -7,9 +7,10 @@ export default class LoginScreen extends React.Component {
   static navigationOptions = {
     title: 'Login',
     headerStyle: {
-      backgroundColor: Colors.altSecondary,
+      backgroundColor: Colors.primaryHeader,
+      elevation: 0,
     },
-    headerTintColor: Colors.primaryHeader,
+    headerTintColor: Colors.text,
     headerTitleStyle: {
       fontWeight: 'bold',
     },
@@ -18,11 +19,8 @@ export default class LoginScreen extends React.Component {
   render() {
     return (
       <View style={styles.container}>
-        <View>
-          <Image style={styles.logo} source={require('../assets/images/logo.png')}/>
           <Form/>
         </View>
-      </View>
     );
   }
 }
@@ -44,14 +42,14 @@ class Form extends React.Component {
     if(this.state.login) {
       return (
         <View>
-          <View style={styles.switchBar}><Text styles={styles.switchBarText}>Login</Text><Switch onValueChange={this.changeForm} value={this.state.login} style={styles.switchBarText} /></View>
+          <View style={styles.switchBar}><Text style={styles.switchBarText}>Login</Text><Switch onValueChange={this.changeForm} value={this.state.login} style={styles.switchBarText}></Switch></View>
           <LoginForm/>
         </View>
       );
     } else {
       return (
         <View>
-          <View style={styles.switchBar}><Switch onValueChange={this.changeForm} value={this.state.login} /><Text styles={styles.switchBarText}>Register</Text></View>
+          <View style={styles.switchBar}><Text styles={styles.switchBarText}>Register</Text><Switch onValueChange={this.changeForm} value={this.state.login} style={styles.switchBarText}/></View>
           <RegisterForm/>
         </View>
       );
@@ -62,7 +60,7 @@ class Form extends React.Component {
 class LoginForm extends React.Component {
   render() {
     return (
-      <KeyboardAvoidingView contentContainerStyle={styles.form} behavior='position' enabled='true'>
+      <ScrollView contentContainerStyle={styles.form}>
         <TextInput
           style={styles.formField}
 
@@ -86,8 +84,10 @@ class LoginForm extends React.Component {
           secureTextEntry={true}
           textContentType='password'
         />
-        <Button mode='outlined' style={styles.button} title='Login' onPress={() => {this.props.navigation.navigate('Orders')}}></Button>
-      </KeyboardAvoidingView>
+        <View style={styles.buttons}>
+          <Button color={Colors.button} mode='outlined' title='Login' onPress={() => console.log('Login button pressed on Login Screen')}></Button>
+        </View>
+        </ScrollView>
     );
   }
 }
@@ -95,78 +95,81 @@ class LoginForm extends React.Component {
 class RegisterForm extends React.Component {
   render () {
     return (
-      <KeyboardAvoidingView contentContainerStyle={styles.form} behavior='padding' enabled='true'>
-        <TextInput
-          style={styles.formField}
+        <ScrollView contentContainerStyle={styles.form}>
+          <TextInput
+            style={styles.formField}
 
-          autoComplete='username'
-          autoCorrect={false}
-          enablesReturnKeyAutomatically={true}
-          label='Username'
-          placeholder='Username'
-          returnKeyType='next'
-          textContentType='username'
-        />
-        <TextInput
-          style={styles.formField}
+            autoComplete='username'
+            autoCorrect={false}
+            enablesReturnKeyAutomatically={true}
+            label='Username'
+            placeholder='Username'
+            returnKeyType='next'
+            textContentType='username'
+          />
+          <TextInput
+            style={styles.formField}
 
-          autoComplete='email'
-          autoCorrect={false}
-          enablesReturnKeyAutomatically={true}
-          label='Email Address'
-          placeholder='Email Address'
-          returnKeyType='next'
-          textContentType='emailAddress'
-        />
-        <TextInput
-          style={styles.formField}
+            autoComplete='email'
+            autoCorrect={false}
+            enablesReturnKeyAutomatically={true}
+            label='Email Address'
+            placeholder='Email Address'
+            returnKeyType='next'
+            textContentType='emailAddress'
+          />
+          <TextInput
+            style={styles.formField}
 
-          autoComplete='phone'
-          autoCorrect={false}
-          enablesReturnKeyAutomatically={true}
-          label='Phone Number'
-          placeholder='Phone Number'
-          returnKeyType='next'
-          textContentType='telephoneNumber'
-        />
-        <TextInput
-          style={styles.formField}
+            autoComplete='phone'
+            autoCorrect={false}
+            enablesReturnKeyAutomatically={true}
+            label='Phone Number'
+            placeholder='Phone Number'
+            returnKeyType='next'
+            textContentType='telephoneNumber'
+          />
+          <TextInput
+            style={styles.formField}
 
-          autoComplete='password'
-          enablesReturnKeyAutomatically={true}
-          label='Password'
-          placeholder='Password'
-          returnKeyType='next'
-          secureTextEntry={true}
-          textContentType='password'
-        />
-        <TextInput
-          style={styles.formField}
+            autoComplete='password'
+            enablesReturnKeyAutomatically={true}
+            label='Password'
+            placeholder='Password'
+            returnKeyType='next'
+            secureTextEntry={true}
+            textContentType='password'
+          />
+          <TextInput
+            style={styles.formField}
 
-          autoComplete='password'
-          enablesReturnKeyAutomatically={true}
-          label='Confirm Password'
-          placeholder='Confirm Password'
-          returnKeyType='send'
-          secureTextEntry={true}
-          textContentType='password'
-        />
-        <Button mode='outlined' style={styles.button} title='Register' onPress={() => {this.props.navigation.navigate('Orders')}}></Button>
-      </KeyboardAvoidingView>
+            autoComplete='password'
+            enablesReturnKeyAutomatically={true}
+            label='Confirm Password'
+            placeholder='Confirm Password'
+            returnKeyType='send'
+            secureTextEntry={true}
+            textContentType='password'
+          />
+          <View style={styles.buttons}>
+            <Button color={Colors.button} mode='outlined' title='Register' onPress={() => console.log('Register button pressed on Login Screen')}></Button>
+          </View>
+        </ScrollView>
     );
   }
 }
 
 const styles = StyleSheet.create({
-  button: {
-    backgroundColor: Colors.button,
+  buttons: {
+    bottom: 0,
+    margin: 10,
   },
 
   container: {
-    justifyContent: 'center',
+    flex: 1,
     paddingTop: Constants.statusBarHeight,
     backgroundColor: Colors.background,
-    padding: 8,
+    padding: 20,
   },
 
   form: {

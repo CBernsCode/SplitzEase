@@ -19,24 +19,21 @@ export default class CheckScreen extends React.Component {
   static navigationOptions = {
     title: 'Checks',
     headerStyle: {
-      backgroundColor: Colors.altSecondary,
+      backgroundColor: Colors.primaryHeader,
+      elevation: 0,
     },
-    headerTintColor: Colors.primaryHeader,
+    headerTintColor: Colors.text,
     headerTitleStyle: {
       fontWeight: 'bold',
     },
   };
 
-  componentDidMount() {
-
-  }
-
   render() {
-    console.log(this.props)
     return (
       <View style={styles.container}>
         <Body />
         <Button
+          color={Colors.button}
           title="Add Friend"
           onPress={() => this.props.frndActions.addFriend('21312', sampleFriend)} />
       </View>
@@ -64,14 +61,14 @@ const check_data = [
   },
 ];
 
-class Body extends React.Component {
+class Body extends React.PureComponent {
   render() {
     return (
-      <FlatList
-        data={check_data}
-        renderItem={({ item }) => <Check id={item.key} amountDue={item.amountDue} description={item.description} {...item} />}
-        style={styles.body}
-      />
+        <FlatList
+            data={check_data}
+            renderItem={({item}) => <Check id={item.key} restaurant={item.restaurant} description={item.description} amount={item.amount} tax={item.tax} total={item.total} {...item}/>}
+            style={styles.body}
+        />
     );
   }
 }
@@ -81,7 +78,7 @@ class Check extends React.Component {
     super(props);
 
     this.state = {
-      isPaid: false,
+      isPaid : false,
     };
 
     // this.pay = this.pay.bind(this);
@@ -93,7 +90,7 @@ class Check extends React.Component {
 
   pay = () => {
     this.setState({
-      isPaid: true,
+      isPaid : true,
     });
 
     // accept payment amount
@@ -101,17 +98,19 @@ class Check extends React.Component {
   }
 
   render() {
-    if (!this.state.isPaid) {
+    if(!this.state.isPaid) {
       return (
         <View style={styles.checkWrapper}>
-          <View style={styles.check}>
-            <Text style={styles.checkHeader}>Check #{this.props.id || "0000000000"}</Text>
-            <Text style={styles.tabbedText}>Amount Due:</Text>
-            <Text style={{ marginLeft: 20 }}>${this.props.amountDue || "0.00"}</Text>
-            <Text style={styles.tabbedText}>Description:</Text>
-            <Text style={{ marginLeft: 20 }}>{this.props.description || "Some food that was ordered."}</Text>
-            <View style={styles.button}><Button color={Colors.button} onPress={this.pay} title="Pay"></Button></View>
-          </View>
+            <View style={styles.check}>
+                <Text style={styles.checkHeader}>Check #{this.props.id || "0000000000"}</Text>
+                <Text style={styles.tabbedText}>Restaurant: {this.props.restaurant || "Some Restaurant"}</Text>
+                <Text style={styles.tabbedText}>Description: {this.props.description || "Some food that was ordered." }</Text>
+                <Text style={styles.tabbedText}>Amount Due: ${this.props.amount || "0.00"}</Text>
+                <Text style={styles.tabbedText}>Tax: ${this.props.tax || "0.00"}</Text>
+                <Text style={styles.tabbedText}>Total Due:</Text>
+                <Text style={styles.total}>${this.props.total || "0.00"}</Text>
+                <View style={styles.button}><Button color={Colors.button} onPress={this.pay} title="Pay"></Button></View>
+            </View>
         </View>
       );
     } else {
@@ -174,5 +173,10 @@ const styles = StyleSheet.create({
   tabbedText: {
     paddingLeft: 10,
     paddingTop: 10,
+  },
+
+  total: {
+    fontSize: 20,
+    paddingLeft: 30,
   },
 });
