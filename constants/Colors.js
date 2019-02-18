@@ -14,23 +14,32 @@ const secondaryDarkColor = '#7a335b';
 
 export default {
   background: primaryColor,
+
   button: secondaryColor,
+
   cardBackground: primaryLightColor,
   cardAffirmButton: secondaryColor,
   cardHeader: secondaryDarkColor,
   cardHeaderText: primaryLightColor,
   cardNegaButton: primaryDarkColor,
+
   fabButton: secondaryColor,
   fabButtonText: primaryLightColor,
-  primaryHeader: secondaryDarkColor,
+
+  primaryHeader: primaryDarkColor,
+
   shadowColor: '#000000',
+
   sliderBackground: secondaryDarkColor,
   sliderNub: secondaryLightColor,
+
   statusBar: primaryDarkColor,
+
   tabBar: secondaryLightColor,
   tabBarSelectedBorder: secondaryColor,
   tabIconDefault: primaryDarkColor,
   tabIconSelected: secondaryColor,
+  
   text: '#000000',
 
   // not used currently

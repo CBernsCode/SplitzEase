@@ -22,8 +22,8 @@ LoginStack.navigationOptions = {
       focused={focused}
       name={
         Platform.OS === 'ios'
-          ? `ios-information-circle${focused ? '' : '-outline'}`
-          : 'md-information-circle'
+          ? `ios-lock'}`
+          : 'md-lock'
       }
     />
   ),
@@ -43,8 +43,8 @@ AccountStack.navigationOptions = {
       focused={focused}
       name={
         Platform.OS === 'ios'
-          ? `ios-information-circle${focused ? '' : '-outline'}`
-          : 'md-information-circle'
+          ? `ios-happy'}`
+          : 'md-happy'
       }
     />
   ),
@@ -58,14 +58,14 @@ const OrderStack = createStackNavigator({
 });
 
 OrderStack.navigationOptions = {
-  tabBarLabel: 'Orders',
+  tabBarLabel: 'Invites',
   tabBarIcon: ({ focused }) => (
     <TabBarIcon
       focused={focused}
       name={
         Platform.OS === 'ios'
-          ? `ios-information-circle${focused ? '' : '-outline'}`
-          : 'md-information-circle'
+          ? `ios-mail'}`
+          : 'md-mail'
       }
     />
   ),
@@ -83,7 +83,7 @@ SettingsStack.navigationOptions = {
   tabBarIcon: ({ focused }) => (
     <TabBarIcon
       focused={focused}
-      name={Platform.OS === 'ios' ? 'ios-options' : 'md-options'}
+      name={Platform.OS === 'ios' ? 'ios-settings' : 'md-settings'}
     />
   ),
   tabBarOptions: {
@@ -100,7 +100,7 @@ CheckStack.navigationOptions = {
   tabBarIcon: ({ focused }) => (
     <TabBarIcon
       focused={focused}
-      name={Platform.OS === 'ios' ? 'ios-options' : 'md-options'}
+      name={Platform.OS === 'ios' ? 'ios-cash' : 'md-cash'}
     />
   ),
   tabBarOptions: {

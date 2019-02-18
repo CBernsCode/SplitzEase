@@ -13,9 +13,10 @@ export default class CheckScreen extends React.Component {
   static navigationOptions = {
     title: 'Checks',
     headerStyle: {
-      backgroundColor: Colors.altSecondary,
+      backgroundColor: Colors.primaryHeader,
+      elevation: 0,
     },
-    headerTintColor: Colors.primaryHeader,
+    headerTintColor: Colors.text,
     headerTitleStyle: {
       fontWeight: 'bold',
     },
@@ -55,7 +56,7 @@ class Body extends React.PureComponent {
     return (
         <FlatList
             data={check_data}
-            renderItem={({item}) => <Check id={item.key} amountDue={item.amountDue} description={item.description} {...item}/>}
+            renderItem={({item}) => <Check id={item.key} restaurant={item.restaurant} description={item.description} amount={item.amount} tax={item.tax} total={item.total} {...item}/>}
             style={styles.body}
         />
     );
@@ -92,10 +93,12 @@ class Check extends React.Component {
         <View style={styles.checkWrapper}>
             <View style={styles.check}>
                 <Text style={styles.checkHeader}>Check #{this.props.id || "0000000000"}</Text>
-                <Text style={styles.tabbedText}>Amount Due:</Text>
-                <Text style={{ marginLeft: 20 }}>${this.props.amountDue || "0.00"}</Text>
-                <Text style={styles.tabbedText}>Description:</Text>
-                <Text style={{ marginLeft: 20 }}>{this.props.description || "Some food that was ordered." }</Text>
+                <Text style={styles.tabbedText}>Restaurant: {this.props.restaurant || "Some Restaurant"}</Text>
+                <Text style={styles.tabbedText}>Description: {this.props.description || "Some food that was ordered." }</Text>
+                <Text style={styles.tabbedText}>Amount Due: ${this.props.amount || "0.00"}</Text>
+                <Text style={styles.tabbedText}>Tax: ${this.props.tax || "0.00"}</Text>
+                <Text style={styles.tabbedText}>Total Due:</Text>
+                <Text style={styles.total}>${this.props.total || "0.00"}</Text>
                 <View style={styles.button}><Button color={Colors.button} onPress={this.pay} title="Pay"></Button></View>
             </View>
         </View>
@@ -158,7 +161,12 @@ const styles = StyleSheet.create({
   },
 
   tabbedText: {
-      paddingLeft: 10,
-      paddingTop: 10,
+    paddingLeft: 10,
+    paddingTop: 10,
+  },
+
+  total: {
+    fontSize: 20,
+    paddingLeft: 30,
   },
 });
