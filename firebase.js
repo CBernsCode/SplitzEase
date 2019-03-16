@@ -15,16 +15,17 @@ const db = firebase.firestore();
 export const invites = db.collection('invites')
 export const checks = db.collection('checks')
 export const friends = db.collection('friends')
+export const users = db.collection('users')
 
-export function getInvite(id) {
-  invites.doc(id).get()
-    .then(doc => {
-      let defObj = { hostname: "", hostid: "", partymembers: [] }
-      let data = { ...defObj, ...doc.data() }
-      console.log(data)
-    })
-    .catch ((error) => {
-        console.error(error);
-    });
+
+/*
+* Sends an invite to guests named in guestList
+*/
+export const sendInvites = (invitation, guestList) => {
+  for(let guest of guestList){
+    invites.doc(guest).collection('invites').add(invitation)
+      .catch(function(error) {
+        console.error(`UID: ${guestList}, did not receive and invitation`, error);
+      });
+  }
 }
-

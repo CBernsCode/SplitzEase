@@ -22,7 +22,6 @@ export default class AccountScreen extends React.Component {
 
 
   render() {
-    console.log(this.props)
     return (
       <View style={styles.screen}>
         <View style={styles.container}>

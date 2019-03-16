@@ -1,6 +1,6 @@
 import * as CheckActTypes from '../constants/actions/Check';
 
-import { checks } from '../firebase';
+import { checks, invites } from '../firebase';
 
 // This is for an async function
 getCheck = id => {
@@ -44,6 +44,12 @@ payCheck = (id, amount) => {
   }
 }
 
+sentInvite = (uid, invite) => {
+  return (dispath) => {
+    invites.doc(uid).collection('invites').add(invite);
+  }
+}
+
 // This is a sync function
 // we only pass stuff to the reducer synchronously
 upadateCheck = payload => {
@@ -53,4 +59,5 @@ upadateCheck = payload => {
 export default {
   getCheck,
   payCheck,
+  sentInvite
 }
