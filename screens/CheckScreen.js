@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Button, Card, FlatList, ScrollView, StatusBar, StyleSheet, Text, View } from 'react-native';
 import { Constants } from 'expo';
 import Colors from '../constants/Colors';
+import { checks } from '../firebase';
 
 /*
   Check Screen
@@ -41,8 +42,6 @@ export default class CheckScreen extends React.Component {
   }
 }
 
-
-
 const check_data = [
   {
     key: '0000000001',
@@ -66,7 +65,7 @@ class Body extends React.PureComponent {
     return (
         <FlatList
             data={check_data}
-            renderItem={({item}) => <Check id={item.key} restaurant={item.restaurant} description={item.description} amount={item.amount} tax={item.tax} total={item.total} {...item}/>}
+            renderItem={({item}) => <Check id={item.key} {...item}/>}
             style={styles.body}
         />
     );
@@ -155,7 +154,6 @@ const styles = StyleSheet.create({
 
   checkHeader: {
     backgroundColor: Colors.cardHeader,
-    borderRadius: 20,
     color: Colors.cardHeaderText,
     padding: 10,
   },

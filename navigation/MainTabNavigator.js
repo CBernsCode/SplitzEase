@@ -24,7 +24,7 @@ LoginStack.navigationOptions = {
       focused={focused}
       name={
         Platform.OS === 'ios'
-          ? `ios-lock'}`
+          ? 'ios-lock'
           : 'md-lock'
       }
     />
@@ -35,7 +35,7 @@ LoginStack.navigationOptions = {
 };
 
 const AccountStack = createStackNavigator({
-  Account: Account,
+  Account: AccountScreen,
 });
 
 AccountStack.navigationOptions = {
@@ -45,7 +45,7 @@ AccountStack.navigationOptions = {
       focused={focused}
       name={
         Platform.OS === 'ios'
-          ? `ios-happy'}`
+          ? 'ios-happy'
           : 'md-happy'
       }
     />
@@ -56,7 +56,7 @@ AccountStack.navigationOptions = {
 };
 
 const OrderStack = createStackNavigator({
-  Orders: Orders,
+  Orders: OrdersScreen,
 });
 
 OrderStack.navigationOptions = {
@@ -66,7 +66,7 @@ OrderStack.navigationOptions = {
       focused={focused}
       name={
         Platform.OS === 'ios'
-          ? `ios-mail'}`
+          ? 'ios-mail'
           : 'md-mail'
       }
     />
@@ -85,7 +85,11 @@ SettingsStack.navigationOptions = {
   tabBarIcon: ({ focused }) => (
     <TabBarIcon
       focused={focused}
-      name={Platform.OS === 'ios' ? 'ios-settings' : 'md-settings'}
+      name={
+        Platform.OS === 'ios'
+          ? 'ios-settings'
+          : 'md-settings'
+      }
     />
   ),
   tabBarOptions: {
@@ -102,7 +106,11 @@ CheckStack.navigationOptions = {
   tabBarIcon: ({ focused }) => (
     <TabBarIcon
       focused={focused}
-      name={Platform.OS === 'ios' ? 'ios-cash' : 'md-cash'}
+      name={
+        Platform.OS === 'ios'
+          ? 'ios-cash'
+          : 'md-cash'
+      }
     />
   ),
   tabBarOptions: {
