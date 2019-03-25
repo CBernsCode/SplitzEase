@@ -44,12 +44,6 @@ payCheck = (id, amount) => {
   }
 }
 
-sentInvite = (uid, invite) => {
-  return (dispath) => {
-    invites.doc(uid).collection('invites').add(invite);
-  }
-}
-
 // This is a sync function
 // we only pass stuff to the reducer synchronously
 upadateCheck = payload => {
@@ -58,6 +52,5 @@ upadateCheck = payload => {
 
 export default {
   getCheck,
-  payCheck,
-  sentInvite
+  payCheck
 }

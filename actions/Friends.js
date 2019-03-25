@@ -1,27 +1,29 @@
 import * as FriendActTypes from '../constants/actions/Friends';
 
 import { friends } from '../firebase';
+import * as defaults from '../constants/DefaultObjs';
 
-addFriend = (id, friend) => {
-  friends.doc(id).collection('friends').add({
+addFriend = (uid, friend) => {
+  friend = { ...defaults.defaultFriend, ...friend }
+  friends.doc(uid).collection('friends').add({
     ...friend
   })
   return { type: FriendActTypes.ADD_FRIEND, payload: friend }
 }
 
-removeFriend = (id, friend) => {
+removeFriend = (uid, friend) => {
   return { type: FriendActTypes.REMOVE_FRIEND, payload: friend }
 }
 
-
-getFriends = (id) => {
+getFriends = (uid) => {
   return (dispatch) => {
     let frnds = [];
-    friends.doc(id).collection('friends').get().then((querySnapshot) => {
-      querySnapshot.forEach((doc) => {
-        frnds.push(doc.data())
-      });
-    })
+    friends.doc(uid).collection('friends').get()
+      .then((querySnapshot) => {
+        querySnapshot.forEach((doc) => {
+          frnds.push(doc.data())
+        });
+      })
     dispatch(loadFriends(frnds))
   }
 }
