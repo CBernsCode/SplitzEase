@@ -1,6 +1,6 @@
 import * as CheckActTypes from '../constants/actions/Check';
 
-import { checks } from '../firebase';
+import { checks, invites } from '../firebase';
 
 // This is for an async function
 getCheck = id => {
@@ -52,5 +52,5 @@ upadateCheck = payload => {
 
 export default {
   getCheck,
-  payCheck,
+  payCheck
 }
