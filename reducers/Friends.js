@@ -1,16 +1,15 @@
 import * as FriendActTypes from '../constants/actions/Friends';
 
 const defObj = {
-  arr:[]
+  arr: []
 }
 
 export default function frndReducer(state = defObj, action) {
-  let prevState = [].push(state)
   switch (action.type) {
     case FriendActTypes.ADD_FRIEND:
       return {
         ...state,
-        arr:[...state.arr, action.payload]
+        arr: [...state.arr, action.payload]
       }
     case FriendActTypes.REMOVE_FRIEND:
       return {

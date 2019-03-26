@@ -13,27 +13,6 @@ import Account from '../containers/Account';
 import Orders from '../containers/Orders';
 import Colors from '../constants/Colors';
 
-const LoginStack = createStackNavigator({
-  Login: LoginScreen,
-});
-
-LoginStack.navigationOptions = {
-  tabBarLabel: 'Login',
-  tabBarIcon: ({ focused }) => (
-    <TabBarIcon
-      focused={focused}
-      name={
-        Platform.OS === 'ios'
-          ? 'ios-lock'
-          : 'md-lock'
-      }
-    />
-  ),
-  tabBarOptions: {
-    activeTintColor: Colors.tabBarSelectedBorder,
-  },
-};
-
 const AccountStack = createStackNavigator({
   Account: AccountScreen,
 });
@@ -120,7 +99,6 @@ CheckStack.navigationOptions = {
 
 export default createBottomTabNavigator(
   {
-    LoginStack,
     AccountStack,
     OrderStack,
     CheckStack,

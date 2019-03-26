@@ -1,6 +1,6 @@
 import { createStore, combineReducers, applyMiddleware } from 'redux';
 import acctReducer  from './Account';
-import checkReducer from './Check';
+import checkReducer from './Checks';
 import frndReducer from './Friends';
 
 import thunk from 'redux-thunk';

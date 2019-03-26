@@ -21,8 +21,6 @@ import Colors from '../constants/Colors';
 
 // change to drop shadow like Checks Screen
 
-// swap default values and passed values
-
 export default class OrderScreen extends React.Component {
   state = {
     modalVisible : false,
@@ -31,7 +29,7 @@ export default class OrderScreen extends React.Component {
   setModalVisible = (visible) => {
     this.setState({modalVisible: visible,});
   }
-
+  
   static navigationOptions = {
     title: 'Invites',
     headerStyle: {
@@ -45,7 +43,6 @@ export default class OrderScreen extends React.Component {
   };
 
   render() {
-    console.log(this.props)
     return (
       <View style={styles.container}>
         <Body {...this.props}/>
@@ -92,41 +89,65 @@ export default class OrderScreen extends React.Component {
 
 const order_data = [
   {
-    key: '0000000001',
+    id: '0000000001',
     host: 'user_id',
     restaurant: 'Applebee\'s',
     accepted: 'true',
-    
+
   },
   {
-    key: '0000000002',
+    id: '0000000002',
   },
   {
-    key: '0000000003',
+    id: '0000000003',
   },
 ];
 
 class Body extends React.PureComponent {
   render() {
     return (
-        <FlatList
-          data={order_data}
-          renderItem={({item}) => <Order id={item.key} {... item}/>}
-          style={styles.body}
-        />
+      <FlatList
+        data={order_data}
+        renderItem={({ item }) => <Order {...this.props} {...item} />}
+        style={styles.body}
+      />
     );
   }
 }
 
 class Order extends React.Component {
+
+  accept = (id) => {
+    let inviteRef = invites.doc(this.props.account.uid).collection('invites');
+    inviteRef.doc(id).set({
+      ts: Date.now(),
+      host: 'user_id',
+      restaurant: 'Applebees',
+      accepted: true
+    })
+  }
+
   render() {
+    console.log(this.props)
     return (
-      <View style={styles.order}>
-        <Text style={styles.orderHeader}>Order Number: {this.props.id || '0000000000'}</Text>
-        <Text style={styles.tabbedText}>{this.props.host || 'Host'} has invited you to order food from {this.props.restaurant || 'some restaurant'}!</Text>
+      <View style={styles.order} key={this.props.id}>
+        <Text style={styles.orderHeader}>
+          Order Number: {this.props.id || '0000000000'}
+        </Text>
+        <Text style={styles.tabbedText}>
+          {this.props.host || 'Host'} has invited you to order food from {this.props.restaurant || 'some restaurant'}!
+        </Text>
         <View style={styles.horizontalView}>
-          <Button color={Colors.cardAffirmButton} title='Accept' onPress={() => console.log('User accepted invite!')}></Button>
-          <Button color ={Colors.cardNegaButton} title='Decline' onPress={() => console.log('User declined invite!')}></Button>
+          <Button
+            color={Colors.cardAffirmButton}
+            title='Accept'
+            onPress={() => this.accept(this.props.id)}>
+          </Button>
+          <Button
+            color={Colors.cardNegaButton}
+            title='Decline'
+            onPress={() => console.log('User declined invite!')}>
+          </Button>
         </View>
       </View>
     );
@@ -245,8 +266,8 @@ const styles = StyleSheet.create({
   },
 
   tabbedText: {
-      paddingLeft: 10,
-      paddingTop: 10,
+    paddingLeft: 10,
+    paddingTop: 10,
   },
 
   titleBarText: {
