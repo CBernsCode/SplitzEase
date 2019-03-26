@@ -7,3 +7,4 @@ npm-debug.*
 *.mobileprovision
 .watchmanconfig
 package-lock.json
+.vscode/*
