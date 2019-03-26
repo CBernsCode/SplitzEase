@@ -3,7 +3,7 @@ import * as AcctActTypes from '../constants/actions/Account'
 // something that sets the shape of the reducer/store object
 const defObj = {
   account: undefined,
-  userId: 0,
+  uid: "12345678910",
   userName: "",
   friends: [],
   blocked: [],
