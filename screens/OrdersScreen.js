@@ -23,13 +23,13 @@ import Colors from '../constants/Colors';
 
 export default class OrderScreen extends React.Component {
   state = {
-    modalVisible : false,
+    modalVisible: false,
   };
 
   setModalVisible = (visible) => {
-    this.setState({modalVisible: visible,});
+    this.setState({ modalVisible: visible, });
   }
-  
+
   static navigationOptions = {
     title: 'Invites',
     headerStyle: {
@@ -45,12 +45,13 @@ export default class OrderScreen extends React.Component {
   render() {
     return (
       <View style={styles.container}>
-        <Body {...this.props}/>
-        <View style={styles.button}><Button color={Colors.fabButton} title='Create Invite' onPress={() => this.setModalVisible(!this.state.modalVisible)}/></View>
+        <Body {...this.props} />
+        <View style={styles.button}><Button color={Colors.fabButton} title='Create Invite' onPress={() => this.setModalVisible(!this.state.modalVisible)} /></View>
         <Modal
           animationType="slide"
           transparent={true}
           visible={this.state.modalVisible}
+          onRequestClose={() => this.setState({ modalVisible: false })}
         >
           <View style={styles.modalOuter}>
             <View style={styles.modalInner}>
@@ -75,7 +76,7 @@ export default class OrderScreen extends React.Component {
                 returnKeyType='next'
               />
               <View style={styles.modalButton}>
-                <Button color={Colors.fabButton} title='Send Invite' onPress={() => this.setModalVisible(!this.state.modalVisible)}/>
+                <Button color={Colors.fabButton} title='Send Invite' onPress={() => this.setModalVisible(!this.state.modalVisible)} />
               </View>
             </View>
           </View>
@@ -108,7 +109,10 @@ class Body extends React.PureComponent {
     return (
       <FlatList
         data={order_data}
-        renderItem={({ item }) => <Order {...this.props} {...item} />}
+        renderItem={({ item }) => {
+          let obj = {...this.props, ...item}
+          return <Order {...obj} />
+        }}
         style={styles.body}
       />
     );
@@ -128,7 +132,6 @@ class Order extends React.Component {
   }
 
   render() {
-    console.log(this.props)
     return (
       <View style={styles.order} key={this.props.id}>
         <Text style={styles.orderHeader}>
@@ -198,10 +201,10 @@ const styles = StyleSheet.create({
   },
 
   modalButton: {
-      bottom: 20,
-      justifyContent: 'center',
-      position: 'absolute',
-      width: 300,
+    bottom: 20,
+    justifyContent: 'center',
+    position: 'absolute',
+    width: 300,
   },
 
   modalInner: {
