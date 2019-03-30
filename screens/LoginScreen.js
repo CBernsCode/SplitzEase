@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Button, Image, KeyboardAvoidingView, ScrollView, StyleSheet, Switch, Text, TextInput, View } from 'react-native';
 import { Constants } from 'expo';
 import Colors from '../constants/Colors';
+import * as firebase from 'firebase';
 
 export default class LoginScreen extends React.Component {
   static navigationOptions = {
@@ -19,7 +20,7 @@ export default class LoginScreen extends React.Component {
   render() {
     return (
       <View style={styles.container}>
-          <Form/>
+          <Form navigation={this.props.navigation}/>
         </View>
     );
   }
@@ -43,14 +44,14 @@ class Form extends React.Component {
       return (
         <View>
           <View style={styles.switchBar}><Text style={styles.switchBarText}>Login</Text><Switch onValueChange={this.changeForm} value={this.state.login} style={styles.switchBarText}></Switch></View>
-          <LoginForm/>
+          <LoginForm navigation={this.props.navigation}/>
         </View>
       );
     } else {
       return (
         <View>
           <View style={styles.switchBar}><Text styles={styles.switchBarText}>Register</Text><Switch onValueChange={this.changeForm} value={this.state.login} style={styles.switchBarText}/></View>
-          <RegisterForm/>
+          <RegisterForm navigation={this.props.navigation}/>
         </View>
       );
     }
@@ -58,34 +59,52 @@ class Form extends React.Component {
 }
 
 class LoginForm extends React.Component {
+  constructor(props) {
+    super(props)
+  }
+  state = {
+    email: "",
+    password: "",
+  }
+
+  login = (email, password) => {
+    console.log(email + " " + password);
+    firebase
+    .auth()
+    .signInWithEmailAndPassword(email, password)
+    .then(() => {
+      this.props.navigation.navigate('Main')
+    })
+    .catch(console.log("Error at LoginForm.login(): Failed to sign user into Firebase."))
+  }
+
   render() {
     return (
       <ScrollView contentContainerStyle={styles.form}>
         <TextInput
           style={styles.formField}
-
-          autoComplete='username'
+          autoComplete='email'
           autoCorrect={false}
           enablesReturnKeyAutomatically={true}
-          label='Username'
-          mode='outlined'
-          placeholder='Username'
+          label='Email'
+          onChangeText={(text) => {this.setState({email: text})}}
+          placeholder='Email Address'
           returnKeyType='next'
-          textContentType='username'
+          textContentType='emailAddress'
         />
         <TextInput
           style={styles.formField}
-
           autoComplete='password'
           enablesReturnKeyAutomatically={true}
           label='Password'
+          onChangeText={(text) => {this.setState({password: text})}}
           placeholder='Password'
           returnKeyType='send'
           secureTextEntry={true}
           textContentType='password'
         />
         <View style={styles.buttons}>
-          <Button color={Colors.button} mode='outlined' title='Login' onPress={() => console.log('Login button pressed on Login Screen')}></Button>
+          <Button color={Colors.button} mode='outlined' title='Login' onPress={() => this.login(this.state.email, this.state.password)}></Button>
         </View>
         </ScrollView>
     );
@@ -93,66 +112,66 @@ class LoginForm extends React.Component {
 }
 
 class RegisterForm extends React.Component {
+  register = (username, password, email, phone) => {
+    console.log(email + " " + password);
+    firebase
+    .auth()
+    .createUserWithEmailAndPassword(email, password)
+    .then(() => {
+      this.props.navigation.navigate('Main')
+    })
+    .catch(console.log("Error at RegisterForm.register(): Failed to create user."))
+  }
+
   render () {
     return (
         <ScrollView contentContainerStyle={styles.form}>
           <TextInput
             style={styles.formField}
-
             autoComplete='username'
             autoCorrect={false}
             enablesReturnKeyAutomatically={true}
             label='Username'
+            onChangeText={(text) => {this.setState({username: text})}}
             placeholder='Username'
             returnKeyType='next'
             textContentType='username'
           />
           <TextInput
             style={styles.formField}
-
             autoComplete='email'
             autoCorrect={false}
             enablesReturnKeyAutomatically={true}
             label='Email Address'
+            onChangeText={(text) => {this.setState({email: text})}}
             placeholder='Email Address'
             returnKeyType='next'
             textContentType='emailAddress'
           />
           <TextInput
             style={styles.formField}
-
             autoComplete='phone'
             autoCorrect={false}
             enablesReturnKeyAutomatically={true}
             label='Phone Number'
+            onChangeText={(text) => {this.setState({phone: text})}}
             placeholder='Phone Number'
             returnKeyType='next'
             textContentType='telephoneNumber'
           />
           <TextInput
             style={styles.formField}
-
             autoComplete='password'
             enablesReturnKeyAutomatically={true}
             label='Password'
+            onChangeText={(text) => {this.setState({password: text})}}
             placeholder='Password'
             returnKeyType='next'
             secureTextEntry={true}
             textContentType='password'
           />
-          <TextInput
-            style={styles.formField}
-
-            autoComplete='password'
-            enablesReturnKeyAutomatically={true}
-            label='Confirm Password'
-            placeholder='Confirm Password'
-            returnKeyType='send'
-            secureTextEntry={true}
-            textContentType='password'
-          />
           <View style={styles.buttons}>
-            <Button color={Colors.button} mode='outlined' title='Register' onPress={() => console.log('Register button pressed on Login Screen')}></Button>
+            <Button color={Colors.button} mode='outlined' title='Register' onPress={() => this.register(this.state.username, this.state.password, this.state.email, this.state.phone)}></Button>
           </View>
         </ScrollView>
     );

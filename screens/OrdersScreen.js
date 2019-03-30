@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Button, FlatList, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Button, FlatList, Modal, StyleSheet, Text, TextInput, View } from 'react-native';
 
 import { Constants } from 'expo';
 import { invites } from '../firebase.js'
@@ -19,7 +19,17 @@ import Colors from '../constants/Colors';
   }
 */
 
+// change to drop shadow like Checks Screen
+
 export default class OrderScreen extends React.Component {
+  state = {
+    modalVisible: false,
+  };
+
+  setModalVisible = (visible) => {
+    this.setState({ modalVisible: visible, });
+  }
+
   static navigationOptions = {
     title: 'Invites',
     headerStyle: {
@@ -31,11 +41,46 @@ export default class OrderScreen extends React.Component {
       fontWeight: 'bold',
     },
   };
+
   render() {
     return (
       <View style={styles.container}>
         <Body {...this.props} />
-        <View style={styles.fab}><Button style={styles.fabButton} color={Colors.fabButton} title='+' onPress={() => console.log("this should open a modal menu to create a new order")} /></View>
+        <View style={styles.button}><Button color={Colors.fabButton} title='Create Invite' onPress={() => this.setModalVisible(!this.state.modalVisible)} /></View>
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={this.state.modalVisible}
+          onRequestClose={() => this.setState({ modalVisible: false })}
+        >
+          <View style={styles.modalOuter}>
+            <View style={styles.modalInner}>
+              <TextInput
+                style={styles.modalInput}
+
+                autoCorrect={false}
+                enablesReturnKeyAutomatically={true}
+                label='Restaurant'
+                placeholder='Restaurant'
+                returnKeyType='next'
+              />
+              <TextInput
+                style={styles.modalMultilineInput}
+
+                autoCorrect={false}
+                enablesReturnKeyAutomatically={true}
+                label='Friends'
+                multiline={true}
+                numberOfLines={3}
+                placeholder='friend@splitzease.com'
+                returnKeyType='next'
+              />
+              <View style={styles.modalButton}>
+                <Button color={Colors.fabButton} title='Send Invite' onPress={() => this.setModalVisible(!this.state.modalVisible)} />
+              </View>
+            </View>
+          </View>
+        </Modal>
       </View>
     );
   }
@@ -47,7 +92,7 @@ const order_data = [
   {
     id: '0000000001',
     host: 'user_id',
-    restaurant: 'Applebees',
+    restaurant: 'Applebee\'s',
     accepted: 'true',
 
   },
@@ -64,7 +109,10 @@ class Body extends React.PureComponent {
     return (
       <FlatList
         data={order_data}
-        renderItem={({ item }) => <Order {...this.props} {...item} />}
+        renderItem={({ item }) => {
+          let obj = {...this.props, ...item}
+          return <Order {...obj} />
+        }}
         style={styles.body}
       />
     );
@@ -84,7 +132,6 @@ class Order extends React.Component {
   }
 
   render() {
-    console.log(this.props)
     return (
       <View style={styles.order} key={this.props.id}>
         <Text style={styles.orderHeader}>
@@ -109,7 +156,6 @@ class Order extends React.Component {
     );
   }
 }
-
 
 const styles = StyleSheet.create({
   body: {
@@ -154,6 +200,54 @@ const styles = StyleSheet.create({
     margin: 10,
   },
 
+  modalButton: {
+    bottom: 20,
+    justifyContent: 'center',
+    position: 'absolute',
+    width: 300,
+  },
+
+  modalInner: {
+    backgroundColor: Colors.background,
+    borderRadius: 20,
+    height: 300,
+    padding: 20,
+    width: 300,
+  },
+
+  modalInput: {
+    backgroundColor: Colors.cardBackground,
+    borderRadius: 5,
+    color: Colors.text,
+    fontSize: 20,
+    height: 40,
+    marginBottom: 10,
+    paddingLeft: 20,
+  },
+
+  modalMultilineInput: {
+    backgroundColor: Colors.cardBackground,
+    borderRadius: 5,
+    color: Colors.text,
+    fontSize: 20,
+    height: 40,
+    marginBottom: 10,
+    paddingLeft: 20,
+  },
+
+  modalOuter: {
+    alignItems: 'center',
+    backgroundColor: Colors.transparentBackDrop,
+    flex: 1,
+    flexDirection: 'column',
+    justifyContent: 'center',
+    padding: 20,
+  },
+
+  modalTitle: {
+    fontSize: 25,
+  },
+
   order: {
     backgroundColor: Colors.cardBackground,
     borderRadius: 20,
@@ -164,7 +258,6 @@ const styles = StyleSheet.create({
 
   orderHeader: {
     backgroundColor: Colors.cardHeader,
-    borderRadius: 20,
     color: Colors.cardHeaderText,
     padding: 10,
   },
