@@ -28,9 +28,9 @@ acceptInvite = (uid, inviteId) => {
               accepted: true
             })
         }
+        dispatch(getInvites(uid))
       }).catch(err => { console.error("Unable to accept invite " + err) })
 
-    dispatch(getInvites(uid))
   }
 }
 
@@ -46,9 +46,9 @@ declineInvite = (uid, inviteId) => {
               accepted: false
             })
         }
+        dispatch(getInvites(uid))
       }).catch(err => { console.error("Unable to decline invite " + err) })
 
-    dispatch(getInvites(uid))
   }
 }
 
