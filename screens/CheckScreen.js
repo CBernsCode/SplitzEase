@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Button, Card, FlatList, ScrollView, StatusBar, StyleSheet, Text, View } from 'react-native';
+import { Button, Card, FlatList, Modal, ScrollView, StatusBar, StyleSheet, Text, TextInput, View } from 'react-native';
 import { Constants } from 'expo';
 import Colors from '../constants/Colors';
 import { checks } from '../firebase';
@@ -29,14 +29,49 @@ export default class CheckScreen extends React.Component {
     },
   };
 
+  state = {
+    modalVisible: false,
+  };
+
+  setModalVisible = (visible) => {
+    this.setState({ modalVisible: visible, });
+  }
+
   render() {
     return (
       <View style={styles.container}>
-        <Body />
-        <Button
-          color={Colors.button}
-          title="Add Friend"
-          onPress={() => this.props.frndActions.addFriend('21312', sampleFriend)} />
+        <Body />  
+          {/*onPress={() => this.props.frndActions.addFriend('21312', sampleFriend)}*/}
+          <Button
+            color={Colors.button}
+            title="Add Friend"
+            onPress={() => this.setModalVisible(!this.state.modalVisible)}
+          />
+          <Modal
+            animationType="slide"
+            transparent={true}
+            visible={this.state.modalVisible}
+            onRequestClose={() => this.setState({ modalVisible: false })}
+          >
+          <View style={styles.modalOuter}>
+            <View style={styles.modalInner}>
+              <TextInput
+                style={styles.modalMultilineInput}
+
+                autoCorrect={false}
+                enablesReturnKeyAutomatically={true}
+                label='Friends'
+                placeholder='friend@splitzease.com'
+                returnKeyType='send'
+              />
+              <View style={styles.modalButton}>
+                {/* Add Friend Button should actually add a friend in the future */}
+                <Button color={Colors.fabButton} title='Add Friend' onPress={() => this.setModalVisible(!this.state.modalVisible)} />
+                <Button color={Colors.fabButton} title='Cancel' onPress={() => this.setModalVisible(!this.state.modalVisible)} />
+              </View>
+            </View>
+          </View>
+        </Modal>
       </View>
     );
   }
@@ -147,6 +182,8 @@ const styles = StyleSheet.create({
   check: {
     backgroundColor: Colors.cardBackground,
     borderRadius: 20,
+    borderColor: Colors.cardHeader,
+    borderWidth: 1,
     margin: 10,
     paddingBottom: 50,
     overflow: 'hidden',
@@ -159,9 +196,57 @@ const styles = StyleSheet.create({
   },
 
   checkWrapper: {
-    shadowColor: Colors.shadowColor,
-    shadowOffset: { width: -3, height: 3 },
-    shadowOpacity: 0.5,
+    /* shadowColor: Colors.shadowColor,*/
+    /* shadowOffset: { width: -3, height: 3 }, */
+    /* shadowOpacity: 0.5, */
+  },
+
+  modalButton: {
+    bottom: 20,
+    justifyContent: 'center',
+    position: 'absolute',
+    width: 300,
+  },
+
+  modalInner: {
+    backgroundColor: Colors.background,
+    borderRadius: 20,
+    height: 300,
+    padding: 20,
+    width: 300,
+  },
+
+  modalInput: {
+    backgroundColor: Colors.cardBackground,
+    borderRadius: 5,
+    color: Colors.text,
+    fontSize: 20,
+    height: 40,
+    marginBottom: 10,
+    paddingLeft: 20,
+  },
+
+  modalMultilineInput: {
+    backgroundColor: Colors.cardBackground,
+    borderRadius: 5,
+    color: Colors.text,
+    fontSize: 20,
+    height: 40,
+    marginBottom: 10,
+    paddingLeft: 20,
+  },
+
+  modalOuter: {
+    alignItems: 'center',
+    backgroundColor: Colors.transparentBackDrop,
+    flex: 1,
+    flexDirection: 'column',
+    justifyContent: 'center',
+    padding: 20,
+  },
+
+  modalTitle: {
+    fontSize: 25,
   },
 
   statusBar: {
