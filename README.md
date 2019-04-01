@@ -31,7 +31,9 @@ How Much Is Left To Do
 Merging the frontend and the backend is the main thing that we still need to complete as a group.
 
 Backend
-    - 
+    - Refine the API
+    - Lookup UIDs by email
+    - Different payment methods stored with invite
 
 Frontend
     - I need to figure out if I want to create a separate screen for a friends list or if I should create a new component for a friends lis in the Account screen because both seem like reasonable options from a UX point of view
