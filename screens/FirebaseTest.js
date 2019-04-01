@@ -11,7 +11,7 @@ const AcctTests = ({ acctActions, account }) => {
     <View style={styles.reducer}>
       <View>
         <Text>Account Actions</Text>
-        <Text>Account UID: {account.uid}</Text>
+        <Text>Account UID: {account.user.uid}</Text>
       </View>
       <Button
         color={Colors.cardAffirmButton}
