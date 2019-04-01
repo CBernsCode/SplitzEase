@@ -102,15 +102,15 @@ const FirebaseStack = createStackNavigator({
   FirebaseTesting: FirebaseTesting,
 });
 
-AccountStack.navigationOptions = {
+FirebaseStack.navigationOptions = {
   tabBarLabel: 'Firebase Test',
   tabBarIcon: ({ focused }) => (
     <TabBarIcon
       focused={focused}
       name={
         Platform.OS === 'ios'
-          ? 'ios-happy'
-          : 'md-happy'
+          ? 'ios-flame'
+          : 'md-flame'
       }
     />
   ),

@@ -1,5 +1,5 @@
-import * as React from 'react';
-import { Button, FlatList, Modal, StyleSheet, Text, TextInput, View } from 'react-native';
+import React from 'react';
+import { Button, ButtonGroup, FlatList, Modal, StyleSheet, Switch, Text, TextInput, View } from 'react-native';
 
 import { Constants } from 'expo';
 import { invites } from '../firebase.js'
@@ -22,14 +22,6 @@ import Colors from '../constants/Colors';
 // change to drop shadow like Checks Screen
 
 export default class OrderScreen extends React.Component {
-  state = {
-    modalVisible: false,
-  };
-
-  setModalVisible = (visible) => {
-    this.setState({ modalVisible: visible, });
-  }
-
   static navigationOptions = {
     title: 'Invites',
     headerStyle: {
@@ -41,6 +33,24 @@ export default class OrderScreen extends React.Component {
       fontWeight: 'bold',
     },
   };
+
+  state = {
+    modalVisible: false,
+    paymentMode: false,
+    paymentModeLabel: 'Payment Mode: Meal'
+  };
+
+  changePaymentMode = () => {
+    if(this.state.paymentMode) {
+      this.setState({paymentMode: false, paymentModeLabel: 'Payment Mode: Meal'})
+    } else {
+      this.setState({paymentMode: true, paymentModeLabel: 'Payment Mode: Percentage'})
+    }
+  }
+
+  setModalVisible = (visible) => {
+    this.setState({ modalVisible: visible, });
+  }
 
   render() {
     return (
@@ -75,8 +85,14 @@ export default class OrderScreen extends React.Component {
                 placeholder='friend@splitzease.com'
                 returnKeyType='next'
               />
+              <View style={styles.switchWrapper}>
+                <Text>{this.state.paymentModeLabel}</Text>
+                <Switch onValueChange={this.changePaymentMode} value={this.state.paymentMode}/>
+              </View>
               <View style={styles.modalButton}>
+                {/* Send Invite Button should actually send an invite in the future */}
                 <Button color={Colors.fabButton} title='Send Invite' onPress={() => this.setModalVisible(!this.state.modalVisible)} />
+                <Button color={Colors.fabButton} title='Cancel' onPress={() => this.setModalVisible(!this.state.modalVisible)} />
               </View>
             </View>
           </View>
@@ -90,17 +106,17 @@ export default class OrderScreen extends React.Component {
 
 const order_data = [
   {
-    id: '0000000001',
+    key: '0000000001',
     host: 'user_id',
     restaurant: 'Applebee\'s',
     accepted: 'true',
 
   },
   {
-    id: '0000000002',
+    key: '0000000002',
   },
   {
-    id: '0000000003',
+    key: '0000000003',
   },
 ];
 
@@ -111,7 +127,7 @@ class Body extends React.PureComponent {
         data={order_data}
         renderItem={({ item }) => {
           let obj = { ...this.props, ...item }
-          return <Order {...obj} />
+          return <Order id={item.key} {...obj} />
         }}
         style={styles.body}
       />
@@ -120,7 +136,6 @@ class Body extends React.PureComponent {
 }
 
 class Order extends React.Component {
-
   accept = (id) => {
     let inviteRef = invites.doc(this.props.account.uid).collection('invites');
     inviteRef.doc(id).set({
@@ -133,34 +148,36 @@ class Order extends React.Component {
 
   render() {
     return (
-      <View style={styles.order} key={this.props.id}>
-        <Text style={styles.orderHeader}>
-          Order Number: {this.props.id || '0000000000'}
-        </Text>
-        <Text style={styles.tabbedText}>
-          {this.props.host || 'Host'} has invited you to order food from {this.props.restaurant || 'some restaurant'}!
-        </Text>
-        <View style={styles.horizontalView}>
-          <Button
-            color={Colors.cardAffirmButton}
-            title='Accept'
-            onPress={() => {
-              this.props.inviteActions.acceptInvite(
-                this.props.account.uid,
-                this.props.id,
-              )
-            }}>
-          </Button>
-          <Button
-            color={Colors.cardNegaButton}
-            title='Decline'
-            onPress={() => {
-              this.props.inviteActions.declineInvite(
-                this.props.account.uid,
-                this.props.id,
-              )
-            }}>
-          </Button>
+      <View style={styles.orderWrapper}>
+        <View style={styles.order} key={this.props.id}>
+          <Text style={styles.orderHeader}>
+            Order Number: {this.props.id || '0000000000'}
+          </Text>
+          <Text style={styles.tabbedText}>
+            {this.props.host || 'Host'} has invited you to order food from {this.props.restaurant || 'some restaurant'}!
+          </Text>
+          <View style={styles.horizontalView}>
+            <Button
+              color={Colors.cardAffirmButton}
+              title='Accept'
+              onPress={() => {
+                this.props.inviteActions.acceptInvite(
+                  this.props.account.uid,
+                  this.props.id,
+                )
+              }}>
+            </Button>
+            <Button
+              color={Colors.cardNegaButton}
+              title='Decline'
+              onPress={() => {
+                this.props.inviteActions.declineInvite(
+                  this.props.account.uid,
+                  this.props.id,
+                )
+              }}>
+            </Button>
+          </View>
         </View>
       </View>
     );
@@ -175,7 +192,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
-    paddingTop: Constants.statusBarHeight,
     backgroundColor: Colors.background,
   },
 
@@ -261,6 +277,8 @@ const styles = StyleSheet.create({
   order: {
     backgroundColor: Colors.cardBackground,
     borderRadius: 20,
+    borderColor: Colors.cardHeader,
+    borderWidth: 1,
     margin: 10,
     paddingBottom: 10,
     overflow: 'hidden',
@@ -273,9 +291,13 @@ const styles = StyleSheet.create({
   },
 
   orderWrapper: {
-    shadowColor: '#000000',
-    shadowOffset: { width: -3, height: 3 },
-    shadowOpacity: 0.5,
+    /* shadowColor: Colors.shadowColor,*/
+    /* shadowOffset: { width: -3, height: 3 }, */
+    /* shadowOpacity: 0.5, */
+  },
+
+  switchWrapper: {
+
   },
 
   tabbedText: {
