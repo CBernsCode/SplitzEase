@@ -99,7 +99,7 @@ const FriendTests = ({frndActions, friends}) => {
 
 const InviteTests = ({inviteActions, invites}) => {
   let uid = 'test-12345'
-  let inviteId = ""
+  let inviteId = "wQ6T9Bybeu6aiS70DFSL"
   // let lastId = !!friends.arr[0] ? friends.arr[0].id : ""
 
   console.log(invites)
@@ -108,7 +108,7 @@ const InviteTests = ({inviteActions, invites}) => {
     <View style={styles.reducer}>
       <View>
         <Text>Invite Actions</Text>
-        <Text>Last invite: </Text>
+        <Text>Invites Count {invites.arr ? invites.arr.length : "0"} </Text>
       </View>
       <Button
         color={Colors.cardAffirmButton}
@@ -119,21 +119,21 @@ const InviteTests = ({inviteActions, invites}) => {
       </Button>
       <Button
         color={Colors.cardAffirmButton}
-        title='Send Invites'
+        title='Accept Invite'
         onPress={() => {
-          inviteActions.acceptInvite(uid, 'n0H51939rO82m0kNFTtE')
+          inviteActions.acceptInvite(uid, inviteId)
         }}>
       </Button>
       <Button
         color={Colors.cardAffirmButton}
-        title='Send Invites'
+        title='Decline Invite'
         onPress={() => {
           inviteActions.declineInvite(uid, inviteId)
         }}>
       </Button>
       <Button
         color={Colors.cardAffirmButton}
-        title='Send Invites'
+        title='Get Invites'
         onPress={() => {
           inviteActions.getInvites(uid)
         }}>

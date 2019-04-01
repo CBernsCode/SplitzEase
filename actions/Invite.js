@@ -21,22 +21,34 @@ acceptInvite = (uid, inviteId) => {
     invites.doc(uid).collection('invites').doc(inviteId).get()
       .then(invite => {
         let payload = !!invite.data ? invite.data() : false;
-        !!payload && checks.doc(id).set({ ...payload, accepted: true })
+        if (!!payload) {
+          invites.doc(uid).collection('invites').doc(inviteId).set(
+            {
+              ...payload,
+              accepted: true
+            })
+        }
       }).catch(err => { console.error("Unable to accept invite " + err) })
 
-      dispatch(getInvites(uid))
+    dispatch(getInvites(uid))
   }
 }
 
 declineInvite = (uid, inviteId) => {
   return (dispatch) => {
-    invites.doc(uid).collection('invites').get()
+    invites.doc(uid).collection('invites').doc(inviteId).get()
       .then(invite => {
         let payload = !!invite && invite.data();
-        !!payload && checks.doc(id).set({ ...payload, accepted: false })
+        if (!!payload) {
+          invites.doc(uid).collection('invites').doc(inviteId).set(
+            {
+              ...payload,
+              accepted: false
+            })
+        }
       }).catch(err => { console.error("Unable to decline invite " + err) })
 
-      dispatch(getInvites(uid))
+    dispatch(getInvites(uid))
   }
 }
 
@@ -55,7 +67,7 @@ getInvites = (uid) => {
       let payload = [];
       snap.forEach((doc) => {
         // console.log(doc.id + doc.data())
-        payload.push({id: doc.id, ...doc.data()})
+        payload.push({ id: doc.id, ...doc.data() })
       });
       dispatch({ type: InviteActions.LOAD_INVITES, payload })
     })
