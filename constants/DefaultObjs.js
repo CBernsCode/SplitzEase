@@ -10,9 +10,10 @@ export const defaultCheck = {
 }
 
 export const defaultInvite = {
-  id: 0,
-  host: "",
-  restaurant: "",
+  host: "test-12345",
+  restaurant: "Default",
+  ts: Date.now(),
+  accepted: false,
 }
 
 export default {

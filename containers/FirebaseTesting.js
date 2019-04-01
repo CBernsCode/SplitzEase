@@ -1,7 +1,7 @@
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 
-import OrdersScreen from '../screens/OrdersScreen';
+import FirebaseScreen from '../screens/FirebaseTest';
 import {
   AcctActions,
   CheckActions,
@@ -27,4 +27,4 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
 export default connect(
   mapStateToProps,
   mapDispatchToProps,
-)(OrdersScreen);
+)(FirebaseScreen);

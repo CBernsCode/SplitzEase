@@ -12,6 +12,7 @@ import Checks from '../containers/Checks';
 import Account from '../containers/Account';
 import Orders from '../containers/Orders';
 import Colors from '../constants/Colors';
+import FirebaseTesting from '../containers/FirebaseTesting'
 
 const AccountStack = createStackNavigator({
   Account: Account,
@@ -97,11 +98,33 @@ CheckStack.navigationOptions = {
   },
 };
 
+const FirebaseStack = createStackNavigator({
+  FirebaseTesting: FirebaseTesting,
+});
+
+AccountStack.navigationOptions = {
+  tabBarLabel: 'Firebase Test',
+  tabBarIcon: ({ focused }) => (
+    <TabBarIcon
+      focused={focused}
+      name={
+        Platform.OS === 'ios'
+          ? 'ios-happy'
+          : 'md-happy'
+      }
+    />
+  ),
+  tabBarOptions: {
+    activeTintColor: Colors.tabBarSelectedBorder,
+  },
+};
+
 export default createBottomTabNavigator(
   {
     AccountStack,
     OrderStack,
     CheckStack,
-    SettingsStack
+    SettingsStack,
+    FirebaseStack
   },
 );

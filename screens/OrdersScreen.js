@@ -110,7 +110,7 @@ class Body extends React.PureComponent {
       <FlatList
         data={order_data}
         renderItem={({ item }) => {
-          let obj = {...this.props, ...item}
+          let obj = { ...this.props, ...item }
           return <Order {...obj} />
         }}
         style={styles.body}
@@ -144,12 +144,22 @@ class Order extends React.Component {
           <Button
             color={Colors.cardAffirmButton}
             title='Accept'
-            onPress={() => this.accept(this.props.id)}>
+            onPress={() => {
+              this.props.inviteActions.acceptInvite(
+                this.props.account.uid,
+                this.props.id,
+              )
+            }}>
           </Button>
           <Button
             color={Colors.cardNegaButton}
             title='Decline'
-            onPress={() => console.log('User declined invite!')}>
+            onPress={() => {
+              this.props.inviteActions.declineInvite(
+                this.props.account.uid,
+                this.props.id,
+              )
+            }}>
           </Button>
         </View>
       </View>

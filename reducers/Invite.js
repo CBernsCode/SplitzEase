@@ -7,7 +7,9 @@ const defObj = {
 export default function frndReducer(state = defObj, action) {
   switch (action.type) {
     case InviteActions.LOAD_INVITES:
-      return { ...payload };
+      return {
+        arr: action.payload
+      }
     default:
       return { ...state };
   }
