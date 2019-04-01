@@ -4,19 +4,21 @@ import { createAppContainer, createStackNavigator, createSwitchNavigator } from 
 import MainTabNavigator from './MainTabNavigator';
 import LoginScreen from '../screens/LoginScreen';
 import OrderScreen from '../screens/OrdersScreen';
+import Login from '../containers/Login'
 
-const AuthStack = createStackNavigator({Login: LoginScreen});
-const MainStack = createStackNavigator({Invites: OrderScreen});
+const AuthStack = createStackNavigator({ Login: Login });
+const MainStack = createStackNavigator({ Invites: OrderScreen });
 
-export default createAppContainer(createSwitchNavigator({
-  // You could add another route here for authentication.
-  // Read more at https://reactnavigation.org/docs/en/auth-flow.html
-  Auth: AuthStack,
-  Main: MainTabNavigator,
-  App: MainStack,
-},
-{
-  initialRouteName: 'Main',
-}
+export default createAppContainer(
+  createSwitchNavigator({
+    // You could add another route here for authentication.
+    // Read more at https://reactnavigation.org/docs/en/auth-flow.html
+    Auth: AuthStack,
+    Main: MainTabNavigator,
+    App: MainStack,
+  },
+    {
+      initialRouteName: 'Auth',
+    }
 
-));
+  ));
