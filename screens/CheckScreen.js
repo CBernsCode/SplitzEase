@@ -2,7 +2,6 @@ import * as React from 'react';
 import { Button, Card, FlatList, Modal, ScrollView, StatusBar, StyleSheet, Text, TextInput, View } from 'react-native';
 import { Constants } from 'expo';
 import Colors from '../constants/Colors';
-import { checks } from '../firebase';
 
 /*
   Check Screen
@@ -17,6 +16,10 @@ const sampleFriend = {
 }
 
 export default class CheckScreen extends React.Component {
+  constructor(props) {
+    super(props);
+    // console.log(props)
+  }
   static navigationOptions = {
     title: 'Checks',
     headerStyle: {

@@ -16,7 +16,7 @@ sendInvites = (invitation, guestList) => {
 }
 
 acceptInvite = (uid, inviteId) => {
-  console.log(inviteId)
+  // console.log(inviteId)
   return (dispatch) => {
     if( !uid || !inviteId) return
     invites.doc(uid).collection('invites').doc(inviteId).get()

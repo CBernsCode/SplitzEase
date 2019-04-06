@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Button, FlatList, Modal, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 
 import * as defaults from '../constants/DefaultObjs';
+import { PayTypes } from '../constants/Enums';
 
 import { Constants } from 'expo';
 import Colors from '../constants/Colors';
@@ -19,7 +20,7 @@ const AcctTests = ({ acctActions, account }) => {
         onPress={() => {
           acctActions.login({
             uid: "LHtoZbLQcIgjHfnvpaVATU5j2AF3",
-            email: "chris@learnmyr.org"
+            email: "chris@learnmyr.org",
           })
         }}>
       </Button>
@@ -35,25 +36,49 @@ const AcctTests = ({ acctActions, account }) => {
 }
 
 const CheckTests = ({ chkActions, checks }) => {
+  const uid = 'qgay3df85tIo7aSO9qmg'
+  const testCheckId = 'Mp077sHWAKsEkMJ9WWIn'
   return (
     <View style={styles.reducer}>
       <View>
         <Text>Check Actions</Text>
-        <Text>Checks ID: {checks.id}</Text>
-        <Text>Checks AMT: {checks.price}</Text>
+        <Text>Selected ID: {!!checks.selected && checks.selected.id}</Text>
+        <Text>Selected AMT: {!!checks.selected && checks.selected.price}</Text>
+        <Text>Checks ID: {!!checks.arr[0] && checks.arr[0].id}</Text>
+        <Text>Checks AMT: {!!checks.arr[0] && checks.arr[0].price}</Text>
       </View>
       <Button
         color={Colors.cardAffirmButton}
         title='Get Check'
         onPress={() => {
-          chkActions.getCheck('qgay3df85tIo7aSO9qmg')
+          chkActions.getCheck(uid, testCheckId)
         }}>
       </Button>
       <Button
         color={Colors.cardAffirmButton}
-        title='Pay Check $100'
+        title='Get Checks'
         onPress={() => {
-          chkActions.payCheck('qgay3df85tIo7aSO9qmg', 100)
+          chkActions.getChecks(uid)
+        }}>
+      </Button>
+      <Button
+        color={Colors.cardAffirmButton}
+        title='Pay Check $0.10'
+        onPress={() => {
+          chkActions.payCheck(uid, testCheckId, 0.10)
+        }}>
+      </Button>
+      <Button
+        color={Colors.cardAffirmButton}
+        title='Place $12.00 Check'
+        onPress={() => {
+          chkActions.createCheck(uid, {
+            ...defaults.defaultCheck,
+            host: 'qgay3df85tIo7aSO9qmg',
+            price: parseFloat(12.00),
+            rest: 'Applebees',
+            payType: PayTypes.self,
+          })
         }}>
       </Button>
     </View>
@@ -102,7 +127,7 @@ const InviteTests = ({inviteActions, invites}) => {
   let inviteId = "wQ6T9Bybeu6aiS70DFSL"
   // let lastId = !!friends.arr[0] ? friends.arr[0].id : ""
 
-  console.log(invites)
+  // console.log(invites)
 
   return (
     <View style={styles.reducer}>
