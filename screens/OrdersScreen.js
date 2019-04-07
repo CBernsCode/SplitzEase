@@ -58,7 +58,7 @@ export default class OrderScreen extends React.Component {
         <Body {...this.props} />
         <View style={styles.button}><Button color={Colors.fabButton} title='Create Invite' onPress={() => this.setModalVisible(!this.state.modalVisible)} /></View>
         <Modal
-          animationType="slide"
+          animationType="fade"
           transparent={true}
           visible={this.state.modalVisible}
           onRequestClose={() => this.setState({ modalVisible: false })}
