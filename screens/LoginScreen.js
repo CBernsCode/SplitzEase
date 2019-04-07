@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import { Button, Image, KeyboardAvoidingView, ScrollView, StyleSheet, Switch, Text, TextInput, View } from 'react-native';
 import { Constants } from 'expo';
 import Colors from '../constants/Colors';
@@ -82,12 +82,12 @@ class LoginForm extends React.Component {
         this.props.acctActions.login(user)
         this.props.navigation.navigate('Main')
       })
-      .catch(console.log("Error at LoginForm.login(): Failed to sign user into Firebase."))
+      .catch(err => {console.log("Error at LoginForm.login(): Failed to sign user into Firebase.")})
   }
 
   render() {
     return (
-      <ScrollView contentContainerStyle={styles.form}>
+      <KeyboardAvoidingView enabled style={styles.form} keyboardVerticalOffset={100}>
         <TextInput
           style={styles.formField}
           autoComplete='email'
@@ -113,7 +113,7 @@ class LoginForm extends React.Component {
         <View style={styles.buttons}>
           <Button color={Colors.button} mode='outlined' title='Login' onPress={() => this.login(this.state.email, this.state.password)}></Button>
         </View>
-      </ScrollView>
+      </KeyboardAvoidingView>
     );
   }
 }
@@ -125,14 +125,15 @@ class RegisterForm extends React.Component {
       .auth()
       .createUserWithEmailAndPassword(email, password)
       .then(() => {
+        this.props.acctActions.login(user)
         this.props.navigation.navigate('Main')
       })
-      .catch(console.log("Error at RegisterForm.register(): Failed to create user."))
+      .catch((err) => {console.log("Error at RegisterForm.register(): Failed to create user.")})
   }
 
   render() {
     return (
-      <ScrollView contentContainerStyle={styles.form}>
+      <KeyboardAvoidingView behavior="padding" enabled style={styles.form} keyboardVerticalOffset={100}>
         <TextInput
           style={styles.formField}
           autoComplete='username'
@@ -180,14 +181,14 @@ class RegisterForm extends React.Component {
         <View style={styles.buttons}>
           <Button color={Colors.button} mode='outlined' title='Register' onPress={() => this.register(this.state.username, this.state.password, this.state.email, this.state.phone)}></Button>
         </View>
-      </ScrollView>
+      </KeyboardAvoidingView>
     );
   }
 }
 
 const styles = StyleSheet.create({
   buttons: {
-    bottom: 0,
+    //bottom: 0,
     margin: 10,
   },
 
