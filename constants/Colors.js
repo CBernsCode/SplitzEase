@@ -42,6 +42,8 @@ export default {
   
   text: '#000000',
 
+  transparentBackDrop: '#00000080',
+
   // not used currently
   errorBackground: 'red',
   errorText: '#fff',

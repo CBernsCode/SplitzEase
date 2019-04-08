@@ -1,16 +1,22 @@
 import * as CheckActTypes from '../constants/actions/Check';
 
 const defObj = {
-  id: "",
-  amount:"",
+  arr: [],
+  selected: "",
 }
 
 export default function checkReducer(state = defObj, action){
   switch (action.type) {
-    case CheckActTypes.UPDATE_CHECK:
+    case CheckActTypes.GET_CHECKS:
       return {
-        ...action.payload
+          ...state,
+          arr: action.payload
       }
+    case CheckActTypes.SELECT_SKU:
+      return {
+        ...state,
+        selected: action.payload
+      }  
     default:
       return state;
   }

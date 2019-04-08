@@ -3,36 +3,16 @@ import { Platform } from 'react-native';
 import { createStackNavigator, createBottomTabNavigator } from 'react-navigation';
 
 import TabBarIcon from '../components/TabBarIcon';
-import AccountScreen from '../screens/AccountScreen';
-import OrdersScreen from '../screens/OrdersScreen';
+// import AccountScreen from '../screens/AccountScreen';
+// import OrdersScreen from '../screens/OrdersScreen';
 import SettingsScreen from '../screens/SettingsScreen';
-import LoginScreen from '../screens/LoginScreen';
+// import LoginScreen from '../screens/LoginScreen';
 
 import Checks from '../containers/Checks';
 import Account from '../containers/Account';
 import Orders from '../containers/Orders';
 import Colors from '../constants/Colors';
-
-const LoginStack = createStackNavigator({
-  Login: LoginScreen,
-});
-
-LoginStack.navigationOptions = {
-  tabBarLabel: 'Login',
-  tabBarIcon: ({ focused }) => (
-    <TabBarIcon
-      focused={focused}
-      name={
-        Platform.OS === 'ios'
-          ? `ios-lock'}`
-          : 'md-lock'
-      }
-    />
-  ),
-  tabBarOptions: {
-    activeTintColor: Colors.tabBarSelectedBorder,
-  },
-};
+import FirebaseTesting from '../containers/FirebaseTesting'
 
 const AccountStack = createStackNavigator({
   Account: Account,
@@ -45,7 +25,7 @@ AccountStack.navigationOptions = {
       focused={focused}
       name={
         Platform.OS === 'ios'
-          ? `ios-happy'}`
+          ? 'ios-happy'
           : 'md-happy'
       }
     />
@@ -66,7 +46,7 @@ OrderStack.navigationOptions = {
       focused={focused}
       name={
         Platform.OS === 'ios'
-          ? `ios-mail'}`
+          ? 'ios-mail'
           : 'md-mail'
       }
     />
@@ -85,7 +65,11 @@ SettingsStack.navigationOptions = {
   tabBarIcon: ({ focused }) => (
     <TabBarIcon
       focused={focused}
-      name={Platform.OS === 'ios' ? 'ios-settings' : 'md-settings'}
+      name={
+        Platform.OS === 'ios'
+          ? 'ios-settings'
+          : 'md-settings'
+      }
     />
   ),
   tabBarOptions: {
@@ -102,7 +86,32 @@ CheckStack.navigationOptions = {
   tabBarIcon: ({ focused }) => (
     <TabBarIcon
       focused={focused}
-      name={Platform.OS === 'ios' ? 'ios-cash' : 'md-cash'}
+      name={
+        Platform.OS === 'ios'
+          ? 'ios-cash'
+          : 'md-cash'
+      }
+    />
+  ),
+  tabBarOptions: {
+    activeTintColor: Colors.tabBarSelectedBorder,
+  },
+};
+
+const FirebaseStack = createStackNavigator({
+  FirebaseTesting: FirebaseTesting,
+});
+
+FirebaseStack.navigationOptions = {
+  tabBarLabel: 'Firebase Test',
+  tabBarIcon: ({ focused }) => (
+    <TabBarIcon
+      focused={focused}
+      name={
+        Platform.OS === 'ios'
+          ? 'ios-flame'
+          : 'md-flame'
+      }
     />
   ),
   tabBarOptions: {
@@ -112,10 +121,10 @@ CheckStack.navigationOptions = {
 
 export default createBottomTabNavigator(
   {
-    LoginStack,
     AccountStack,
     OrderStack,
     CheckStack,
-    SettingsStack
+    SettingsStack,
+    FirebaseStack
   },
 );

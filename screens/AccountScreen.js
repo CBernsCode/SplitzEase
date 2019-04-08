@@ -1,10 +1,5 @@
 import React from 'react';
-import { Button, Dimensions, Image, Platform, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
-
-import { Constants, WebBrowser } from 'expo';
-import { MonoText } from '../components/StyledText';
-
-import { invites } from '../firebase.js'
+import { Button, FlatList, Image, Modal, StyleSheet, Text, TextInput, View } from 'react-native';
 import Colors from '../constants/Colors';
 
 export default class AccountScreen extends React.Component {
@@ -20,28 +15,101 @@ export default class AccountScreen extends React.Component {
     },
   };
 
+  state = {
+    modalVisible: false,
+  };
+
+  setModalVisible = (visible) => {
+    this.setState({ modalVisible: visible, });
+  }
+
+  addFriend = (uid, friend) => {
+    this.setModalVisible(!this.state.modalVisible)
+    this.props.frndActions.addFriend(uid, friend)
+  }
 
   render() {
+    // console.log(this.props.account.user)
+
     return (
       <View style={styles.screen}>
         <View style={styles.container}>
           <View style={styles.userInfo}>
             <View style={styles.horizontalView}>
               <Image style={styles.userImage} source={require('../assets/images/logo.png')}/>
-              <Text style={styles.userName}>Username Here</Text>
+              <Text style={styles.userName}>{this.props.account.user.email}</Text>
             </View>
             <TextInput style={styles.input} editable={false} placeholder='Email Address Here'></TextInput>
             <Text>{/* used to create a space between buttons... margin isn't working */}</Text>
             <TextInput style={styles.input} editable={false} placeholder='Phone Number Here'></TextInput>
           </View>
 
-          <View style={styles.buttons}>
-            <Button color={Colors.button} title='Edit' onPress={() => console.log('Edit button pressed on Account Screen')}/>
-            <Text>{/* used to create a space between buttons... margin isn't working */}</Text>
-            <Button color={Colors.button} title='Save' onPress={() => console.log('Save button pressed on Account Screen')}/>
-          </View>
+          {/*
+            <View style={styles.buttons}>
+              <Button color={Colors.button} title='Edit' onPress={() => console.log('Edit button pressed on Account Screen')}/>
+              <Text></Text>
+              <Button color={Colors.button} title='Save' onPress={() => console.log('Save button pressed on Account Screen')}/>
+            </View>
+          */}
         </View>
+        <Text style={styles.friendsListHeader}>Friends List</Text>
+        <FriendsList {...this.props}/>
+        <Button color={Colors.button} title="Add Friend" onPress={() => this.setModalVisible(!this.state.modalVisible)} />
+        <Modal
+          animationType="fade"
+          transparent={true}
+          visible={this.state.modalVisible}
+          onRequestClose={() => this.setState({ modalVisible: false })}
+        >
+          <View style={styles.modalOuter}>
+            <View style={styles.modalInner}>
+              <TextInput
+                style={styles.modalMultilineInput}
+
+                autoCorrect={false}
+                enablesReturnKeyAutomatically={true}
+                label='Friends'
+                onChange={(friend_email) => this.setState({friend: friend_email,})}
+                placeholder='friend@splitzease.com'
+                returnKeyType='send'
+              />
+              <View style={styles.modalButton}>
+                <Button color={Colors.fabButton} title='Add Friend' onPress={() => this.setModalVisible(!this.state.modalVisible)} />
+                <Button color={Colors.fabButton} title='Cancel' onPress={() => this.setModalVisible(!this.state.modalVisible)} />
+              </View>
+            </View>
+          </View>
+        </Modal>
       </View>
+    );
+  }
+}
+
+class FriendsList extends React.Component {
+  componentDidMount () {
+    const { account } = this.props;
+
+    !!account && !!account.user && this.props.frndActions.getFriends(account.user.uid);
+  }
+
+  render () {
+    // console.log(this.props.frndActions.getFriends(this.props.account.user.uid));
+
+    return (
+      <FlatList
+        data={this.props.friends.arr}
+        keyExtractor={(item, index) => item.id.toString()}
+        renderItem={({item}) => <Friend id={item.id} name={item.name} {...item}/>}
+        style={styles.friendsList}
+      />
+    );
+  }
+}
+
+class Friend extends React.Component {
+  render () {
+    return(
+      <Text style={styles.friend}>{this.props.name}</Text>
     );
   }
 }
@@ -54,6 +122,30 @@ const styles = StyleSheet.create({
 
   container: {
     flex: 1,
+  },
+
+  friend: {
+    margin: 10,
+  },
+
+  friendsList: {
+    backgroundColor: Colors.primaryLightColor,
+    borderColor: Colors.secondaryColor,
+    borderRadius: 5,
+    borderStyle: 'solid',
+    borderWidth: 1,
+    flex: 1,
+    height: 200,
+    marginBottom: 10,
+    marginLeft: 20,
+    marginRight: 20,
+    marginTop: 10,
+  },
+
+  friendsListHeader: {
+    fontSize: 30,
+    marginLeft: 20,
+    marginTop: 20,
   },
 
   horizontalView: {
@@ -71,6 +163,54 @@ const styles = StyleSheet.create({
     height: 40,
     margin: 10,
     paddingLeft: 20,
+  },
+
+  modalButton: {
+    bottom: 20,
+    justifyContent: 'center',
+    position: 'absolute',
+    width: 300,
+  },
+
+  modalInner: {
+    backgroundColor: Colors.background,
+    borderRadius: 20,
+    height: 300,
+    padding: 20,
+    width: 300,
+  },
+
+  modalInput: {
+    backgroundColor: Colors.cardBackground,
+    borderRadius: 5,
+    color: Colors.text,
+    fontSize: 20,
+    height: 40,
+    marginBottom: 10,
+    paddingLeft: 20,
+  },
+
+  modalMultilineInput: {
+    backgroundColor: Colors.cardBackground,
+    borderRadius: 5,
+    color: Colors.text,
+    fontSize: 20,
+    height: 40,
+    marginBottom: 10,
+    paddingLeft: 20,
+  },
+
+  modalOuter: {
+    alignItems: 'center',
+    backgroundColor: Colors.transparentBackDrop,
+    flex: 1,
+    flexDirection: 'column',
+    justifyContent: 'center',
+    padding: 20,
+  },
+
+  modalTitle: {
+    fontSize: 25,
   },
 
   screen: {

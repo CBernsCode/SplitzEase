@@ -1,21 +1,13 @@
-import * as React from 'react';
-import { Button, Card, FlatList, ScrollView, StatusBar, StyleSheet, Text, View } from 'react-native';
+import React from 'react';
+import { Button, Card, FlatList, Modal, ScrollView, StatusBar, StyleSheet, Text, TextInput, View } from 'react-native';
 import { Constants } from 'expo';
 import Colors from '../constants/Colors';
 
-/*
-  Check Screen
-    [ ] Should be used for order history
-    [ ] Should be used to display unpaid orders
-*/
-
-const sampleFriend = {
-  added: Date.now(),
-  name: "Dave",
-  id: Math.random()
-}
-
 export default class CheckScreen extends React.Component {
+  constructor(props) {
+    super(props);
+    // console.log(props)
+  }
   static navigationOptions = {
     title: 'Checks',
     headerStyle: {
@@ -31,45 +23,37 @@ export default class CheckScreen extends React.Component {
   render() {
     return (
       <View style={styles.container}>
-        <Body />
-        <Button
-          color={Colors.button}
-          title="Add Friend"
-          onPress={() => this.props.frndActions.addFriend('21312', sampleFriend)} />
+        <Body {...this.props} />
       </View>
     );
   }
 }
 
-
-
-const check_data = [
-  {
-    key: '0000000001',
-    restaurant: 'Applebee\'s',
-    description: "1x BLT",
-
-    amount: '22.00',
-    tax: '2.00',
-    total: '24.00',
-  },
-  {
-    key: '0000000002',
-  },
-  {
-    key: '0000000003',
-  },
-];
-
 class Body extends React.PureComponent {
+  componentDidMount () {
+    const { account } = this.props;
+    !!account && !!account.user && this.props.chkActions.getChecks(account.user.uid);
+  }
+
   render() {
-    return (
+    // console.log(this.props.checks.arr)
+
+    if(this.props.checks.arr[0] != undefined) {
+      return (
         <FlatList
-            data={check_data}
-            renderItem={({item}) => <Check id={item.key} restaurant={item.restaurant} description={item.description} amount={item.amount} tax={item.tax} total={item.total} {...item}/>}
+            data={this.props.checks.arr}
+            keyExtractor={(item, index) => item.id.toString()}
+            renderItem={({item}) => <Check id={item.id} uid={this.props.account.user.uid} chkActions={this.props.chkActions} {...item}/>}
             style={styles.body}
         />
-    );
+      );
+    } else {
+      return (
+        <View style={styles.body}>
+          <Text style={styles.noChecks}>Loading...</Text>
+        </View>
+      );
+    }
   }
 }
 
@@ -80,21 +64,14 @@ class Check extends React.Component {
     this.state = {
       isPaid : false,
     };
-
-    // this.pay = this.pay.bind(this);
-    // only necessary to define "this" when using
-    //    pay(){...} (Function.prototype.bind)
-    //    instead of 
-    //    pay = () => {...} (arrow functions)
   }
 
   pay = () => {
     this.setState({
       isPaid : true,
     });
-
-    // accept payment amount
-    // accept payment type
+    // console.log(this.props);
+    this.props.chkActions.payCheck(this.props.uid, this.props.id, this.props.amount) // pay check...?
   }
 
   render() {
@@ -105,10 +82,8 @@ class Check extends React.Component {
                 <Text style={styles.checkHeader}>Check #{this.props.id || "0000000000"}</Text>
                 <Text style={styles.tabbedText}>Restaurant: {this.props.restaurant || "Some Restaurant"}</Text>
                 <Text style={styles.tabbedText}>Description: {this.props.description || "Some food that was ordered." }</Text>
-                <Text style={styles.tabbedText}>Amount Due: ${this.props.amount || "0.00"}</Text>
-                <Text style={styles.tabbedText}>Tax: ${this.props.tax || "0.00"}</Text>
-                <Text style={styles.tabbedText}>Total Due:</Text>
-                <Text style={styles.total}>${this.props.total || "0.00"}</Text>
+                <Text style={styles.tabbedText}>Amount Due:</Text>
+                <Text style={styles.total}>${this.props.price || "0.00"}</Text>
                 <View style={styles.button}><Button color={Colors.button} onPress={this.pay} title="Pay"></Button></View>
             </View>
         </View>
@@ -148,6 +123,8 @@ const styles = StyleSheet.create({
   check: {
     backgroundColor: Colors.cardBackground,
     borderRadius: 20,
+    borderColor: Colors.cardHeader,
+    borderWidth: 1,
     margin: 10,
     paddingBottom: 50,
     overflow: 'hidden',
@@ -155,15 +132,19 @@ const styles = StyleSheet.create({
 
   checkHeader: {
     backgroundColor: Colors.cardHeader,
-    borderRadius: 20,
     color: Colors.cardHeaderText,
     padding: 10,
   },
 
   checkWrapper: {
-    shadowColor: Colors.shadowColor,
-    shadowOffset: { width: -3, height: 3 },
-    shadowOpacity: 0.5,
+    /* shadowColor: Colors.shadowColor,*/
+    /* shadowOffset: { width: -3, height: 3 }, */
+    /* shadowOpacity: 0.5, */
+  },
+
+  noChecks: {
+    margin: 10,
+    textAlign: 'center',
   },
 
   statusBar: {

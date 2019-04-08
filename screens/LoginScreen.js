@@ -1,9 +1,11 @@
-import * as React from 'react';
+import React from 'react';
 import { Button, Image, KeyboardAvoidingView, ScrollView, StyleSheet, Switch, Text, TextInput, View } from 'react-native';
 import { Constants } from 'expo';
 import Colors from '../constants/Colors';
+import * as firebase from 'firebase';
 
 export default class LoginScreen extends React.Component {
+
   static navigationOptions = {
     title: 'Login',
     headerStyle: {
@@ -15,12 +17,12 @@ export default class LoginScreen extends React.Component {
       fontWeight: 'bold',
     },
   };
-  
+
   render() {
     return (
       <View style={styles.container}>
-          <Form/>
-        </View>
+        <Form {...this.props} />
+      </View>
     );
   }
 }
@@ -35,22 +37,28 @@ class Form extends React.Component {
   }
 
   changeForm = () => {
-    this.setState((state) => { return {login: !state.login,}; });
+    this.setState((state) => { return { login: !state.login, }; });
   }
 
   render() {
-    if(this.state.login) {
+    if (this.state.login) {
       return (
         <View>
-          <View style={styles.switchBar}><Text style={styles.switchBarText}>Login</Text><Switch onValueChange={this.changeForm} value={this.state.login} style={styles.switchBarText}></Switch></View>
-          <LoginForm/>
+          <View style={styles.switchBar}>
+            <Text style={styles.switchBarText}>Login</Text>
+            <Switch onValueChange={this.changeForm} value={this.state.login} style={styles.switchBarText}></Switch>
+          </View>
+          <LoginForm {...this.props}  />
         </View>
       );
     } else {
       return (
         <View>
-          <View style={styles.switchBar}><Text styles={styles.switchBarText}>Register</Text><Switch onValueChange={this.changeForm} value={this.state.login} style={styles.switchBarText}/></View>
-          <RegisterForm/>
+          <View style={styles.switchBar}>
+            <Text styles={styles.switchBarText}>Register</Text>
+            <Switch onValueChange={this.changeForm} value={this.state.login} style={styles.switchBarText} />
+          </View>
+          <RegisterForm  {...this.props} />
         </View>
       );
     }
@@ -58,110 +66,129 @@ class Form extends React.Component {
 }
 
 class LoginForm extends React.Component {
+  constructor(props) {
+    super(props)
+  }
+  state = {
+    email: "",
+    password: "",
+  }
+
+  login = (email, password) => {
+    firebase
+      .auth()
+      .signInWithEmailAndPassword(email, password)
+      .then((user) => {
+        this.props.acctActions.login(user)
+        this.props.navigation.navigate('Main')
+      })
+      .catch(err => {console.log("Error at LoginForm.login(): Failed to sign user into Firebase.")})
+  }
+
   render() {
     return (
-      <ScrollView contentContainerStyle={styles.form}>
+      <KeyboardAvoidingView enabled style={styles.form} keyboardVerticalOffset={100}>
         <TextInput
           style={styles.formField}
-
-          autoComplete='username'
+          autoComplete='email'
           autoCorrect={false}
           enablesReturnKeyAutomatically={true}
-          label='Username'
-          mode='outlined'
-          placeholder='Username'
+          label='Email'
+          onChangeText={(text) => { this.setState({ email: text }) }}
+          placeholder='Email Address'
           returnKeyType='next'
-          textContentType='username'
+          textContentType='emailAddress'
         />
         <TextInput
           style={styles.formField}
-
           autoComplete='password'
           enablesReturnKeyAutomatically={true}
           label='Password'
+          onChangeText={(text) => { this.setState({ password: text }) }}
           placeholder='Password'
           returnKeyType='send'
           secureTextEntry={true}
           textContentType='password'
         />
         <View style={styles.buttons}>
-          <Button color={Colors.button} mode='outlined' title='Login' onPress={() => console.log('Login button pressed on Login Screen')}></Button>
+          <Button color={Colors.button} mode='outlined' title='Login' onPress={() => this.login(this.state.email, this.state.password)}></Button>
         </View>
-        </ScrollView>
+      </KeyboardAvoidingView>
     );
   }
 }
 
 class RegisterForm extends React.Component {
-  render () {
+  register = (username, password, email, phone) => {
+    // console.log(email + " " + password);
+    firebase
+      .auth()
+      .createUserWithEmailAndPassword(email, password)
+      .then(() => {
+        this.props.acctActions.login(user)
+        this.props.navigation.navigate('Main')
+      })
+      .catch((err) => {console.log("Error at RegisterForm.register(): Failed to create user.")})
+  }
+
+  render() {
     return (
-        <ScrollView contentContainerStyle={styles.form}>
-          <TextInput
-            style={styles.formField}
-
-            autoComplete='username'
-            autoCorrect={false}
-            enablesReturnKeyAutomatically={true}
-            label='Username'
-            placeholder='Username'
-            returnKeyType='next'
-            textContentType='username'
-          />
-          <TextInput
-            style={styles.formField}
-
-            autoComplete='email'
-            autoCorrect={false}
-            enablesReturnKeyAutomatically={true}
-            label='Email Address'
-            placeholder='Email Address'
-            returnKeyType='next'
-            textContentType='emailAddress'
-          />
-          <TextInput
-            style={styles.formField}
-
-            autoComplete='phone'
-            autoCorrect={false}
-            enablesReturnKeyAutomatically={true}
-            label='Phone Number'
-            placeholder='Phone Number'
-            returnKeyType='next'
-            textContentType='telephoneNumber'
-          />
-          <TextInput
-            style={styles.formField}
-
-            autoComplete='password'
-            enablesReturnKeyAutomatically={true}
-            label='Password'
-            placeholder='Password'
-            returnKeyType='next'
-            secureTextEntry={true}
-            textContentType='password'
-          />
-          <TextInput
-            style={styles.formField}
-
-            autoComplete='password'
-            enablesReturnKeyAutomatically={true}
-            label='Confirm Password'
-            placeholder='Confirm Password'
-            returnKeyType='send'
-            secureTextEntry={true}
-            textContentType='password'
-          />
-          <View style={styles.buttons}>
-            <Button color={Colors.button} mode='outlined' title='Register' onPress={() => console.log('Register button pressed on Login Screen')}></Button>
-          </View>
-        </ScrollView>
+      <KeyboardAvoidingView behavior="padding" enabled style={styles.form} keyboardVerticalOffset={100}>
+        <TextInput
+          style={styles.formField}
+          autoComplete='username'
+          autoCorrect={false}
+          enablesReturnKeyAutomatically={true}
+          label='Username'
+          onChangeText={(text) => { this.setState({ username: text }) }}
+          placeholder='Username'
+          returnKeyType='next'
+          textContentType='username'
+        />
+        <TextInput
+          style={styles.formField}
+          autoComplete='email'
+          autoCorrect={false}
+          enablesReturnKeyAutomatically={true}
+          label='Email Address'
+          onChangeText={(text) => { this.setState({ email: text }) }}
+          placeholder='Email Address'
+          returnKeyType='next'
+          textContentType='emailAddress'
+        />
+        <TextInput
+          style={styles.formField}
+          autoComplete='phone'
+          autoCorrect={false}
+          enablesReturnKeyAutomatically={true}
+          label='Phone Number'
+          onChangeText={(text) => { this.setState({ phone: text }) }}
+          placeholder='Phone Number'
+          returnKeyType='next'
+          textContentType='telephoneNumber'
+        />
+        <TextInput
+          style={styles.formField}
+          autoComplete='password'
+          enablesReturnKeyAutomatically={true}
+          label='Password'
+          onChangeText={(text) => { this.setState({ password: text }) }}
+          placeholder='Password'
+          returnKeyType='next'
+          secureTextEntry={true}
+          textContentType='password'
+        />
+        <View style={styles.buttons}>
+          <Button color={Colors.button} mode='outlined' title='Register' onPress={() => this.register(this.state.username, this.state.password, this.state.email, this.state.phone)}></Button>
+        </View>
+      </KeyboardAvoidingView>
     );
   }
 }
 
 const styles = StyleSheet.create({
   buttons: {
-    bottom: 0,
+    //bottom: 0,
     margin: 10,
   },
 

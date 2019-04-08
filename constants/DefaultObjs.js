@@ -6,13 +6,15 @@ export const defaultFriend = {
 
 export const defaultCheck = {
   id: 0,
-  price: 0,
+  ts: Date.now(),
+  price: parseFloat(0),
 }
 
 export const defaultInvite = {
-  id: 0,
-  host: "",
-  restaurant: "",
+  host: "test-12345",
+  restaurant: "Default",
+  ts: Date.now(),
+  accepted: false,
 }
 
 export default {
