@@ -169,6 +169,11 @@ const InviteTests = ({inviteActions, invites}) => {
 }
 
 export default class FirebaseScreen extends React.Component {
+  static navigationOptions = {
+    title: 'Firebase Test',
+    header: null,
+  };
+
 
   render() {
     // console.log(this.props)

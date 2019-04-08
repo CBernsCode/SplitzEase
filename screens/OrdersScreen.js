@@ -5,22 +5,6 @@ import { Constants } from 'expo';
 import { invites } from '../firebase.js'
 import Colors from '../constants/Colors';
 
-/*
-  Orders Screen
-    [ ] Should be used for pending invites
-
-  componentDidMount = () => {
-    // This is an example of how to grab an invite
-    invites.doc('N8Ur2NvmqBBUmynPQvZ3').get().then(doc => {
-      let defObj = { hostname: "", hostid: "", partymembers: []}
-      let data = { ... defObj, ...doc.data() }
-      console.log(data);
-    })
-  }
-*/
-
-// change to drop shadow like Checks Screen
-
 export default class OrderScreen extends React.Component {
   static navigationOptions = {
     title: 'Invites',
@@ -32,6 +16,7 @@ export default class OrderScreen extends React.Component {
     headerTitleStyle: {
       fontWeight: 'bold',
     },
+    header: null,
   };
 
   state = {
@@ -193,6 +178,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     backgroundColor: Colors.background,
+    paddingTop: Constants.statusBarHeight,
   },
 
   fab: {
