@@ -18,6 +18,7 @@ export default class SettingsScreen extends React.Component {
     headerTitleStyle: {
       fontWeight: 'bold',
     },
+    header: null,
   };
 
 
@@ -54,6 +55,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     margin: 20,
+    paddingTop: Constants.statusBarHeight,
   },
 
   horizontalView: {

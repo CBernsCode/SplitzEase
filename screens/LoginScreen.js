@@ -5,24 +5,17 @@ import Colors from '../constants/Colors';
 import * as firebase from 'firebase';
 
 export default class LoginScreen extends React.Component {
-
   static navigationOptions = {
     title: 'Login',
-    headerStyle: {
-      backgroundColor: Colors.primaryHeader,
-      elevation: 0,
-    },
-    headerTintColor: Colors.text,
-    headerTitleStyle: {
-      fontWeight: 'bold',
-    },
+    header: null,
   };
 
   render() {
     return (
-      <View style={styles.container}>
+      <KeyboardAvoidingView style={styles.container}>
+        {/*<Image source={require('../assets/images/logo.png')} style={styles.logo}/>*/}
         <Form {...this.props} />
-      </View>
+      </KeyboardAvoidingView>
     );
   }
 }
@@ -87,7 +80,7 @@ class LoginForm extends React.Component {
 
   render() {
     return (
-      <KeyboardAvoidingView enabled style={styles.form} keyboardVerticalOffset={100}>
+      <View enabled style={styles.form} keyboardVerticalOffset={100}>
         <TextInput
           style={styles.formField}
           autoComplete='email'
@@ -113,7 +106,7 @@ class LoginForm extends React.Component {
         <View style={styles.buttons}>
           <Button color={Colors.button} mode='outlined' title='Login' onPress={() => this.login(this.state.email, this.state.password)}></Button>
         </View>
-      </KeyboardAvoidingView>
+      </View>
     );
   }
 }
@@ -133,7 +126,7 @@ class RegisterForm extends React.Component {
 
   render() {
     return (
-      <KeyboardAvoidingView behavior="padding" enabled style={styles.form} keyboardVerticalOffset={100}>
+      <View behavior="padding" enabled style={styles.form} keyboardVerticalOffset={100}>
         <TextInput
           style={styles.formField}
           autoComplete='username'
@@ -181,7 +174,7 @@ class RegisterForm extends React.Component {
         <View style={styles.buttons}>
           <Button color={Colors.button} mode='outlined' title='Register' onPress={() => this.register(this.state.username, this.state.password, this.state.email, this.state.phone)}></Button>
         </View>
-      </KeyboardAvoidingView>
+      </View>
     );
   }
 }
@@ -189,14 +182,14 @@ class RegisterForm extends React.Component {
 const styles = StyleSheet.create({
   buttons: {
     //bottom: 0,
-    margin: 10,
+    // margin: 10,
   },
 
   container: {
     flex: 1,
     paddingTop: Constants.statusBarHeight,
     backgroundColor: Colors.background,
-    padding: 20,
+    padding: 10,
   },
 
   form: {
@@ -210,10 +203,10 @@ const styles = StyleSheet.create({
     borderStyle: 'solid',
     borderWidth: 1,
     color: Colors.text,
-    fontSize: 30,
+    fontSize: 20,
     height: 40,
-    margin: 20,
-    paddingLeft: 20,
+    margin: 10,
+    paddingLeft: 10,
   },
 
   logo: {

@@ -18,6 +18,7 @@ export default class CheckScreen extends React.Component {
     headerTitleStyle: {
       fontWeight: 'bold',
     },
+    header: null,
   };
 
   render() {
@@ -111,6 +112,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     backgroundColor: Colors.background,
+    paddingTop: Constants.statusBarHeight,
   },
 
   horizontalRule: {

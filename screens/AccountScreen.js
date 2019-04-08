@@ -2,16 +2,14 @@ import React from 'react';
 import { Button, FlatList, Image, Modal, StyleSheet, Text, TextInput, View } from 'react-native';
 import Colors from '../constants/Colors';
 
+import { Constants } from 'expo';
+
 export default class AccountScreen extends React.Component {
   static navigationOptions = {
     title: 'Account',
+    header: null,
     headerStyle: {
       backgroundColor: Colors.primaryHeader,
-      elevation: 0,
-    },
-    headerTintColor: Colors.text,
-    headerTitleStyle: {
-      fontWeight: 'bold',
     },
   };
 
@@ -52,8 +50,10 @@ export default class AccountScreen extends React.Component {
             </View>
           */}
         </View>
-        <Text style={styles.friendsListHeader}>Friends List</Text>
-        <FriendsList {...this.props}/>
+        <View style={styles.friendsList}>
+          <Text style={styles.friendsListHeader}>Friends List</Text>
+          <FriendsList {...this.props}/>
+        </View>
         <Button color={Colors.button} title="Add Friend" onPress={() => this.setModalVisible(!this.state.modalVisible)} />
         <Modal
           animationType="fade"
@@ -99,8 +99,7 @@ class FriendsList extends React.Component {
       <FlatList
         data={this.props.friends.arr}
         keyExtractor={(item, index) => item.id.toString()}
-        renderItem={({item}) => <Friend id={item.id} name={item.name} {...item}/>}
-        style={styles.friendsList}
+        renderItem={({item, index}) => <Friend id={item.id} index={index} name={item.name} {...item}/>}
       />
     );
   }
@@ -108,9 +107,19 @@ class FriendsList extends React.Component {
 
 class Friend extends React.Component {
   render () {
-    return(
-      <Text style={styles.friend}>{this.props.name}</Text>
-    );
+    if(this.props.index % 2 == 0) {
+      return(
+        <View style={styles.evenFriend}>
+          <Text>{this.props.name}</Text>
+        </View>
+      );
+    } else {
+      return(
+        <View style={styles.oddFriend}>
+          <Text>{this.props.name}</Text>
+        </View>
+      );
+    }
   }
 }
 
@@ -122,30 +131,45 @@ const styles = StyleSheet.create({
 
   container: {
     flex: 1,
+    paddingTop: Constants.statusBarHeight,
   },
 
-  friend: {
-    margin: 10,
+  evenFriend: {
+    backgroundColor: Colors.primaryLightColor,
+    flex: 1,
+    fontSize: 20,
+    padding: 10,
+    paddingBottom: 15,
+    paddingTop: 15,
+  },
+
+  oddFriend: {
+    backgroundColor: Colors.primaryColor,
+    flex: 1,
+    fontSize: 20,
+    padding: 10,
+    paddingBottom: 15,
+    paddingTop: 15,
   },
 
   friendsList: {
-    backgroundColor: Colors.primaryLightColor,
-    borderColor: Colors.secondaryColor,
-    borderRadius: 5,
+    backgroundColor: Colors.cardBackground,
+    borderColor: Colors.cardAffirmButton,
+    borderRadius: 20,
     borderStyle: 'solid',
     borderWidth: 1,
     flex: 1,
-    height: 200,
     marginBottom: 10,
-    marginLeft: 20,
-    marginRight: 20,
-    marginTop: 10,
+    marginLeft: 10,
+    marginRight: 10,
+    overflow: 'hidden',
   },
 
   friendsListHeader: {
+    backgroundColor: Colors.secondaryDarkColor,
+    color: Colors.primaryLightColor,
     fontSize: 30,
-    marginLeft: 20,
-    marginTop: 20,
+    padding: 10,
   },
 
   horizontalView: {
@@ -161,8 +185,7 @@ const styles = StyleSheet.create({
     color: Colors.text,
     fontSize: 20,
     height: 40,
-    margin: 10,
-    paddingLeft: 20,
+    paddingLeft: 10,
   },
 
   modalButton: {
@@ -221,6 +244,7 @@ const styles = StyleSheet.create({
   userImage: {
     flex: 1,
     height: 100,
+    marginBottom: 10,
     width: 100,
   },
 

@@ -28,6 +28,14 @@ export default {
 
   primaryHeader: primaryDarkColor,
 
+  primaryColor: primaryColor,
+  primaryLightColor: primaryLightColor,
+  primaryDarkColor: primaryDarkColor,
+
+  secondaryColor: '#ab6088',
+  secondaryLightColor: '#de8fb8',
+  secondaryDarkColor: '#7a335b',
+
   shadowColor: '#000000',
 
   sliderBackground: secondaryDarkColor,
