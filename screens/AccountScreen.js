@@ -4,6 +4,9 @@ import Colors from '../constants/Colors';
 
 import { Constants } from 'expo';
 
+import { createSession } from '../firebase'
+
+
 export default class AccountScreen extends React.Component {
   static navigationOptions = {
     title: 'Account',
@@ -28,7 +31,6 @@ export default class AccountScreen extends React.Component {
 
   render() {
     // console.log(this.props.account.user)
-
     return (
       <View style={styles.screen}>
         <View style={styles.container}>
