@@ -1,11 +1,12 @@
 import React from 'react';
-import { Button, ButtonGroup, FlatList, Modal, StyleSheet, Switch, Text, TextInput, View } from 'react-native';
+import { Button, FlatList, Modal, StyleSheet, Switch, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
 import { Constants } from 'expo';
 import { invites } from '../firebase.js'
 import Colors from '../constants/Colors';
+// import console = require('console');
 
-export default class OrderScreen extends React.Component {
+export default class SessionScreen extends React.Component {
   static navigationOptions = {
     title: 'Events',
     headerStyle: {
@@ -20,14 +21,41 @@ export default class OrderScreen extends React.Component {
   };
 
   state = {
+    guestList: new Array(),
     modalVisible: false,
     payForGuests: false,
+    restaurant: '',
   };
 
+  addGuest = (id) => {
+    // add guest
+    if(!this.guestIsSelected(id)) {
+      let tempArr = this.state.guestList;
+      tempArr.push(id)
+      this.setState({guestList: tempArr});
 
+    // remove guest
+    } else {
+      let tempArr = this.state.guestList;
+      let idIndex = tempArr.indexOf(id);
+      tempArr.splice(idIndex, 1);
+
+      this.setState({guestList: tempArr});
+    }
+  }
+
+  guestIsSelected = (id) => {
+    // console.log(this.state.guestList);
+    return this.state.guestList.includes(id)
+  }
 
   setModalVisible = (visible) => {
     this.setState({ modalVisible: visible});
+  }
+
+  setRestaurant = (rest) => {
+    // console.log(rest);
+    this.setState({restaurant: rest});
   }
 
   render() {
@@ -49,6 +77,7 @@ export default class OrderScreen extends React.Component {
                 autoCorrect={false}
                 enablesReturnKeyAutomatically={true}
                 label='Restaurant'
+                onChangeText={(rest) => this.setRestaurant(rest)}
                 placeholder='Restaurant'
                 returnKeyType='next'
               />
@@ -58,7 +87,11 @@ export default class OrderScreen extends React.Component {
               </View>
               <View style={styles.friendsList}>
                 <Text style={styles.friendsListHeader}>Friends List</Text>
-                <FriendsList {...this.props}/>
+                <FriendsList
+                  addGuest = {this.addGuest.bind(this)} // makes addGuest available to FriendsList... adds it to this.props
+                  guestIsSelected = {this.guestIsSelected.bind(this)}
+                  {...this.props}
+                  />
               </View>
               <View style={styles.modalButton}>
                 {/* Send Invite Button should actually send an invite in the future */}
@@ -125,33 +158,32 @@ class FriendsList extends React.Component {
   }
 
   render () {
-    // console.log(this.props.frndActions.getFriends(this.props.account.user.uid));
-
     return (
       <FlatList
         data={this.props.friends.arr}
         keyExtractor={(item, index) => item.id.toString()}
-        renderItem={({item, index}) => <Friend id={item.id} index={index} name={item.name} {...item}/>}
+        renderItem={({item, index}) => 
+          index % 2 == 0 ?
+            <TouchableOpacity
+              style={[styles.friend, {backgroundColor: this.props.guestIsSelected(item.id) ? Colors.secondaryLightColor: Colors.primaryLightColor}]}
+              id={item.id}
+              index={index}
+              name={item.name}
+              onPress={() => this.props.addGuest(item.id)}
+              {...item}
+            ><Text>{item.name}</Text></TouchableOpacity>  
+            :
+            <TouchableOpacity
+              style={[styles.friend, {backgroundColor: this.props.guestIsSelected(item.id) ? Colors.secondaryLightColor: Colors.primaryColor}]}
+              id={item.id}
+              index={index}
+              name={item.name}
+              {...item}
+              onPress={() => this.props.addGuest(item.id)}
+            ><Text>{item.name}</Text></TouchableOpacity>
+          }
       />
     );
-  }
-}
-
-class Friend extends React.Component {
-  render () {
-    if(this.props.index % 2 == 0) {
-      return(
-        <View style={styles.evenFriend}>
-          <Text>{this.props.name}</Text>
-        </View>
-      );
-    } else {
-      return(
-        <View style={styles.oddFriend}>
-          <Text>{this.props.name}</Text>
-        </View>
-      );
-    }
   }
 }
 
@@ -185,31 +217,23 @@ const styles = StyleSheet.create({
     width: 5,
   },
 
-  evenFriend: {
-    backgroundColor: Colors.primaryLightColor,
+  friend: {
     flex: 1,
     fontSize: 20,
     padding: 10,
     paddingBottom: 15,
     paddingTop: 15,
   },
-
-  oddFriend: {
-    backgroundColor: Colors.primaryColor,
-    flex: 1,
-    fontSize: 20,
-    padding: 10,
-    paddingBottom: 15,
-    paddingTop: 15,
-  },
-
+  
   friendsList: {
     backgroundColor: Colors.cardBackground,
     borderColor: Colors.cardAffirmButton,
     borderRadius: 20,
     borderStyle: 'solid',
     borderWidth: 1,
-    height: 200,
+    height: 175,
+    marginBottom: 10,
+    marginTop: 10,
     overflow: 'hidden',
   },
 
