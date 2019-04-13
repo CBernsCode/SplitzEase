@@ -1,10 +1,39 @@
 import React from 'react';
-import { Button, FlatList, Modal, StyleSheet, Switch, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Alert, Button, FlatList, Modal, StyleSheet, Switch, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
 import { Constants } from 'expo';
-import { invites } from '../firebase.js'
+import { createSession, invites } from '../firebase.js'
 import Colors from '../constants/Colors';
+import { PayTypes, SessionStatuses } from '../constants/Enums'
+// import { listenerCount } from 'cluster';
 // import console = require('console');
+
+const event_data = [
+  {
+    id: '0000000001',
+    host: '09irxlCDcPbJfFMkRJa3L6JJHqh1',
+    restaurant: 'Applebee\'s',
+    status: SessionStatuses.started,
+    payType: PayTypes.self,
+    inviteList: ['guest_01', 'guest_02', 'guest_03', 'guest_04', 'guest_05', 'guest_06']
+  },
+  {
+    id: '0000000002',
+    host: '09irxlCDcPbJfFMkRJa3L6JJHqh1',
+    restaurant: 'Jimmy K\'s',
+    status: SessionStatuses.pending,
+    payType: PayTypes.share,
+    inviteList: ['guest_01', 'guest_02', 'guest_03', 'guest_04', 'guest_05', 'guest_06']
+  },
+  {
+    id: '0000000003',
+    host: '09irxlCDcPbJfFMkRJa3L6JJHqh1',
+    restaurant: 'Taco Bell',
+    status: SessionStatuses.done,
+    payType: PayTypes.single,
+    inviteList: ['guest_01', 'guest_02', 'guest_03', 'guest_04', 'guest_05', 'guest_06']
+  },
+];
 
 export default class SessionScreen extends React.Component {
   static navigationOptions = {
@@ -24,6 +53,7 @@ export default class SessionScreen extends React.Component {
     guestList: new Array(),
     modalVisible: false,
     payForGuests: false,
+    paymentType: PayTypes.self,
     restaurant: '',
   };
 
@@ -49,8 +79,48 @@ export default class SessionScreen extends React.Component {
     return this.state.guestList.includes(id)
   }
 
+  resetModalMenu = () => {
+    this.setModalVisible(!this.state.modalVisible);
+
+    this.setState({
+      guestList: new Array(),
+      modalVisible: false,
+      payForGuests: false,
+      paymentType: PayTypes.self,
+      restaurant: '',
+    });
+  }
+
+  sendInvites = () => {
+
+    // only do this when all fields are filled in
+    if(!!this.state.restaurant && !!this.state.guestList[0]) {
+      createSession(this.props.account.user.uid, this.state.guestList, this.state.restaurant, this.state.paymentType);
+      this.resetModalMenu();
+    } else {
+      Alert.alert(
+        'No Invites Sent',
+        'Please fill in all fields before sending invites',
+        [
+          {text: 'OK', onPress: () => {}},
+        ],
+        {cancelable: true},
+      );
+    }
+  }
+
   setModalVisible = (visible) => {
     this.setState({ modalVisible: visible});
+  }
+
+  setPaymentType = () => {
+    this.setState({payForGuests: !this.state.payForGuests})
+
+    if(this.state.payForGuests) {
+      this.setState({paymentType: PayTypes.single});
+    } else {
+      this.setState({paymentType: PayTypes.self});
+    }
   }
 
   setRestaurant = (rest) => {
@@ -83,7 +153,7 @@ export default class SessionScreen extends React.Component {
               />
               <View style={styles.switchWrapper}>
                 <Text>Pay for guests?</Text>
-                <Switch onValueChange={() => this.setState({payForGuests: !this.state.payForGuests})} value={this.state.payForGuests}/>
+                <Switch onValueChange={() => this.setPaymentType()} value={this.state.payForGuests}/>
               </View>
               <View style={styles.friendsList}>
                 <Text style={styles.friendsListHeader}>Friends List</Text>
@@ -95,8 +165,8 @@ export default class SessionScreen extends React.Component {
               </View>
               <View style={styles.modalButton}>
                 {/* Send Invite Button should actually send an invite in the future */}
-                <Button color={Colors.fabButton} title='Send Invites' onPress={() => this.setModalVisible(!this.state.modalVisible)} />
-                <Button color={Colors.fabButton} title='Cancel' onPress={() => this.setModalVisible(!this.state.modalVisible)} />
+                <Button color={Colors.fabButton} title='Send Invites' onPress={() => this.sendInvites()} />
+                <Button color={Colors.fabButton} title='Cancel' onPress={() => this.resetModalMenu()} />
               </View>
             </View>
           </View>
@@ -106,30 +176,6 @@ export default class SessionScreen extends React.Component {
   }
 }
 
-class Event extends React.Component {
-  render() {
-    return(
-      <View><Text>Some Event</Text></View>
-    );
-  }
-}
-
-const event_data = [
-  {
-    key: '0000000001',
-    host: 'user_id',
-    restaurant: 'Applebee\'s',
-    accepted: 'true',
-
-  },
-  {
-    key: '0000000002',
-  },
-  {
-    key: '0000000003',
-  },
-];
-
 class Body extends React.PureComponent {
   componentDidMount () {
     const { account } = this.props;
@@ -138,13 +184,53 @@ class Body extends React.PureComponent {
 
   render() {
     return (
+      <EventList {...this.props}/>
+    );
+  }
+}
+
+class EventList extends React.Component {
+  render() {
+    return(
       <FlatList
-        data={event_data}
-        renderItem={({ item }) => {
-          let obj = { ...this.props, ...item }
-          return <Event id={item.key} {...obj} />
-        }}
-        style={styles.body}
+        data = {event_data}
+        keyExtractor={(item) => item.id.toString()}
+        renderItem = {({item}) =>
+          <Event
+            {...item}
+          />
+        }
+      />
+    );
+  }
+}
+
+class Event extends React.Component {
+  render () {
+    return (
+      <View style={styles.eventWrapper}>
+        <View style={styles.event}>
+          <Text style={styles.eventHeader}>Event ID: {this.props.id || "000000000"}</Text>
+          <Text style={styles.tabbedText}>Restaurant: {this.props.restaurant || "Some Restaurant"}</Text>
+          <Text style={styles.tabbedText}>Status: {this.props.status || "Some Status"}</Text>
+          <Text style={styles.tabbedText}>Payment Type: {this.props.payType || "Payment"}</Text>
+          <Text style={styles.tabbedText}>Guest List:</Text>
+          <GuestList inviteList={this.props.inviteList}/>
+        </View>
+      </View>
+    );
+  }
+}
+
+class GuestList extends React.Component {
+  render () {
+    return (
+      <FlatList
+        data={this.props.inviteList}
+        keyExtractor={(item, index) => index.toString()}
+        renderItem={({item, index}) => 
+          <Text style={styles.guestList}>{item}</Text>
+        }
       />
     );
   }
@@ -245,6 +331,10 @@ const styles = StyleSheet.create({
     paddingLeft: 10,
   },
 
+  guestList: {
+    paddingLeft: 25,
+  },
+
 
   horizontalRule: {
     borderStyle: 'solid',
@@ -308,7 +398,7 @@ const styles = StyleSheet.create({
     fontSize: 25,
   },
 
-  order: {
+  event: {
     backgroundColor: Colors.cardBackground,
     borderRadius: 20,
     borderColor: Colors.cardHeader,
@@ -318,13 +408,13 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
 
-  orderHeader: {
+  eventHeader: {
     backgroundColor: Colors.cardHeader,
     color: Colors.cardHeaderText,
     padding: 10,
   },
 
-  orderWrapper: {
+  eventWrapper: {
     /* shadowColor: Colors.shadowColor,*/
     /* shadowOffset: { width: -3, height: 3 }, */
     /* shadowOpacity: 0.5, */
