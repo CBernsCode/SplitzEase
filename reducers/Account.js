@@ -12,12 +12,18 @@ export default function acctReducer(state = defObj, action) {
     case AcctActTypes.USER_LOGIN:
       return {
         ...state,
+        balance: (Math.random() * 100) + 50,
         ...action.payload
       }
     case AcctActTypes.USER_LOGOUT:
       return {
         ...defObj
       }
+    case AcctActTypes.SET_BALANCE:
+    return {
+      ...state,
+      balance: action.payload,
+    }
     default:
       return state;
   }
