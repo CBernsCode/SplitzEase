@@ -1,10 +1,11 @@
 import React from 'react';
-import { Button, FlatList, Image, Modal, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Alert, Button, FlatList, Image, Modal, StyleSheet, Text, TextInput, View } from 'react-native';
 import Colors from '../constants/Colors';
 
 import { Constants } from 'expo';
 
 import { createSession } from '../firebase'
+// import console = require('console');
 
 
 export default class AccountScreen extends React.Component {
@@ -17,16 +18,69 @@ export default class AccountScreen extends React.Component {
   };
 
   state = {
+    friend: null,
     modalVisible: false,
   };
+
+  componentDidMount () {
+    const { account } = this.props;
+
+    !!account && !!account.user && this.props.frndActions.getFriends(account.user.uid);
+  }
 
   setModalVisible = (visible) => {
     this.setState({ modalVisible: visible, });
   }
 
-  addFriend = (uid, friend) => {
-    this.setModalVisible(!this.state.modalVisible)
-    this.props.frndActions.addFriend(uid, friend)
+  alreadyInFriendsList = (friend_id) => {
+    let foundFriend = false;
+
+    this.props.friends.arr.forEach((friend) => {
+      if(friend.uid == friend_id) {
+        foundFriend = true;
+      }
+    })
+
+    return foundFriend;
+  }
+
+  addFriend = (friend) => {
+    if(!!friend) {
+      let uid = this.props.account.user.uid
+
+      if(this.alreadyInFriendsList(friend.uid)) {
+        Alert.alert(
+          'Friend Not Added',
+          'User ' + friend.uid + ' already in friends list',
+          [
+            {text: 'OK', onPress: () => this.setModalVisible(!this.state.modalVisible)},
+          ],
+          {cancelable: true},
+        );
+      } else {
+        this.setModalVisible(!this.state.modalVisible)
+        this.props.frndActions.addFriend(uid, friend)
+      }
+    } else {
+      Alert.alert(
+        'Friend Not Added',
+        'Please fill in the User ID field.',
+        [
+          {text: 'OK', onPress: () => {}},
+        ],
+        {cancelable: true},
+      );
+    }
+  }
+
+  setFriend = (userId) => {
+    this.setState({
+      friend: {
+        uid: userId,
+        name: 'dummy-friend-' + userId,
+        added: Date.now(),
+      }
+    });
   }
 
   render() {
@@ -43,14 +97,6 @@ export default class AccountScreen extends React.Component {
             <Text>{/* used to create a space between buttons... margin isn't working */}</Text>
             <TextInput style={styles.input} editable={false} placeholder='Phone Number Here'></TextInput>
           </View>
-
-          {/*
-            <View style={styles.buttons}>
-              <Button color={Colors.button} title='Edit' onPress={() => console.log('Edit button pressed on Account Screen')}/>
-              <Text></Text>
-              <Button color={Colors.button} title='Save' onPress={() => console.log('Save button pressed on Account Screen')}/>
-            </View>
-          */}
         </View>
         <View style={styles.friendsList}>
           <Text style={styles.friendsListHeader}>Friends List</Text>
@@ -71,12 +117,12 @@ export default class AccountScreen extends React.Component {
                 autoCorrect={false}
                 enablesReturnKeyAutomatically={true}
                 label='Friends'
-                onChange={(friend_email) => this.setState({friend: friend_email,})}
-                placeholder='friend@splitzease.com'
+                onChangeText={(userId) => this.setFriend(userId)}
+                placeholder='User ID'
                 returnKeyType='send'
               />
               <View style={styles.modalButton}>
-                <Button color={Colors.fabButton} title='Add Friend' onPress={() => this.setModalVisible(!this.state.modalVisible)} />
+                <Button color={Colors.fabButton} title='Add Friend' onPress={() => this.addFriend(this.state.friend)} />
                 <Button color={Colors.fabButton} title='Cancel' onPress={() => this.setModalVisible(!this.state.modalVisible)} />
               </View>
             </View>
