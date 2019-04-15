@@ -1,12 +1,11 @@
 import React from 'react';
-import { Button, Card, FlatList, Modal, ScrollView, StatusBar, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Button, FlatList, StyleSheet, Text, View } from 'react-native';
 import { Constants } from 'expo';
-import Colors from '../constants/Colors';
-
+import Colors from '../constants/Colors'
 export default class CheckScreen extends React.Component {
   constructor(props) {
-    super(props);
     // console.log(props)
+    super(props);
   }
   static navigationOptions = {
     title: 'Checks',
@@ -37,21 +36,23 @@ class Body extends React.PureComponent {
   }
 
   render() {
-    // console.log(this.props.checks.arr)
-
     if(this.props.checks.arr[0] != undefined) {
       return (
-        <FlatList
-            data={this.props.checks.arr}
-            keyExtractor={(item, index) => item.id.toString()}
-            renderItem={({item}) => <Check id={item.id} uid={this.props.account.user.uid} chkActions={this.props.chkActions} {...item}/>}
-            style={styles.body}
-        />
+        <View style={styles.body}>
+          <FlatList
+              data={this.props.checks.arr}
+              keyExtractor={(item, index) => item.id.toString()}
+              renderItem={({item}) => <Check id={item.id} uid={this.props.account.user.uid} {...this.props} {...item}/>}
+              style={styles.body}
+          />
+          <Text>{this.props.account.balance}</Text>
+        </View>
       );
     } else {
       return (
         <View style={styles.body}>
-          <Text style={styles.noChecks}>Loading...</Text>
+          <Text>{this.props.account.balance}</Text>
+          <Text>Loading...</Text>
         </View>
       );
     }
@@ -68,15 +69,17 @@ class Check extends React.Component {
   }
 
   pay = () => {
-    this.setState({
-      isPaid : true,
-    });
-    // console.log(this.props);
-    this.props.chkActions.payCheck(this.props.uid, this.props.id, this.props.amount) // pay check...?
+    const { cost, chkActions, acctActions } = this.props
+    const bal = this.props.account.balance
+
+    if(bal >  Number(cost)){
+      console.log("Can pay")
+      acctActions.setBalance(bal - Number(cost))
+    }
   }
 
   render() {
-    const { price} = this.props
+    const { cost} = this.props
     if(!this.state.isPaid) {
       return (
         <View style={styles.checkWrapper}>
@@ -85,8 +88,8 @@ class Check extends React.Component {
                 <Text style={styles.tabbedText}>Restaurant: {this.props.restaurant || "Some Restaurant"}</Text>
                 <Text style={styles.tabbedText}>Description: {this.props.description || "Some food that was ordered." }</Text>
                 <Text style={styles.tabbedText}>Amount Due:</Text>
-                <Text style={styles.total}>${parseFloat(price).toFixed(2) || "0.00"}</Text>
-                <View style={styles.button}><Button color={Colors.button} onPress={this.pay} title="Pay"></Button></View>
+                <Text style={styles.total}>${cost || "0.00"}</Text>
+                <View style={styles.button}><Button color={Colors.button} onPress={() => this.pay(cost)} title="Pay"></Button></View>
             </View>
         </View>
       );
