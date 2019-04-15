@@ -7,6 +7,10 @@ import { PayTypes } from '../constants/Enums';
 import { Constants } from 'expo';
 import Colors from '../constants/Colors';
 
+import {createSession, sendChecks } from '../firebase';
+
+const uid = 'LHtoZbLQcIgjHfnvpaVATU5j2AF3'
+
 const AcctTests = ({ acctActions, account }) => {
   return (
     <View style={styles.reducer}>
@@ -19,7 +23,7 @@ const AcctTests = ({ acctActions, account }) => {
         title='Login'
         onPress={() => {
           acctActions.login({
-            uid: "LHtoZbLQcIgjHfnvpaVATU5j2AF3",
+            uid: uid,
             email: "chris@learnmyr.org",
           })
         }}>
@@ -36,11 +40,10 @@ const AcctTests = ({ acctActions, account }) => {
 }
 
 const CheckTests = ({ chkActions, checks }) => {
-  const uid = 'qgay3df85tIo7aSO9qmg'
   const testCheckId = 'Mp077sHWAKsEkMJ9WWIn'
   return (
     <View style={styles.reducer}>
-      <View>
+      {/* <View>
         <Text>Check Actions</Text>
         <Text>Selected ID: {!!checks.selected && checks.selected.id}</Text>
         <Text>Selected AMT: {!!checks.selected && checks.selected.price}</Text>
@@ -80,7 +83,7 @@ const CheckTests = ({ chkActions, checks }) => {
             payType: PayTypes.self,
           })
         }}>
-      </Button>
+      </Button> */}
     </View>
   )
 }
@@ -123,8 +126,8 @@ const FriendTests = ({frndActions, friends}) => {
 }
 
 const InviteTests = ({inviteActions, invites}) => {
-  let uid = 'test-12345'
-  let inviteId = "wQ6T9Bybeu6aiS70DFSL"
+  let uid = 'test-1a'
+  let inviteId = "C6GnveM0NeAQEkNHmPlS"
   // let lastId = !!friends.arr[0] ? friends.arr[0].id : ""
 
   // console.log(invites)
@@ -135,13 +138,6 @@ const InviteTests = ({inviteActions, invites}) => {
         <Text>Invite Actions</Text>
         <Text>Invites Count {invites.arr ? invites.arr.length : "0"} </Text>
       </View>
-      <Button
-        color={Colors.cardAffirmButton}
-        title='Send Invites'
-        onPress={() => {
-          inviteActions.sendInvites(defaults.defaultInvite, ['test-12345'])
-        }}>
-      </Button>
       <Button
         color={Colors.cardAffirmButton}
         title='Accept Invite'
@@ -168,6 +164,53 @@ const InviteTests = ({inviteActions, invites}) => {
   )
 }
 
+const EventTests = () => {
+
+  const guestList = ['test-1a', 'test-2a', 'test-3a']
+
+  const fakeBill = {
+    cost: 120.00,
+    sessionId: "",
+    host: "123",
+    isBuying: false,
+    restaurant: "Amer. Test Kitchen",
+    perPerson: [
+      {
+        cost: 20.00,
+        uid: "user-1",
+      },
+      {
+        cost: 12.00,
+        uid: "user-3",
+      },
+    ],
+    sharedCost: ["user-0", "user-2"]
+  }
+  
+  
+  return (
+    <View style={styles.reducer}>
+      <View>
+        <Text>EventTests</Text>
+      </View>
+      <Button
+        color={Colors.cardAffirmButton}
+        title='Send Invites'
+        onPress={() => {
+          createSession(uid, guestList, 'Rollys')
+        }}>
+      </Button>
+      <Button
+        color={Colors.cardAffirmButton}
+        title='Send Check'
+        onPress={() => {
+          sendChecks(fakeBill)
+        }}>
+      </Button>
+    </View>
+  )
+}
+
 export default class FirebaseScreen extends React.Component {
   static navigationOptions = {
     title: 'Firebase Test',
@@ -183,6 +226,7 @@ export default class FirebaseScreen extends React.Component {
         <CheckTests {...this.props} />
         <FriendTests {...this.props} />
         <InviteTests {...this.props} />
+        <EventTests {...this.props} />
       </ScrollView>
     );
   }
