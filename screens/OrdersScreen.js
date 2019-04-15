@@ -4,6 +4,7 @@ import { Button, ButtonGroup, FlatList, Modal, StyleSheet, Switch, Text, TextInp
 import { Constants } from 'expo';
 import { invites } from '../firebase.js'
 import Colors from '../constants/Colors';
+import { PayTypes } from '../constants/Enums';
 
 export default class OrderScreen extends React.Component {
   static navigationOptions = {
@@ -19,75 +20,14 @@ export default class OrderScreen extends React.Component {
     header: null,
   };
 
-  state = {
-    modalVisible: false,
-    paymentMode: false,
-    paymentModeLabel: 'Payment Mode: Meal'
-  };
-
-  changePaymentMode = () => {
-    if(this.state.paymentMode) {
-      this.setState({paymentMode: false, paymentModeLabel: 'Payment Mode: Meal'})
-    } else {
-      this.setState({paymentMode: true, paymentModeLabel: 'Payment Mode: Percentage'})
-    }
-  }
-
-  setModalVisible = (visible) => {
-    this.setState({ modalVisible: visible, });
-  }
-
   render() {
     return (
       <View style={styles.container}>
         <Body {...this.props} />
-        <View style={styles.button}><Button color={Colors.fabButton} title='Create Invite' onPress={() => this.setModalVisible(!this.state.modalVisible)} /></View>
-        <Modal
-          animationType="fade"
-          transparent={true}
-          visible={this.state.modalVisible}
-          onRequestClose={() => this.setState({ modalVisible: false })}
-        >
-          <View style={styles.modalOuter}>
-            <View style={styles.modalInner}>
-              <TextInput
-                style={styles.modalInput}
-
-                autoCorrect={false}
-                enablesReturnKeyAutomatically={true}
-                label='Restaurant'
-                placeholder='Restaurant'
-                returnKeyType='next'
-              />
-              <TextInput
-                style={styles.modalMultilineInput}
-
-                autoCorrect={false}
-                enablesReturnKeyAutomatically={true}
-                label='Friends'
-                multiline={true}
-                numberOfLines={3}
-                placeholder='friend@splitzease.com'
-                returnKeyType='next'
-              />
-              <View style={styles.switchWrapper}>
-                <Text>{this.state.paymentModeLabel}</Text>
-                <Switch onValueChange={this.changePaymentMode} value={this.state.paymentMode}/>
-              </View>
-              <View style={styles.modalButton}>
-                {/* Send Invite Button should actually send an invite in the future */}
-                <Button color={Colors.fabButton} title='Send Invite' onPress={() => this.setModalVisible(!this.state.modalVisible)} />
-                <Button color={Colors.fabButton} title='Cancel' onPress={() => this.setModalVisible(!this.state.modalVisible)} />
-              </View>
-            </View>
-          </View>
-        </Modal>
       </View>
     );
   }
 }
-
-
 
 const order_data = [
   {
@@ -95,13 +35,19 @@ const order_data = [
     host: 'user_id',
     restaurant: 'Applebee\'s',
     accepted: 'true',
+    slot: '0',
+    sessionId: 'aaabbb123',
+    ts: "041519104900",
+    payType: PayTypes.unknown,
 
   },
   {
     key: '0000000002',
+    payType: PayTypes.single,
   },
   {
     key: '0000000003',
+    payType: PayTypes.unknown,
   },
 ];
 
@@ -121,51 +67,94 @@ class Body extends React.PureComponent {
 }
 
 class Order extends React.Component {
-  accept = (id) => {
-    let inviteRef = invites.doc(this.props.account.uid).collection('invites');
-    inviteRef.doc(id).set({
-      ts: Date.now(),
-      host: 'user_id',
-      restaurant: 'Applebees',
-      accepted: true
-    })
-  }
-
   render() {
-    return (
-      <View style={styles.orderWrapper}>
-        <View style={styles.order} key={this.props.id}>
-          <Text style={styles.orderHeader}>
-            Order Number: {this.props.id || '0000000000'}
-          </Text>
-          <Text style={styles.tabbedText}>
-            {this.props.host || 'Host'} has invited you to order food from {this.props.restaurant || 'some restaurant'}!
-          </Text>
-          <View style={styles.horizontalView}>
-            <Button
-              color={Colors.cardAffirmButton}
-              title='Accept'
-              onPress={() => {
-                this.props.inviteActions.acceptInvite(
-                  this.props.account.uid,
-                  this.props.id,
-                )
-              }}>
-            </Button>
-            <Button
-              color={Colors.cardNegaButton}
-              title='Decline'
-              onPress={() => {
-                this.props.inviteActions.declineInvite(
-                  this.props.account.uid,
-                  this.props.id,
-                )
-              }}>
-            </Button>
+    // host is paying
+    if(this.props.payType == PayTypes.single) {
+      return (
+        <View style={styles.orderWrapper}>
+          <View style={styles.order} key={this.props.id}>
+            <Text style={styles.orderHeader}>
+              Invite Number: {this.props.id || '0000000000'}
+            </Text>
+            <Text style={styles.tabbedText}>
+              {this.props.host || 'Host'} has invited you to order food from {this.props.restaurant || 'some restaurant'}!
+            </Text>
+            <View style={styles.horizontalView}>
+              <Button
+                color={Colors.cardAffirmButton}
+                title='Accept Free Meal'
+                onPress={() => {
+                  this.props.inviteActions.acceptInvite(
+                    this.props.account.uid,
+                    this.props.id,
+                    this.props.payType
+                  )
+                }}>
+              </Button>
+              <Button
+                color={Colors.cardNegaButton}
+                title='Decline'
+                onPress={() => {
+                  this.props.inviteActions.declineInvite(
+                    this.props.account.uid,
+                    this.props.id,
+                  )
+                }}>
+              </Button>
+            </View>
           </View>
-        </View>
-      </View>
-    );
+        </View>  
+      );
+
+    // user decides how they want to pay
+    } else if (this.props.payType == PayTypes.unknown) {
+      return (
+        <View style={styles.orderWrapper}>
+          <View style={styles.order} key={this.props.id}>
+            <Text style={styles.orderHeader}>
+              Invite Number: {this.props.id || '0000000000'}
+            </Text>
+            <Text style={styles.tabbedText}>
+              {this.props.host || 'Host'} has invited you to order food from {this.props.restaurant || 'some restaurant'}!
+            </Text>
+            <View style={styles.horizontalView}>
+              <Button
+                color={Colors.cardAffirmButton}
+                title='Accept Self'
+                onPress={() => {
+                  this.props.inviteActions.acceptInvite(
+                    this.props.account.uid,
+                    this.props.id,
+                    PayTypes.self
+                  )
+                }}>
+              </Button>
+              <Button
+                color={Colors.cardAffirmButton}
+                title='Accept Share'
+                onPress={() => {
+                  this.props.inviteActions.acceptInvite(
+                    this.props.account.uid,
+                    this.props.id,
+                    PayTypes.share
+                  )
+                }}>
+              </Button>
+              <Button
+                color={Colors.cardNegaButton}
+                title='Decline'
+                onPress={() => {
+                  this.props.inviteActions.declineInvite(
+                    this.props.account.uid,
+                    this.props.id,
+                  )
+                }}>
+              </Button>
+            </View>
+          </View>
+        </View>  
+      );
+    }
   }
 }
 
