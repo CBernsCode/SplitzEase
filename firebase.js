@@ -1,7 +1,7 @@
 import * as firebase from 'firebase';
 import '@firebase/firestore';
 
-import { PayTypes, SessionStatuses } from './constants/Enums';
+import { InviteStatus, PayTypes, SessionStatuses } from './constants/Enums';
 
 var config = {
   apiKey: "AIzaSyBVKzhG8Mi7-k9bbePV71YPTnhBsWG6-L0",
@@ -34,16 +34,17 @@ export const createSession = (uid, inviteList, restaurant, paytype = PayTypes.un
     iniviteRef.set({
       restaurant,
       host: uid,
-      accepted: false,
+      status: InviteStatus.pending,
       slot: index,
-      sent: Date.now()
+      sessionId: seshRef.id,
+      sent: Date.now(),
+      paytype,
     })
-    .catch(function (error) {
-      console.error(`UID: ${guest}, did not receive and invitation`, error);
-    });
+    .catch(error => console.error(`UID: ${guest}, did not receive and invitation`, error));
   });
   
   seshRef.set({
+    sessionId: seshRef.id,
     status: SessionStatuses.started,
     inviteList: sessionInviteList,
     restaurant,
@@ -51,8 +52,10 @@ export const createSession = (uid, inviteList, restaurant, paytype = PayTypes.un
     lastChanged: Date.now(),
   }).then(() => {
     console.log("Document written with ID: ", seshRef.id);
-  }).catch(err => { console.error("Unable to create a check " + err) })
+  }).catch(err =>  console.error("Unable to create a check " + err) )
 }
+
+// createSession('test-user-1', ['test-1', 'test-2', 'test-3'], 'Rollys')
 
 const fakeBill = {
   cost: 120.00,

@@ -12,3 +12,9 @@ export const SessionStatuses = {
   done: "done",
   cancelled: "cancelled",
 }
+
+export const InviteStatus = {
+  pending: "pending",
+  accepted: "accepted",
+  declined: "declined",
+}
