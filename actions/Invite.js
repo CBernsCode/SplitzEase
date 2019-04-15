@@ -24,6 +24,7 @@ acceptInvite = (uid, inviteId, paytype = PayTypes.share) => {
           let newInvite = {
             ...payload,
             paytype,
+            uid,
             id: inviteId,
             status: InviteStatus.accepted
           }

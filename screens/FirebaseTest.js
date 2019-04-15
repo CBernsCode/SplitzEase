@@ -1,15 +1,15 @@
 import * as React from 'react';
-import { Button, FlatList, Modal, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Button, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { PayTypes } from '../constants/Enums';
+import { createSession, sendChecks } from '../firebase';
+import { Constants } from 'expo';
+import { BillGenerator } from '../utils/BillGenerator';
 
 import * as defaults from '../constants/DefaultObjs';
-import { PayTypes } from '../constants/Enums';
 
-import { Constants } from 'expo';
 import Colors from '../constants/Colors';
 
-import {createSession, sendChecks } from '../firebase';
-
-const uid = 'LHtoZbLQcIgjHfnvpaVATU5j2AF3'
+const uid = 'LHtoZbLQcIgjHfnvpaVATU5j2AF3';
 
 const AcctTests = ({ acctActions, account }) => {
   return (
@@ -128,9 +128,6 @@ const FriendTests = ({frndActions, friends}) => {
 const InviteTests = ({inviteActions, invites}) => {
   let uid = 'test-1a'
   let inviteId = "C6GnveM0NeAQEkNHmPlS"
-  // let lastId = !!friends.arr[0] ? friends.arr[0].id : ""
-
-  // console.log(invites)
 
   return (
     <View style={styles.reducer}>
@@ -165,6 +162,18 @@ const InviteTests = ({inviteActions, invites}) => {
 }
 
 const EventTests = () => {
+  const inviteList = [
+    {paytype: PayTypes.share, uid: "test-1"},
+    {paytype: PayTypes.self, uid: "test-2"},
+    {paytype: PayTypes.share, uid: "test-3"},
+    {paytype: PayTypes.self, uid: "test-4"},
+    {paytype: PayTypes.share, uid: "test-5"},
+    {paytype: PayTypes.self, uid: "test-6"},
+  ]
+
+  let bg = new BillGenerator("host-1", "some-rest", inviteList)
+  
+  console.log(bg.makeCheck('something', false))
 
   const guestList = ['test-1a', 'test-2a', 'test-3a']
 
@@ -204,7 +213,7 @@ const EventTests = () => {
         color={Colors.cardAffirmButton}
         title='Send Check'
         onPress={() => {
-          sendChecks(fakeBill)
+          sendChecks(bg.makeCheck('something', false))
         }}>
       </Button>
     </View>
