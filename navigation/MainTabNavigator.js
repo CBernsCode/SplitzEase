@@ -5,7 +5,7 @@ import { createStackNavigator, createBottomTabNavigator } from 'react-navigation
 import TabBarIcon from '../components/TabBarIcon';
 // import AccountScreen from '../screens/AccountScreen';
 // import OrdersScreen from '../screens/OrdersScreen';
-import SettingsScreen from '../screens/SettingsScreen';
+// import SettingsScreen from '../screens/SettingsScreen';
 // import LoginScreen from '../screens/LoginScreen';
 
 import Checks from '../containers/Checks';
@@ -57,26 +57,26 @@ OrderStack.navigationOptions = {
   },
 };
 
-const SettingsStack = createStackNavigator({
-  Settings: SettingsScreen,
-});
+// const SettingsStack = createStackNavigator({
+//   Settings: SettingsScreen,
+// });
 
-SettingsStack.navigationOptions = {
-  tabBarLabel: 'Settings',
-  tabBarIcon: ({ focused }) => (
-    <TabBarIcon
-      focused={focused}
-      name={
-        Platform.OS === 'ios'
-          ? 'ios-settings'
-          : 'md-settings'
-      }
-    />
-  ),
-  tabBarOptions: {
-    activeTintColor: Colors.tabBarSelectedBorder,
-  },
-};
+// SettingsStack.navigationOptions = {
+//   tabBarLabel: 'Settings',
+//   tabBarIcon: ({ focused }) => (
+//     <TabBarIcon
+//       focused={focused}
+//       name={
+//         Platform.OS === 'ios'
+//           ? 'ios-settings'
+//           : 'md-settings'
+//       }
+//     />
+//   ),
+//   tabBarOptions: {
+//     activeTintColor: Colors.tabBarSelectedBorder,
+//   },
+// };
 
 const CheckStack = createStackNavigator({
   Checks: Checks,
@@ -147,7 +147,7 @@ export default createBottomTabNavigator(
     OrderStack,
     SessionStack,
     CheckStack,
-    SettingsStack,
+    // SettingsStack,
     FirebaseStack
   },
 );
