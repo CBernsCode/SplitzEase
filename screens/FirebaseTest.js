@@ -1,11 +1,15 @@
 import * as React from 'react';
-import { Button, FlatList, Modal, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Button, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { PayTypes } from '../constants/Enums';
+import { createSession, sendChecks } from '../firebase';
+import { Constants } from 'expo';
+import { BillGenerator } from '../utils/BillGenerator';
 
 import * as defaults from '../constants/DefaultObjs';
-import { PayTypes } from '../constants/Enums';
 
-import { Constants } from 'expo';
 import Colors from '../constants/Colors';
+
+const uid = 'LHtoZbLQcIgjHfnvpaVATU5j2AF3';
 
 const AcctTests = ({ acctActions, account }) => {
   return (
@@ -19,7 +23,7 @@ const AcctTests = ({ acctActions, account }) => {
         title='Login'
         onPress={() => {
           acctActions.login({
-            uid: "LHtoZbLQcIgjHfnvpaVATU5j2AF3",
+            uid: uid,
             email: "chris@learnmyr.org",
           })
         }}>
@@ -36,7 +40,6 @@ const AcctTests = ({ acctActions, account }) => {
 }
 
 const CheckTests = ({ chkActions, checks }) => {
-  const uid = 'qgay3df85tIo7aSO9qmg'
   const testCheckId = 'Mp077sHWAKsEkMJ9WWIn'
   return (
     <View style={styles.reducer}>
@@ -123,11 +126,8 @@ const FriendTests = ({frndActions, friends}) => {
 }
 
 const InviteTests = ({inviteActions, invites}) => {
-  let uid = 'test-12345'
-  let inviteId = "wQ6T9Bybeu6aiS70DFSL"
-  // let lastId = !!friends.arr[0] ? friends.arr[0].id : ""
-
-  // console.log(invites)
+  let uid = 'test-1a'
+  let inviteId = "C6GnveM0NeAQEkNHmPlS"
 
   return (
     <View style={styles.reducer}>
@@ -135,13 +135,6 @@ const InviteTests = ({inviteActions, invites}) => {
         <Text>Invite Actions</Text>
         <Text>Invites Count {invites.arr ? invites.arr.length : "0"} </Text>
       </View>
-      <Button
-        color={Colors.cardAffirmButton}
-        title='Send Invites'
-        onPress={() => {
-          inviteActions.sendInvites(defaults.defaultInvite, ['test-12345'])
-        }}>
-      </Button>
       <Button
         color={Colors.cardAffirmButton}
         title='Accept Invite'
@@ -168,7 +161,49 @@ const InviteTests = ({inviteActions, invites}) => {
   )
 }
 
+const EventTests = () => {
+  const inviteList = [
+    {paytype: PayTypes.share, uid: "LHtoZbLQcIgjHfnvpaVATU5j2AF3"},
+    {paytype: PayTypes.self, uid: "09irxlCDcPbJfFMkRJa3L6JJHqh1"},
+    {paytype: PayTypes.share, uid: "test-3"},
+    {paytype: PayTypes.self, uid: "test-4"},
+    {paytype: PayTypes.share, uid: "test-5"},
+    {paytype: PayTypes.self, uid: "test-6"},
+  ]
+
+  let bg = new BillGenerator("host-1", "some-rest", inviteList)
+
+  const guestList = ['test-1a', 'test-2a', 'test-3a']
+  
+  return (
+    <View style={styles.reducer}>
+      <View>
+        <Text>EventTests</Text>
+      </View>
+      <Button
+        color={Colors.cardAffirmButton}
+        title='Send Invites'
+        onPress={() => {
+          createSession(uid, guestList, 'Rollys')
+        }}>
+      </Button>
+      <Button
+        color={Colors.cardAffirmButton}
+        title='Send Check'
+        onPress={() => {
+          sendChecks(bg.makeCheck('something', false))
+        }}>
+      </Button>
+    </View>
+  )
+}
+
 export default class FirebaseScreen extends React.Component {
+  static navigationOptions = {
+    title: 'Firebase Test',
+    header: null,
+  };
+
 
   render() {
     // console.log(this.props)
@@ -178,6 +213,7 @@ export default class FirebaseScreen extends React.Component {
         <CheckTests {...this.props} />
         <FriendTests {...this.props} />
         <InviteTests {...this.props} />
+        <EventTests {...this.props} />
       </ScrollView>
     );
   }

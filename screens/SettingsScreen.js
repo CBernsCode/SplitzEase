@@ -18,6 +18,7 @@ export default class SettingsScreen extends React.Component {
     headerTitleStyle: {
       fontWeight: 'bold',
     },
+    header: null,
   };
 
 
@@ -36,7 +37,7 @@ export default class SettingsScreen extends React.Component {
             </View>
           </View>
           <View style={styles.buttons}>
-            <Button color={Colors.button} title='Reset' onPress={() => console.log('Reset button pressed on Settings Screen')}/>
+            <Button color={Colors.button} title='Restore to Defaults' onPress={() => console.log('Reset button pressed on Settings Screen')}/>
             <Text>{/* used to create a space between buttons... margin isn't working */}</Text>
             <Button color={Colors.button} title='Save' onPress={() => console.log('Save button pressed on Settings Screen')}/>
           </View>
@@ -54,6 +55,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     margin: 20,
+    paddingTop: Constants.statusBarHeight,
   },
 
   horizontalView: {

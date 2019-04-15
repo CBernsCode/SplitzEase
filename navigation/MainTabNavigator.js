@@ -5,13 +5,14 @@ import { createStackNavigator, createBottomTabNavigator } from 'react-navigation
 import TabBarIcon from '../components/TabBarIcon';
 // import AccountScreen from '../screens/AccountScreen';
 // import OrdersScreen from '../screens/OrdersScreen';
-import SettingsScreen from '../screens/SettingsScreen';
+// import SettingsScreen from '../screens/SettingsScreen';
 // import LoginScreen from '../screens/LoginScreen';
 
 import Checks from '../containers/Checks';
 import Account from '../containers/Account';
 import Orders from '../containers/Orders';
 import Colors from '../constants/Colors';
+import Sessions from '../containers/Sessions'
 import FirebaseTesting from '../containers/FirebaseTesting'
 
 const AccountStack = createStackNavigator({
@@ -56,26 +57,26 @@ OrderStack.navigationOptions = {
   },
 };
 
-const SettingsStack = createStackNavigator({
-  Settings: SettingsScreen,
-});
+// const SettingsStack = createStackNavigator({
+//   Settings: SettingsScreen,
+// });
 
-SettingsStack.navigationOptions = {
-  tabBarLabel: 'Settings',
-  tabBarIcon: ({ focused }) => (
-    <TabBarIcon
-      focused={focused}
-      name={
-        Platform.OS === 'ios'
-          ? 'ios-settings'
-          : 'md-settings'
-      }
-    />
-  ),
-  tabBarOptions: {
-    activeTintColor: Colors.tabBarSelectedBorder,
-  },
-};
+// SettingsStack.navigationOptions = {
+//   tabBarLabel: 'Settings',
+//   tabBarIcon: ({ focused }) => (
+//     <TabBarIcon
+//       focused={focused}
+//       name={
+//         Platform.OS === 'ios'
+//           ? 'ios-settings'
+//           : 'md-settings'
+//       }
+//     />
+//   ),
+//   tabBarOptions: {
+//     activeTintColor: Colors.tabBarSelectedBorder,
+//   },
+// };
 
 const CheckStack = createStackNavigator({
   Checks: Checks,
@@ -119,12 +120,34 @@ FirebaseStack.navigationOptions = {
   },
 };
 
+const SessionStack = createStackNavigator({
+  Sessions: Sessions,
+});
+
+SessionStack.navigationOptions = {
+  tabBarLabel: 'Events',
+  tabBarIcon: ({ focused }) => (
+    <TabBarIcon
+      focused={focused}
+      name={
+        Platform.OS === 'ios'
+          ? 'ios-restaurant'
+          : 'md-restaurant'
+      }
+    />
+  ),
+  tabBarOptions: {
+    activeTintColor: Colors.tabBarSelectedBorder,
+  },
+};
+
 export default createBottomTabNavigator(
   {
     AccountStack,
     OrderStack,
+    SessionStack,
     CheckStack,
-    SettingsStack,
+    // SettingsStack,
     FirebaseStack
   },
 );

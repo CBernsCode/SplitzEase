@@ -9,7 +9,12 @@ logout = () => {
   return { type: AcctActTypes.USER_LOGOUT }
 }
 
+setBalance = (payload) => {
+  return { type: AcctActTypes.SET_BALANCE, payload}
+}
+
 export default {
   login,
-  logout
+  logout,
+  setBalance
 }
