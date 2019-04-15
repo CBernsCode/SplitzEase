@@ -1,7 +1,8 @@
 import React from 'react';
-import { Button, Image, KeyboardAvoidingView, ScrollView, StyleSheet, Switch, Text, TextInput, View } from 'react-native';
+import { Alert, Button, Image, KeyboardAvoidingView, Platform, StyleSheet, Switch, Text, TextInput, View } from 'react-native';
 import { Constants } from 'expo';
 import Colors from '../constants/Colors';
+import Layout from '../constants/Layout';
 import * as firebase from 'firebase';
 
 export default class LoginScreen extends React.Component {
@@ -12,9 +13,12 @@ export default class LoginScreen extends React.Component {
 
   render() {
     return (
-      <KeyboardAvoidingView style={styles.container}>
-        {/*<Image source={require('../assets/images/logo.png')} style={styles.logo}/>*/}
-        <Form {...this.props} />
+      <KeyboardAvoidingView behavior="padding" style={{flex: 1}}>
+        <View style={styles.container}>
+          <Image source={require('../assets/images/logo.png')} style={styles.logo}/>
+          <Form {...this.props} />
+          <View style={{flex: 1}}></View>
+        </View>
       </KeyboardAvoidingView>
     );
   }
@@ -38,20 +42,20 @@ class Form extends React.Component {
       return (
         <View>
           <View style={styles.switchBar}>
-            <Text style={styles.switchBarText}>Login</Text>
-            <Switch onValueChange={this.changeForm} value={this.state.login} style={styles.switchBarText}></Switch>
+            <Text style={styles.switchBarLabel}>Login</Text>
+            <Switch onValueChange={this.changeForm} value={this.state.login} style={styles.switch}></Switch>
           </View>
-          <LoginForm {...this.props}  />
+          <LoginForm {...this.props} />
         </View>
       );
     } else {
       return (
-        <View>
+        <View style={{justifyContent: 'center'}}>
           <View style={styles.switchBar}>
-            <Text styles={styles.switchBarText}>Register</Text>
-            <Switch onValueChange={this.changeForm} value={this.state.login} style={styles.switchBarText} />
+            <Text style={styles.switchBarLabel}>Register</Text>
+            <Switch onValueChange={this.changeForm} value={this.state.login} style={styles.switch}></Switch>
           </View>
-          <RegisterForm  {...this.props} />
+          <RegisterForm {...this.props} />
         </View>
       );
     }
@@ -62,20 +66,32 @@ class LoginForm extends React.Component {
   constructor(props) {
     super(props)
   }
+
   state = {
     email: "",
     password: "",
   }
 
   login = (email, password) => {
-    firebase
-      .auth()
-      .signInWithEmailAndPassword(email, password)
-      .then((user) => {
-        this.props.acctActions.login(user)
-        this.props.navigation.navigate('Main')
-      })
-      .catch(err => {console.log("Error at LoginForm.login(): Failed to sign user into Firebase.")})
+    if(!!email && !!password) {
+      firebase
+        .auth()
+        .signInWithEmailAndPassword(email, password)
+        .then((user) => {
+          this.props.acctActions.login(user)
+          this.props.navigation.navigate('Main')
+        })
+        .catch(err => {console.log("Error at LoginForm.login(): Failed to sign user into Firebase.")})
+      } else {
+        Alert.alert(
+          'Login Failed',
+          'Please fill in all fields before attempting to log in',
+          [
+            {text: 'OK', onPress: () => {}},
+          ],
+          {cancelable: true},
+        );
+      }
   }
 
   render() {
@@ -112,16 +128,37 @@ class LoginForm extends React.Component {
 }
 
 class RegisterForm extends React.Component {
+  constructor(props) {
+    super(props);
+  }
+
+  state = {
+    username: '',
+    email: '',
+    phone: '',
+    password: '',
+  }
+
   register = (username, password, email, phone) => {
-    // console.log(email + " " + password);
-    firebase
-      .auth()
-      .createUserWithEmailAndPassword(email, password)
-      .then(() => {
-        this.props.acctActions.login(user)
-        this.props.navigation.navigate('Main')
-      })
-      .catch((err) => {console.log("Error at RegisterForm.register(): Failed to create user.")})
+    if(!!email && !!password && !!username && !!phone) {
+      firebase
+        .auth()
+        .createUserWithEmailAndPassword(email, password)
+        .then(() => {
+          this.props.acctActions.login(user)
+          this.props.navigation.navigate('Main')
+        })
+        .catch((err) => {console.log("Error at RegisterForm.register(): Failed to create user.")})
+    } else {
+      Alert.alert(
+        'Registration Failed',
+        'Please fill in all fields before attempting to register',
+        [
+          {text: 'OK', onPress: () => {}},
+        ],
+        {cancelable: true},
+      );
+    }
   }
 
   render() {
@@ -189,6 +226,7 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingTop: Constants.statusBarHeight,
     backgroundColor: Colors.background,
+    justifyContent: 'flex-end', // needed to make KeyboardAvoidingView work properly
     padding: 10,
   },
 
@@ -221,12 +259,18 @@ const styles = StyleSheet.create({
   },
 
   switchBar: {
+    alignItems: 'stretch',
     flexDirection: 'row',
     justifyContent: 'center',
+    padding: 5,
+    width: Layout.window.width,
   },
 
-  switchBarText: {
-    flex: 1,
-    padding: 5,
+  switchBarLabel: {
+    paddingRight: 5,
+  },
+
+  switch: {
+    
   }
 });
