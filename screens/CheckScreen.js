@@ -41,7 +41,7 @@ class Body extends React.PureComponent {
         <View style={styles.body}>
           <FlatList
               data={this.props.checks.arr}
-              keyExtractor={(item, index) => item.id.toString()}
+              keyExtractor={(item, _) => item.id.toString()}
               renderItem={({item}) => <Check id={item.id} uid={this.props.account.user.uid} {...this.props} {...item}/>}
               style={styles.body}
           />
@@ -69,12 +69,15 @@ class Check extends React.Component {
   }
 
   pay = () => {
-    const { cost, chkActions, acctActions } = this.props
-    const bal = this.props.account.balance
+    const { cost, chkActions, acctActions, id } = this.props
+    const { balance } = this.props.account
+    const { uid } = this.props.account.user
 
-    if(bal >  Number(cost)){
+    if(balance >  Number(cost)){
       console.log("Can pay")
-      acctActions.setBalance(bal - Number(cost))
+      acctActions.setBalance(balance - Number(cost))
+      chkActions.payCheck(uid, id)
+      this.setState({ isPaid : true });
     }
   }
 

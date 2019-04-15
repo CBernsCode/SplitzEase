@@ -48,6 +48,7 @@ export const createSession = (uid, inviteList, restaurant, paytype = PayTypes.un
     status: SessionStatuses.started,
     inviteList: sessionInviteList,
     restaurant,
+    host: uid,
     paytype: paytype,
     lastChanged: Date.now(),
   }).then(() => {
