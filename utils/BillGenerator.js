@@ -11,20 +11,28 @@ export class BillGenerator {
   }
 
   perPersonBillGen = () => {
-    return this.inviteList.filter(it => {
-      return it.paytype === PayTypes.self
-    }).map(it => {
-      return {
-        uid: it.uid,
-        cost: parseFloat((Math.random() * 30) + 5).toFixed(2)
-      }
-    })
+    if(Array.isArray(this.inviteList)) {
+      return this.inviteList.filter(it => {
+        return it.paytype === PayTypes.self
+      }).map(it => {
+        return {
+          uid: it.uid,
+          cost: parseFloat((Math.random() * 30) + 5).toFixed(2)
+        }
+      })
+    } else {
+      return [];
+    }
   }
 
   shareList = () => {
-    return this.inviteList.filter(it => {
-      return it.paytype === PayTypes.share ? it.uid : false
-    }).map(it => it.uid)
+    if(Array.isArray(this.inviteList)) {
+      return this.inviteList.filter(it => {
+        return it.paytype === PayTypes.share ? it.uid : false
+      }).map(it => it.uid)
+    } else {
+      return [];
+    }
   }
 
   makeCheck = (sessionId, isBuying) => {

@@ -84,7 +84,7 @@ class Check extends React.Component {
       return (
         <View style={styles.checkWrapper}>
             <View style={styles.check}>
-                <Text style={styles.checkHeader}>Check #{this.props.id || "0000000000"}</Text>
+                <Text style={styles.checkHeader}>Check #: {this.props.id || "0000000000"}</Text>
                 <Text style={styles.tabbedText}>Restaurant: {this.props.restaurant || "Some Restaurant"}</Text>
                 <Text style={styles.tabbedText}>Description: {this.props.description || "Some food that was ordered." }</Text>
                 <Text style={styles.tabbedText}>Amount Due:</Text>
