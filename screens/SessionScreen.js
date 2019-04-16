@@ -2,20 +2,27 @@ import React from 'react';
 import { Alert, Button, FlatList, Modal, StyleSheet, Switch, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
 import { Constants } from 'expo';
-import { createSession, invites } from '../firebase.js'
+import { createSession, sendChecks } from '../firebase'
 import Colors from '../constants/Colors';
+import Layout from '../constants/Layout';
 import { PayTypes, SessionStatuses } from '../constants/Enums'
-// import { listenerCount } from 'cluster';
-// import console = require('console');
+import { BillGenerator } from '../utils/BillGenerator'
 
 const event_data = [
   {
     id: '0000000001',
     host: '09irxlCDcPbJfFMkRJa3L6JJHqh1',
-    restaurant: 'Applebee\'s',
-    status: SessionStatuses.started,
+    restaurant: 'Applebees',
+    status: SessionStatuses.pending,
     payType: PayTypes.self,
-    inviteList: ['guest_01', 'guest_02', 'guest_03', 'guest_04', 'guest_05', 'guest_06']
+    inviteList: [
+      {payType: PayTypes.share, uid: "LHtoZbLQcIgjHfnvpaVATU5j2AF3"},
+      {payType: PayTypes.self, uid: "09irxlCDcPbJfFMkRJa3L6JJHqh1"},
+      {payType: PayTypes.share, uid: "test-3"},
+      {payType: PayTypes.self, uid: "test-4"},
+      {payType: PayTypes.share, uid: "test-5"},
+      {payType: PayTypes.self, uid: "test-6"},
+    ],
   },
   {
     id: '0000000002',
@@ -92,7 +99,6 @@ export default class SessionScreen extends React.Component {
   }
 
   sendInvites = () => {
-
     // only do this when all fields are filled in
     if(!!this.state.restaurant && !!this.state.guestList[0]) {
       createSession(this.props.account.user.uid, this.state.guestList, this.state.restaurant, this.state.paymentType);
@@ -151,9 +157,9 @@ export default class SessionScreen extends React.Component {
                 placeholder='Restaurant'
                 returnKeyType='next'
               />
-              <View style={styles.switchWrapper}>
-                <Text>Pay for guests?</Text>
-                <Switch onValueChange={() => this.setPaymentType()} value={this.state.payForGuests}/>
+              <View style={styles.switchBar}>
+                <Text style={styles.switchBarLabel}>Pay for guests?</Text>
+                <Switch style={styles.switch} onValueChange={() => this.setPaymentType()} value={this.state.payForGuests}/>
               </View>
               <View style={styles.friendsList}>
                 <Text style={styles.friendsListHeader}>Friends List</Text>
@@ -206,19 +212,53 @@ class EventList extends React.Component {
 }
 
 class Event extends React.Component {
+  cancelEvent = (eventId) => {
+    
+  }
+
+  finishEvent = (hostId, sessionId, inviteList, restaurant, payType) => {
+    let billGenerator = new BillGenerator(hostId, restaurant, inviteList);
+    sendChecks(billGenerator.makeCheck(sessionId, payType));
+  }
+
   render () {
-    return (
-      <View style={styles.eventWrapper}>
-        <View style={styles.event}>
-          <Text style={styles.eventHeader}>Event ID: {this.props.id || "000000000"}</Text>
-          <Text style={styles.tabbedText}>Restaurant: {this.props.restaurant || "Some Restaurant"}</Text>
-          <Text style={styles.tabbedText}>Status: {this.props.status || "Some Status"}</Text>
-          <Text style={styles.tabbedText}>Payment Type: {this.props.payType || "Payment"}</Text>
-          <Text style={styles.tabbedText}>Guest List:</Text>
-          <GuestList inviteList={this.props.inviteList}/>
+    if(this.props.status == SessionStatuses.pending) {
+      return (
+        <View style={styles.eventWrapper}>
+          <View style={styles.event}>
+            <Text style={styles.eventHeader}>Event ID: {this.props.id || "000000000"}</Text>
+            <Text style={styles.tabbedText}>Restaurant: {this.props.restaurant || "Some Restaurant"}</Text>
+            <Text style={styles.tabbedText}>Status: {this.props.status || "Some Status"}</Text>
+            <Text style={styles.tabbedText}>Payment Type: {this.props.payType || "Payment"}</Text>
+            <Text style={styles.tabbedText}>Guest List:</Text>
+            <GuestList inviteList={this.props.inviteList}/>
+            <Button
+              color={Colors.cardAffirmButton}
+              title='Done'
+              onPress={() => this.finishEvent(this.props.host, this.props.id, this.props.inviteList, this.props.restaurant, this.props.payType)}>
+            </Button>
+            <Button
+              color={Colors.cardNegaButton}
+              title='Cancel'
+              onPress={() => this.cancelEvent()}>
+            </Button>
+          </View>
         </View>
-      </View>
-    );
+      );
+    } else {
+      return (
+        <View style={styles.eventWrapper}>
+          <View style={styles.event}>
+            <Text style={styles.eventHeader}>Event ID: {this.props.id || "000000000"}</Text>
+            <Text style={styles.tabbedText}>Restaurant: {this.props.restaurant || "Some Restaurant"}</Text>
+            <Text style={styles.tabbedText}>Status: {this.props.status || "Some Status"}</Text>
+            <Text style={styles.tabbedText}>Payment Type: {this.props.payType || "Payment"}</Text>
+            <Text style={styles.tabbedText}>Guest List:</Text>
+            <GuestList inviteList={this.props.inviteList}/>
+          </View>
+        </View>
+      );
+    }
   }
 }
 
@@ -229,7 +269,7 @@ class GuestList extends React.Component {
         data={this.props.inviteList}
         keyExtractor={(item, index) => index.toString()}
         renderItem={({item, index}) => 
-          <Text style={styles.guestList}>{item}</Text>
+          <Text style={styles.guestList}>{item.uid}</Text>
         }
       />
     );
@@ -420,8 +460,20 @@ const styles = StyleSheet.create({
     /* shadowOpacity: 0.5, */
   },
 
-  switchWrapper: {
+  switchBar: {
+    alignItems: 'stretch',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    padding: 5,
+    width: Layout.window.width,
+  },
 
+  switchBarLabel: {
+    paddingRight: 5,
+  },
+
+  switch: {
+    
   },
 
   tabbedText: {
