@@ -1,6 +1,5 @@
 import * as firebase from 'firebase';
 import '@firebase/firestore';
-
 import { InviteStatus, PayTypes, SessionStatuses } from './constants/Enums';
 
 var config = {
@@ -23,7 +22,7 @@ export const sessions = db.collection('sessions')
 export const createSession = (uid, inviteList, restaurant, paytype = PayTypes.unknown) => {
   let seshRef = sessions.doc(uid).collection('sessions').doc()
   let sessionInviteList = []
-  
+
   inviteList.forEach((guest, index) => {
     let iniviteRef = invites.doc(guest).collection('invites').doc()
     sessionInviteList.push({
@@ -40,9 +39,9 @@ export const createSession = (uid, inviteList, restaurant, paytype = PayTypes.un
       sent: Date.now(),
       paytype,
     })
-    .catch(error => console.error(`UID: ${guest}, did not receive and invitation`, error));
+      .catch(error => console.error(`UID: ${guest}, did not receive and invitation`, error));
   });
-  
+
   seshRef.set({
     sessionId: seshRef.id,
     status: SessionStatuses.started,
@@ -53,10 +52,8 @@ export const createSession = (uid, inviteList, restaurant, paytype = PayTypes.un
     lastChanged: Date.now(),
   }).then(() => {
     console.log("Document written with ID: ", seshRef.id);
-  }).catch(err =>  console.error("Unable to create a check " + err) )
+  }).catch(err => console.error("Unable to create a check " + err))
 }
-
-// createSession('test-user-1', ['test-1', 'test-2', 'test-3'], 'Rollys')
 
 const fakeBill = {
   cost: 120.00,
@@ -86,7 +83,7 @@ export const sendChecks = (bill) => {
     shareTotal -= check.cost
     let chk = {
       restaurant: bill.restaurant,
-      cost:  parseFloat(check.cost).toFixed(2),
+      cost: parseFloat(check.cost).toFixed(2),
       id: checkRef.id,
       ts: Date.now(),
     }
@@ -95,11 +92,11 @@ export const sendChecks = (bill) => {
     }).catch(err => { console.error("Unable to create a check " + err) })
   })
 
-  if(bill.isBuying){
+  if (bill.isBuying) {
     let checkRef = checks.doc(bill.host).collection('checks').doc()
     let chk = {
       restaurant: bill.restaurant,
-      cost:  parseFloat(bill.cost).toFixed(2),
+      cost: parseFloat(bill.cost).toFixed(2),
       id: checkRef.id,
       ts: Date.now(),
     }
@@ -107,7 +104,7 @@ export const sendChecks = (bill) => {
       console.log("Document written with ID: ", checkRef.id);
     }).catch(err => { console.error("Unable to create a check " + err) })
   } else { // send check shares
-    bill.sharedCost.map( check => {
+    bill.sharedCost.map(check => {
       let checkRef = checks.doc(check).collection('checks').doc()
       let chk = {
         restaurant: bill.restaurant,
@@ -120,8 +117,20 @@ export const sendChecks = (bill) => {
       }).catch(err => { console.error("Unable to create a check " + err) })
     })
   }
+}
+
+export const changeSessionState = (uid, sessionId, state) => {
+  const sessionRef = sessions.doc(uid).collection('sessions').doc(sessionId)
+  sessionRef.get().then(doc => {
+    let session = doc.data()
+    session.status = state
+    console.log(session)
+    sessionRef.set(session)
+  })
 
 }
+
+// changeSessionState('LHtoZbLQcIgjHfnvpaVATU5j2AF3', 'zOm4DnbkFRiR4Gda4uhz', SessionStatuses.done)
 
 // sendChecks(fakeBill)
 // createSession("123", ['user-0', 'user-1', 'user-2', 'user-'], "Test Kitchen")

@@ -107,6 +107,20 @@ getInvites = (uid) => {
   }
 }
 
+MOCK_inviteAccept = (uid, sessionId) => {
+  return (dispatch) => {
+    const sessionRef = sessions.doc(uid).collection('sessions').doc(sessionId)
+    sessionRef.get().then(doc => {
+      let session = doc.data()
+      console.log( doc.data())
+      if (Array.isArray(session.inviteList)) {
+        session.inviteList.map(it => {
+          dispatch(acceptInvite(it.guest, it.id))
+        })
+      }
+    })
+  }
+}
 
 export default {
   sendInvites,
@@ -114,4 +128,5 @@ export default {
   declineInvite,
   getInvite,
   getInvites,
+  MOCK_inviteAccept
 }

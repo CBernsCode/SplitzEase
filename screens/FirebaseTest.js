@@ -127,7 +127,7 @@ const FriendTests = ({frndActions, friends}) => {
 
 const InviteTests = ({inviteActions, invites}) => {
   let uid = 'test-1a'
-  let inviteId = "C6GnveM0NeAQEkNHmPlS"
+  let inviteId = "Usq7jbHglqB2p5Icb82Q"
 
   return (
     <View style={styles.reducer}>
@@ -154,6 +154,13 @@ const InviteTests = ({inviteActions, invites}) => {
         title='Get Invites'
         onPress={() => {
           inviteActions.getInvites(uid)
+        }}>
+      </Button>
+      <Button
+        color={Colors.cardAffirmButton}
+        title='Accept Invites'
+        onPress={() => {
+          inviteActions.MOCK_inviteAccept("LHtoZbLQcIgjHfnvpaVATU5j2AF3", "zOm4DnbkFRiR4Gda4uhz")
         }}>
       </Button>
       
