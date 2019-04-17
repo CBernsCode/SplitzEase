@@ -168,7 +168,8 @@ const InviteTests = ({inviteActions, invites}) => {
   )
 }
 
-const EventTests = () => {
+const EventTests = ({sessionActions}) => {
+
   const inviteList = [
     {paytype: PayTypes.share, uid: "LHtoZbLQcIgjHfnvpaVATU5j2AF3"},
     {paytype: PayTypes.self, uid: "09irxlCDcPbJfFMkRJa3L6JJHqh1"},
@@ -196,9 +197,16 @@ const EventTests = () => {
       </Button>
       <Button
         color={Colors.cardAffirmButton}
-        title='Send Check'
+        title='Send Checks'
         onPress={() => {
           sendChecks(bg.makeCheck('something', false))
+        }}>
+      </Button>
+      <Button
+        color={Colors.cardAffirmButton}
+        title='Get All Sessions'
+        onPress={() => {
+          sessionActions.loadSessions('LHtoZbLQcIgjHfnvpaVATU5j2AF3')
         }}>
       </Button>
     </View>
@@ -213,7 +221,7 @@ export default class FirebaseScreen extends React.Component {
 
 
   render() {
-    // console.log(this.props)
+    console.log(this.props)
     return (
       <ScrollView>
         <AcctTests {...this.props} />

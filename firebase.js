@@ -127,7 +127,6 @@ export const changeSessionState = (uid, sessionId, state) => {
     console.log(session)
     sessionRef.set(session)
   })
-
 }
 
 // changeSessionState('LHtoZbLQcIgjHfnvpaVATU5j2AF3', 'zOm4DnbkFRiR4Gda4uhz', SessionStatuses.done)
