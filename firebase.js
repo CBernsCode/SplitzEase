@@ -53,6 +53,8 @@ export const createSession = (uid, inviteList, restaurant, paytype = PayTypes.un
   }).then(() => {
     console.log("Document written with ID: ", seshRef.id);
   }).catch(err => console.error("Unable to create a check " + err))
+
+  return seshRef.id;
 }
 
 const fakeBill = {
