@@ -172,7 +172,18 @@ class Order extends React.Component {
         );
       }
     } else {
-      return false;
+      return (
+        <View style={styles.orderWrapper}>
+          <View style={styles.order} key={this.props.id}>
+            <Text style={styles.oldOrderHeader}>
+              Invite #: {this.props.id || '0000000000'} [Expired]
+            </Text>
+            <Text style={styles.tabbedText}>
+              User # {this.props.host || 'Host'} invited you to order food at {this.props.sent}.
+            </Text>
+          </View>
+        </View>  
+      );
     }
   }
 }
@@ -286,6 +297,12 @@ const styles = StyleSheet.create({
 
   orderHeader: {
     backgroundColor: Colors.cardHeader,
+    color: Colors.cardHeaderText,
+    padding: 10,
+  },
+
+  oldOrderHeader: {
+    backgroundColor: '#999999',
     color: Colors.cardHeaderText,
     padding: 10,
   },
