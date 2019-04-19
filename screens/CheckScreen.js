@@ -88,16 +88,6 @@ class Check extends React.Component {
   }
 
   render() {
-    const { cost } = this.props
-    const { price } = this.props
-    let tempCost = 0;
-
-    if(!!cost) {
-      tempCost = cost
-    } else if (!!price) {
-      tempCost = price;
-    }
-
     if(!this.state.isPaid) {
       return (
         <View style={styles.checkWrapper}>
@@ -106,7 +96,7 @@ class Check extends React.Component {
                 <Text style={styles.tabbedText}>Restaurant: {this.props.restaurant || "Some Restaurant"}</Text>
                 <Text style={styles.tabbedText}>Description: {this.props.description || "Some food that was ordered." }</Text>
                 <Text style={styles.tabbedText}>Amount Due:</Text>
-                <Text style={styles.total}>${tempCost || "0.00"}</Text>
+                <Text style={styles.total}>${this.props.cost || "0.00"}</Text>
                 <View style={styles.button}><Button color={Colors.button} onPress={() => this.pay(tempCost)} title="Pay"></Button></View>
             </View>
         </View>

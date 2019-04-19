@@ -78,7 +78,7 @@ const CheckTests = ({ chkActions, checks }) => {
           chkActions.createCheck(uid, {
             ...defaults.defaultCheck,
             host: 'qgay3df85tIo7aSO9qmg',
-            price: parseFloat(12.00),
+            cost: parseFloat(12.00),
             rest: 'Applebees',
             payType: PayTypes.self,
           })
