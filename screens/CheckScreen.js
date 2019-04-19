@@ -39,7 +39,7 @@ class Body extends React.PureComponent {
   }
 
   render() {
-    if(!!this.props.checks.arr) {
+    if(!!this.props.checks.arr[0]) {
       return (
         <View style={styles.body}>
           <FlatList
@@ -168,8 +168,10 @@ const styles = StyleSheet.create({
   },
 
   noChecks: {
+    flex: 1,
     padding: 10,
     textAlign: 'center',
+    top: 0,
     width: Layout.window.width,
   },
 
