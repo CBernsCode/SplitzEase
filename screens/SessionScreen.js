@@ -28,6 +28,7 @@ export default class SessionScreen extends React.Component {
     payForGuests: false,
     paymentType: PayTypes.self,
     restaurant: '',
+    shouldRefresh: false,
   };
 
   addGuest = (id) => {
@@ -71,6 +72,7 @@ export default class SessionScreen extends React.Component {
       changeSessionState(this.props.account.user.uid, sessionId, SessionStatuses.pending);
       !!this.props.account && !this.props.account.user && this.props.SessionActions.loadSessions(account.user.uid);
       this.resetModalMenu();
+      this.setState({ modalVisible: !this.state.modalVisible});
     } else {
       Alert.alert(
         'No Invites Sent',
@@ -152,8 +154,8 @@ export default class SessionScreen extends React.Component {
 
 class Body extends React.PureComponent {
   componentDidMount () {
-    const { account } = this.props;
-    !!account && !!account.user && this.props.SessionActions.loadSessions(account.user.uid);
+    const { account, SessionActions } = this.props;
+    !!account && !!account.user && SessionActions.loadSessions(account.user.uid);
   }
 
   render() {
@@ -165,32 +167,39 @@ class Body extends React.PureComponent {
 
 class EventList extends React.Component {
   render() {
-    return(
-      <FlatList
-        data = {this.props.session.arr}
-        keyExtractor={(item) => item.sessionId.toString()}
-        renderItem = {({item}) =>
-          <Event
-            {...item}
-          />
-        }
-      />
-    );
+    if(!!this.props.session.arr) {
+      return(
+        <FlatList
+          data = {this.props.session.arr}
+          keyExtractor={(item, index) => index.toString()}
+          renderItem = {({item}) =>
+            <Event
+              {...item}
+            />
+          }
+        />
+      );
+    } else {
+      return(
+        <View style={styles.body}>
+          <Text style={styles.noEvents}>You currently have no sessions.</Text>
+        </View>
+      );
+    }
   }
 }
 
 class Event extends React.Component {
   cancelEvent = (hostId, sessionId) => {
     changeSessionState(hostId, sessionId, SessionStatuses.cancelled);
-    !!this.props.account && !this.props.account.user && this.props.SessionActions.loadSessions(account.user.uid);
+    !!this.props.account && !!this.props.account.user && this.props.SessionActions.loadSessions(account.user.uid);
   }
 
   finishEvent = (hostId, sessionId, inviteList, restaurant, payType) => {
-    console.log(hostId);
     let billGenerator = new BillGenerator(hostId, restaurant, inviteList);
     sendChecks(billGenerator.makeCheck(sessionId, payType));
     changeSessionState(hostId, sessionId, SessionStatuses.done);
-    !!this.props.account && !this.props.account.user && this.props.SessionActions.loadSessions(account.user.uid);
+    !!this.props.account && !!this.props.account.user && this.props.SessionActions.loadSessions(account.user.uid);
   }
 
   render () {
@@ -412,6 +421,12 @@ const styles = StyleSheet.create({
 
   modalTitle: {
     fontSize: 25,
+  },
+
+  noEvents: {
+    padding: 10,
+    textAlign: 'center',
+    width: Layout.window.width,
   },
 
   event: {

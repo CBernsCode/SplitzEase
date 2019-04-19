@@ -39,7 +39,7 @@ class Body extends React.PureComponent {
   }
 
   render() {
-    if(this.props.checks.arr[0] != undefined) {
+    if(!!this.props.checks.arr) {
       return (
         <View style={styles.body}>
           <FlatList
@@ -54,7 +54,7 @@ class Body extends React.PureComponent {
     } else {
       return (
         <View style={styles.body}>
-          <Text>Loading...</Text>
+          <Text style={styles.noChecks}>You currently have no checks.</Text>
           <Text style={styles.balance}>Balance: ${parseFloat(this.props.account.balance).toFixed(2)}</Text>
         </View>
       );
@@ -178,8 +178,9 @@ const styles = StyleSheet.create({
   },
 
   noChecks: {
-    margin: 10,
+    padding: 10,
     textAlign: 'center',
+    width: Layout.window.width,
   },
 
   statusBar: {

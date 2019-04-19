@@ -1,9 +1,9 @@
 import React from 'react';
-import { Button, ButtonGroup, FlatList, Modal, StyleSheet, Switch, Text, TextInput, View } from 'react-native';
+import { Button, FlatList, StyleSheet, Text, View } from 'react-native';
 
 import { Constants } from 'expo';
-import { invites, sessions } from '../firebase.js'
 import Colors from '../constants/Colors';
+import Layout from '../constants/Layout';
 import { InviteStatus, PayTypes } from '../constants/Enums';
 
 export default class OrderScreen extends React.Component {
@@ -51,10 +51,12 @@ class Body extends React.PureComponent {
 
   acceptInvite = (uid, sessionId, payType) => {
     this.props.inviteActions.acceptInvite(uid, sessionId, payType);
+    !!account && !!account.user && this.props.inviteActions.getInvites(account.user.uid.toString());
   }
 
   declineInvite = (uid, sessionId) => {
     this.props.inviteActions.declineInvite(uid, sessionId);
+    !!account && !!account.user && this.props.inviteActions.getInvites(account.user.uid.toString());
   }
 
   render() {
@@ -72,8 +74,7 @@ class Body extends React.PureComponent {
     } else {
       return (
         <View style={styles.body}>
-          <Text>{this.props.account.balance}</Text>
-          <Text>Loading...</Text>
+          <Text style={styles.noInvites}>You currently have no invites.</Text>
         </View>
       );
     }
@@ -101,7 +102,7 @@ class Order extends React.Component {
                   onPress={() => {
                     this.props.acceptInvite(
                       this.props.uid,
-                      this.props.id,
+                      this.props.sessionId,
                       this.props.payType
                     )
                   }}>
@@ -112,7 +113,7 @@ class Order extends React.Component {
                   onPress={() => {
                     this.props.declineInvite(
                       this.props.uid,
-                      this.props.id,
+                      this.props.sessionId,
                     )
                   }}>
                 </Button>
@@ -139,7 +140,7 @@ class Order extends React.Component {
                   onPress={() => {
                     this.props.acceptInvite(
                       this.props.uid,
-                      this.props.id,
+                      this.props.sessionId,
                       PayTypes.self
                     )
                   }}>
@@ -150,7 +151,7 @@ class Order extends React.Component {
                   onPress={() => {
                     this.props.acceptInvite(
                       this.props.uid,
-                      this.props.id,
+                      this.props.sessionId,
                       PayTypes.share
                     )
                   }}>
@@ -161,7 +162,7 @@ class Order extends React.Component {
                   onPress={() => {
                     this.props.declineInvite(
                       this.props.uid,
-                      this.props.id
+                      this.props.sessionId
                     )
                   }}>
                 </Button>
@@ -171,11 +172,7 @@ class Order extends React.Component {
         );
       }
     } else {
-      return(
-        <View style={styles.body}>
-          <Text>Loading...</Text>
-        </View>
-      );
+      return false;
     }
   }
 }
@@ -269,6 +266,12 @@ const styles = StyleSheet.create({
 
   modalTitle: {
     fontSize: 25,
+  },
+
+  noInvites: {
+    padding: 10,
+    textAlign: 'center',
+    width: Layout.window.width,
   },
 
   order: {
