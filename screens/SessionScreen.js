@@ -2,45 +2,11 @@ import React from 'react';
 import { Alert, Button, FlatList, Modal, StyleSheet, Switch, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
 import { Constants } from 'expo';
-import { createSession, sendChecks } from '../firebase'
+import { changeSessionState, createSession, sendChecks } from '../firebase'
 import Colors from '../constants/Colors';
 import Layout from '../constants/Layout';
 import { PayTypes, SessionStatuses } from '../constants/Enums'
 import { BillGenerator } from '../utils/BillGenerator'
-
-const event_data = [
-  {
-    id: '0000000001',
-    host: '09irxlCDcPbJfFMkRJa3L6JJHqh1',
-    restaurant: 'Applebees',
-    status: SessionStatuses.pending,
-    payType: PayTypes.self,
-    inviteList: [
-      {payType: PayTypes.share, uid: "LHtoZbLQcIgjHfnvpaVATU5j2AF3"},
-      {payType: PayTypes.self, uid: "09irxlCDcPbJfFMkRJa3L6JJHqh1"},
-      {payType: PayTypes.share, uid: "test-3"},
-      {payType: PayTypes.self, uid: "test-4"},
-      {payType: PayTypes.share, uid: "test-5"},
-      {payType: PayTypes.self, uid: "test-6"},
-    ],
-  },
-  {
-    id: '0000000002',
-    host: '09irxlCDcPbJfFMkRJa3L6JJHqh1',
-    restaurant: 'Jimmy K\'s',
-    status: SessionStatuses.pending,
-    payType: PayTypes.share,
-    inviteList: ['guest_01', 'guest_02', 'guest_03', 'guest_04', 'guest_05', 'guest_06']
-  },
-  {
-    id: '0000000003',
-    host: '09irxlCDcPbJfFMkRJa3L6JJHqh1',
-    restaurant: 'Taco Bell',
-    status: SessionStatuses.done,
-    payType: PayTypes.single,
-    inviteList: ['guest_01', 'guest_02', 'guest_03', 'guest_04', 'guest_05', 'guest_06']
-  },
-];
 
 export default class SessionScreen extends React.Component {
   static navigationOptions = {
@@ -62,6 +28,7 @@ export default class SessionScreen extends React.Component {
     payForGuests: false,
     paymentType: PayTypes.self,
     restaurant: '',
+    shouldRefresh: false,
   };
 
   addGuest = (id) => {
@@ -101,8 +68,11 @@ export default class SessionScreen extends React.Component {
   sendInvites = () => {
     // only do this when all fields are filled in
     if(!!this.state.restaurant && !!this.state.guestList[0]) {
-      createSession(this.props.account.user.uid, this.state.guestList, this.state.restaurant, this.state.paymentType);
+      sessionId = createSession(this.props.account.user.uid, this.state.guestList, this.state.restaurant, this.state.paymentType);
+      changeSessionState(this.props.account.user.uid, sessionId, SessionStatuses.pending);
+      !!this.props.account && !this.props.account.user && this.props.SessionActions.loadSessions(account.user.uid);
       this.resetModalMenu();
+      this.setState({ modalVisible: !this.state.modalVisible});
     } else {
       Alert.alert(
         'No Invites Sent',
@@ -184,8 +154,8 @@ export default class SessionScreen extends React.Component {
 
 class Body extends React.PureComponent {
   componentDidMount () {
-    const { account } = this.props;
-    !!account && !!account.user && this.props.chkActions.getChecks(account.user.uid);
+    const { account, SessionActions } = this.props;
+    !!account && !!account.user && SessionActions.loadSessions(account.user.uid);
   }
 
   render() {
@@ -197,28 +167,39 @@ class Body extends React.PureComponent {
 
 class EventList extends React.Component {
   render() {
-    return(
-      <FlatList
-        data = {event_data}
-        keyExtractor={(item) => item.id.toString()}
-        renderItem = {({item}) =>
-          <Event
-            {...item}
-          />
-        }
-      />
-    );
+    if(!!this.props.session.arr) {
+      return(
+        <FlatList
+          data = {this.props.session.arr}
+          keyExtractor={(item, index) => index.toString()}
+          renderItem = {({item}) =>
+            <Event
+              {...item}
+            />
+          }
+        />
+      );
+    } else {
+      return(
+        <View style={styles.body}>
+          <Text style={styles.noEvents}>You currently have no sessions.</Text>
+        </View>
+      );
+    }
   }
 }
 
 class Event extends React.Component {
-  cancelEvent = (eventId) => {
-    
+  cancelEvent = (hostId, sessionId) => {
+    changeSessionState(hostId, sessionId, SessionStatuses.cancelled);
+    !!this.props.account && !!this.props.account.user && this.props.SessionActions.loadSessions(account.user.uid);
   }
 
   finishEvent = (hostId, sessionId, inviteList, restaurant, payType) => {
     let billGenerator = new BillGenerator(hostId, restaurant, inviteList);
     sendChecks(billGenerator.makeCheck(sessionId, payType));
+    changeSessionState(hostId, sessionId, SessionStatuses.done);
+    !!this.props.account && !!this.props.account.user && this.props.SessionActions.loadSessions(account.user.uid);
   }
 
   render () {
@@ -226,7 +207,7 @@ class Event extends React.Component {
       return (
         <View style={styles.eventWrapper}>
           <View style={styles.event}>
-            <Text style={styles.eventHeader}>Event ID: {this.props.id || "000000000"}</Text>
+            <Text style={styles.eventHeader}>Event ID: {this.props.sessionId || "000000000"}</Text>
             <Text style={styles.tabbedText}>Restaurant: {this.props.restaurant || "Some Restaurant"}</Text>
             <Text style={styles.tabbedText}>Status: {this.props.status || "Some Status"}</Text>
             <Text style={styles.tabbedText}>Payment Type: {this.props.payType || "Payment"}</Text>
@@ -235,21 +216,21 @@ class Event extends React.Component {
             <Button
               color={Colors.cardAffirmButton}
               title='Done'
-              onPress={() => this.finishEvent(this.props.host, this.props.id, this.props.inviteList, this.props.restaurant, this.props.payType)}>
+              onPress={() => this.finishEvent(this.props.host, this.props.sessionId, this.props.inviteList, this.props.restaurant, this.props.payType)}>
             </Button>
             <Button
               color={Colors.cardNegaButton}
               title='Cancel'
-              onPress={() => this.cancelEvent()}>
+              onPress={() => this.cancelEvent(this.props.host, this.props.sessionId)}>
             </Button>
           </View>
         </View>
       );
-    } else {
+    } else if (this.props.status == SessionStatuses.done) {
       return (
         <View style={styles.eventWrapper}>
           <View style={styles.event}>
-            <Text style={styles.eventHeader}>Event ID: {this.props.id || "000000000"}</Text>
+            <Text style={styles.eventHeader}>Event ID: {this.props.sessionId || "000000000"}</Text>
             <Text style={styles.tabbedText}>Restaurant: {this.props.restaurant || "Some Restaurant"}</Text>
             <Text style={styles.tabbedText}>Status: {this.props.status || "Some Status"}</Text>
             <Text style={styles.tabbedText}>Payment Type: {this.props.payType || "Payment"}</Text>
@@ -257,6 +238,10 @@ class Event extends React.Component {
             <GuestList inviteList={this.props.inviteList}/>
           </View>
         </View>
+      );
+    } else {
+      return(
+        <View></View>
       );
     }
   }
@@ -267,9 +252,9 @@ class GuestList extends React.Component {
     return (
       <FlatList
         data={this.props.inviteList}
-        keyExtractor={(item, index) => index.toString()}
+        keyExtractor={(item, index) => item.id.toString()}
         renderItem={({item, index}) => 
-          <Text style={styles.guestList}>{item.uid}</Text>
+          <Text style={styles.guestList}>{item.guest}</Text>
         }
       />
     );
@@ -436,6 +421,12 @@ const styles = StyleSheet.create({
 
   modalTitle: {
     fontSize: 25,
+  },
+
+  noEvents: {
+    padding: 10,
+    textAlign: 'center',
+    width: Layout.window.width,
   },
 
   event: {
