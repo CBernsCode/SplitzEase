@@ -177,7 +177,7 @@ export default class SessionScreen extends React.Component {
   }
 }
 
-class Body extends React.PureComponent {
+class Body extends React.Component {
   render() {
     return (
       <EventList // getShouldRefresh={this.props.getShouldRefresh.bind(this)} setShouldRefresh={this.props.setShouldRefresh.bind(this)} 
@@ -196,7 +196,6 @@ class EventList extends React.Component {
           keyExtractor={(item, index) => index.toString()}
           renderItem={({ item, index }) =>
             <Event
-              index={index}
               {...item}
               {...this.props}
             />
