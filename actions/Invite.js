@@ -112,7 +112,7 @@ MOCK_inviteAccept = (uid, sessionId) => {
     const sessionRef = sessions.doc(uid).collection('sessions').doc(sessionId)
     sessionRef.get().then(doc => {
       let session = doc.data()
-      console.log( doc.data())
+      // console.log( doc.data())
       if (Array.isArray(session.inviteList)) {
         session.inviteList.map(it => {
           dispatch(acceptInvite(it.guest, it.id))

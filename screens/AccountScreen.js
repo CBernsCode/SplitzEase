@@ -25,7 +25,7 @@ export default class AccountScreen extends React.Component {
   componentDidMount () {
     const { account } = this.props;
 
-    !!account && !!account.user && this.props.frndActions.getFriends(account.user.uid);
+    !!account && this.props.frndActions.getFriends(account.user.uid);
   }
 
   setModalVisible = (visible) => {

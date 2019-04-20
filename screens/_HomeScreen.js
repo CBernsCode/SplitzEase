@@ -24,7 +24,7 @@ export default class HomeScreen extends React.Component {
     invites.doc('N8Ur2NvmqBBUmynPQvZ3').get().then(doc => {
       let defObj = { hostname: "", hostid: "", partymembers: []}
       let data = { ... defObj, ...doc.data() }
-      console.log(data);
+      // console.log(data);
     })
   }
 
