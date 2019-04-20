@@ -121,12 +121,13 @@ export default class SessionScreen extends React.Component {
     return (
       <View style={styles.container}>
         <Body getShouldRefresh={this.getShouldRefresh.bind(this)} setShouldRefresh={this.setShouldRefresh.bind(this)} {...this.props} />
-        <View style={styles.button}>
-          <Button
-            color={Colors.fabButton}
-            title='Create Event'
-            onPress={() => this.setModalVisible(!this.state.modalVisible)} />
-        </View>
+        
+        <TouchableOpacity
+          style={styles.customButton}
+          onPress={() => this.setModalVisible(!this.state.modalVisible)}>
+          <Text style={styles.buttonText}>Create Event</Text>
+        </TouchableOpacity>
+
         <Modal
           animationType="fade"
           transparent={true}
@@ -349,6 +350,21 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     backgroundColor: Colors.background,
     paddingTop: Constants.statusBarHeight,
+  },
+  
+  customButton: {
+    alignItems: 'center',
+    backgroundColor: Colors.button,
+    borderRadius: 5,
+    bottom: 0,
+    marginHorizontal: 10,
+    marginVertical: 10,
+    padding: 10,
+  },
+
+  buttonText: {
+    color: "#ffffff",
+    fontSize: 20,
   },
 
   fab: {

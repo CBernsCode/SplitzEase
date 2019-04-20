@@ -1,6 +1,7 @@
 import React from 'react';
-import { Alert, Button, FlatList, Image, Modal, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Alert, Button, FlatList, Image, Modal, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import Colors from '../constants/Colors';
+import Layout from '../constants/Layout';
 
 import { Constants } from 'expo';
 
@@ -102,7 +103,11 @@ export default class AccountScreen extends React.Component {
           <Text style={styles.friendsListHeader}>Friends List</Text>
           <FriendsList {...this.props}/>
         </View>
-        <Button color={Colors.button} title="Add Friend" onPress={() => this.setModalVisible(!this.state.modalVisible)} />
+        <TouchableOpacity
+          style={styles.customButton}
+          onPress={() => this.setModalVisible(!this.state.modalVisible)}>
+          <Text style={styles.buttonText}>Add Friend</Text>
+        </TouchableOpacity>
         <Modal
           animationType="fade"
           transparent={true}
@@ -172,9 +177,19 @@ class Friend extends React.Component {
 }
 
 const styles = StyleSheet.create({
-  buttons: {
+  customButton: {
+    alignItems: 'center',
+    backgroundColor: Colors.button,
+    borderRadius: 5,
     bottom: 0,
-    margin: 10,
+    marginHorizontal: 10,
+    marginVertical: 10,
+    padding: 10,
+  },
+
+  buttonText: {
+    color: "#ffffff",
+    fontSize: 20,
   },
 
   container: {

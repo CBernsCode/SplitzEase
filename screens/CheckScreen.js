@@ -110,11 +110,11 @@ class Check extends React.Component {
 const styles = StyleSheet.create({
   balance: {
     backgroundColor: Colors.background,
-    bottom: 10,
+    bottom: 0,
     color: Colors.secondaryColor,
-    fontSize: 15,
-    height: 30,
-    padding: 5,
+    fontSize: 20,
+    margin: 10,
+    // paddingVertical: 5,
     textAlign: 'center',
     width: Layout.window.width,
   },
