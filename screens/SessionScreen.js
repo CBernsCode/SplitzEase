@@ -238,13 +238,13 @@ class Event extends React.Component {
             <Text style={styles.eventHeader}>Event ID: {this.props.sessionId || "000000000"}</Text>
             <Text style={styles.tabbedText}>Restaurant: {this.props.restaurant || "Some Restaurant"}</Text>
             <Text style={styles.tabbedText}>Status: {this.props.status || "Some Status"}</Text>
-            <Text style={styles.tabbedText}>Payment Type: {this.props.payType || "Payment"}</Text>
+            <Text style={styles.tabbedText}>Payment Type: {this.props.paytype || "Payment"}</Text>
             <Text style={styles.tabbedText}>Guest List:</Text>
             <GuestList inviteList={this.props.inviteList}/>
             <Button
               color={Colors.cardAffirmButton}
               title='Done'
-              onPress={() => this.finishEvent(this.props.host, this.props.sessionId, this.props.inviteList, this.props.restaurant, this.props.payType)}>
+              onPress={() => this.finishEvent(this.props.host, this.props.sessionId, this.props.inviteList, this.props.restaurant, this.props.paytype)}>
             </Button>
             <Button
               color={Colors.cardNegaButton}
@@ -261,7 +261,7 @@ class Event extends React.Component {
             <Text style={styles.eventHeader}>Event ID: {this.props.sessionId || "000000000"}</Text>
             <Text style={styles.tabbedText}>Restaurant: {this.props.restaurant || "Some Restaurant"}</Text>
             <Text style={styles.tabbedText}>Status: {this.props.status || "Some Status"}</Text>
-            <Text style={styles.tabbedText}>Payment Type: {this.props.payType || "Payment"}</Text>
+            <Text style={styles.tabbedText}>Payment Type: {this.props.paytype || "Payment"}</Text>
             <Text style={styles.tabbedText}>Guest List:</Text>
             <GuestList inviteList={this.props.inviteList}/>
           </View>
