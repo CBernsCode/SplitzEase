@@ -70,8 +70,10 @@ export default class SessionScreen extends React.Component {
     // only do this when all fields are filled in
     if(!!this.state.restaurant && !!this.state.guestList[0]) {
       sessionId = createSession(this.props.account.user.uid, this.state.guestList, this.state.restaurant, this.state.paymentType);
-      changeSessionState(this.props.account.user.uid, sessionId, SessionStatuses.pending);
-      !!this.props.account && !this.props.account.user && this.props.SessionActions.loadSessions(account.user.uid);
+      
+      // changeSessionState(this.props.account.user.uid, sessionId, SessionStatuses.pending);
+      // !!this.props.account && !this.props.account.user && this.props.SessionActions.loadSessions(account.user.uid);
+      
       this.resetModalMenu();
       this.setState({ modalVisible: !this.state.modalVisible});
     } else {
@@ -230,6 +232,10 @@ class Event extends React.Component {
     changeSessionState(hostId, sessionId, SessionStatuses.done);
   }
 
+  sendInvites = (uid, sessionId) => {
+    changeSessionState(uid, sessionId, SessionStatuses.pending);
+  }
+
   render () {
     if(this.props.status == SessionStatuses.pending) {
       return (
@@ -264,6 +270,29 @@ class Event extends React.Component {
             <Text style={styles.tabbedText}>Payment Type: {this.props.paytype || "Payment"}</Text>
             <Text style={styles.tabbedText}>Guest List:</Text>
             <GuestList inviteList={this.props.inviteList}/>
+          </View>
+        </View>
+      );
+    } else if(this.props.status == SessionStatuses.started) {
+      return (
+        <View style={styles.eventWrapper}>
+          <View style={styles.event}>
+            <Text style={styles.eventHeader}>Event ID: {this.props.sessionId || "000000000"}</Text>
+            <Text style={styles.tabbedText}>Restaurant: {this.props.restaurant || "Some Restaurant"}</Text>
+            <Text style={styles.tabbedText}>Status: {this.props.status || "Some Status"}</Text>
+            <Text style={styles.tabbedText}>Payment Type: {this.props.paytype || "Payment"}</Text>
+            <Text style={styles.tabbedText}>Guest List:</Text>
+            <GuestList inviteList={this.props.inviteList}/>
+            <Button
+              color={Colors.cardAffirmButton}
+              title='Send Invites'
+              onPress={() => this.sendInvites(this.props.host, this.props.sessionId)}>
+            </Button>
+            <Button
+              color={Colors.cardNegaButton}
+              title='Cancel'
+              onPress={() => this.cancelEvent(this.props.host, this.props.sessionId)}>
+            </Button>
           </View>
         </View>
       );
