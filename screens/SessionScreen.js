@@ -187,7 +187,6 @@ class Body extends React.PureComponent {
 }
 
 class EventList extends React.Component {
-  
   render() {
     const { account, sessionActions } = this.props;
     if (!!this.props.session.arr[0]) {
@@ -218,18 +217,29 @@ class EventList extends React.Component {
 }
 
 class Event extends React.Component {
+  state = {
+    shouldDisplay: true,
+  }
+
   cancelEvent = (hostId, sessionId) => {
     changeSessionState(hostId, sessionId, SessionStatuses.cancelled);
+    this.setState({shouldDisplay: false});
   }
 
   finishEvent = (hostId, sessionId, inviteList, restaurant, payType) => {
     let billGenerator = new BillGenerator(hostId, restaurant, inviteList);
     sendChecks(billGenerator.makeCheck(sessionId, payType));
     changeSessionState(hostId, sessionId, SessionStatuses.done);
+    this.setState({shouldDisplay: false});
+  }
+
+  sendInvites = (host, sessionId) => {
+    this.props.inviteActions.MOCK_inviteAccept(host, sessionId);
+    this.setState({shouldDisplay: false});
   }
 
   render () {
-    if(this.props.status == SessionStatuses.pending) {
+    if(this.props.status == SessionStatuses.pending && this.state.shouldDisplay) {
       return (
         <View style={styles.eventWrapper}>
           <View style={styles.event}>
@@ -256,7 +266,7 @@ class Event extends React.Component {
           </View>
         </View>
       );
-    } else if (this.props.status == SessionStatuses.done) {
+    } else if (this.props.status == SessionStatuses.done && this.state.shouldDisplay) {
       return (
         <View style={styles.eventWrapper}>
           <View style={styles.event}>
@@ -269,7 +279,7 @@ class Event extends React.Component {
           </View>
         </View>
       );
-    } else if(this.props.status == SessionStatuses.started) {
+    } else if(this.props.status == SessionStatuses.started && this.state.shouldDisplay) {
       return (
         <View style={styles.eventWrapper}>
           <View style={styles.event}>
@@ -288,7 +298,7 @@ class Event extends React.Component {
               </TouchableOpacity>
 
               <TouchableOpacity
-                onPress={() => this.props.inviteActions.MOCK_inviteAccept(this.props.host, this.props.sessionId)}
+                onPress={() => this.sendInvites(this.props.host, this.props.sessionId)}
                 style={styles.modalPosButton}>
                 <Text style={styles.buttonText}>Send Invites</Text>
               </TouchableOpacity>
@@ -577,10 +587,6 @@ const styles = StyleSheet.create({
 
   switchBarLabel: {
     paddingRight: 5,
-  },
-
-  switch: {
-
   },
 
   tabbedText: {
