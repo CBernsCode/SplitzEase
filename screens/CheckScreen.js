@@ -97,7 +97,7 @@ class Check extends React.Component {
                 <Text style={styles.tabbedText}>Description: {this.props.description || "Some food that was ordered." }</Text>
                 <Text style={styles.tabbedText}>Amount Due:</Text>
                 <Text style={styles.total}>${this.props.cost || "0.00"}</Text>
-                <View style={styles.button}><Button color={Colors.button} onPress={() => this.pay(tempCost)} title="Pay"></Button></View>
+                <View style={styles.button}><Button color={Colors.button} onPress={() => this.pay(this.props.cost)} title="Pay"></Button></View>
             </View>
         </View>
       );
