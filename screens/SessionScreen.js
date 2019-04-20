@@ -53,11 +53,6 @@ export default class SessionScreen extends React.Component {
     return this.state.guestList.includes(id)
   }
 
-  refresh = () => {
-    !!this.props.account && !this.props.account.user && this.props.SessionActions.loadSessions(account.user.uid);
-    this.setShouldRefresh(false);
-  }
-
   resetModalMenu = () => {
     this.setModalVisible(!this.state.modalVisible);
 
@@ -79,7 +74,6 @@ export default class SessionScreen extends React.Component {
       !!this.props.account && !this.props.account.user && this.props.SessionActions.loadSessions(account.user.uid);
       this.resetModalMenu();
       this.setState({ modalVisible: !this.state.modalVisible});
-      this.setShouldRefresh(true);
     } else {
       Alert.alert(
         'No Invites Sent',
@@ -122,7 +116,7 @@ export default class SessionScreen extends React.Component {
   render() {
     return (
       <View style={styles.container}>
-        <Body getShouldRefresh={this.getShouldRefresh.bind(this)} setShouldRefresh={this.setShouldRefresh.bind(this)} refresh={this.refresh.bind(this)} {...this.props} />
+        <Body getShouldRefresh={this.getShouldRefresh.bind(this)} setShouldRefresh={this.setShouldRefresh.bind(this)} {...this.props} />
         <View style={styles.button}><Button color={Colors.fabButton} title='Create Event' onPress={() => this.setModalVisible(!this.state.modalVisible)} /></View>
         <Modal
           animationType="fade"
@@ -175,25 +169,40 @@ class Body extends React.PureComponent {
 
   render() {
     return (
-      <EventList getShouldRefresh={this.props.getShouldRefresh.bind(this)} setShouldRefresh={this.props.setShouldRefresh.bind(this)} refresh={this.props.refresh.bind(this)} {...this.props}/>
+      <EventList getShouldRefresh={this.props.getShouldRefresh.bind(this)} setShouldRefresh={this.props.setShouldRefresh.bind(this)} {...this.props}/>
     );
   }
 }
 
 class EventList extends React.Component {
+  state = {
+    eventList: new Array()
+  }
+
+  componentDidMount = () => {
+    const { account, SessionActions } = this.props;
+    !!account && !!account.user && SessionActions.loadSessions(account.user.uid);
+
+    this.setState({eventList: this.props.session.arr});
+  }
+
+  refresh = () => {
+    !!this.props.account && !!this.props.account.user && this.props.SessionActions.loadSessions(this.props.account.user.uid);
+    this.setState({eventList: this.props.session.arr});
+    this.props.setShouldRefresh(false);
+  }
+
   render() {
-    if(!!this.props.session.arr) {
+    if(!!this.state.eventList[0]) {
       return(
         <FlatList
-          data = {this.props.session.arr}
+          data = {this.state.eventList}
           keyExtractor={(item, index) => index.toString()}
-          onRefresh= {() => this.props.refresh()}
+          onRefresh= {() => this.refresh() }
           refreshing = {this.props.getShouldRefresh()}
-          renderItem = {({item}) =>
+          renderItem = {({item, index}) =>
             <Event
-              getShouldRefresh={this.props.getShouldRefresh.bind(this)}
-              setShouldRefresh={this.props.setShouldRefresh.bind(this)}
-              refresh={this.props.refresh.bind(this)}
+              index={index}
               {...item}
             />
           }
@@ -203,6 +212,7 @@ class EventList extends React.Component {
       return(
         <View style={styles.body}>
           <Text style={styles.noEvents}>You currently have no sessions.</Text>
+          <TouchableOpacity onPress={this.refresh}><Text style={styles.refreshButton}>Push to refresh.</Text></TouchableOpacity>
         </View>
       );
     }
@@ -212,14 +222,12 @@ class EventList extends React.Component {
 class Event extends React.Component {
   cancelEvent = (hostId, sessionId) => {
     changeSessionState(hostId, sessionId, SessionStatuses.cancelled);
-    this.props.setShouldRefresh(true);
   }
 
   finishEvent = (hostId, sessionId, inviteList, restaurant, payType) => {
     let billGenerator = new BillGenerator(hostId, restaurant, inviteList);
     sendChecks(billGenerator.makeCheck(sessionId, payType));
     changeSessionState(hostId, sessionId, SessionStatuses.done);
-    this.props.setShouldRefresh(true);
   }
 
   render () {
@@ -444,6 +452,13 @@ const styles = StyleSheet.create({
   },
 
   noEvents: {
+    padding: 10,
+    textAlign: 'center',
+    width: Layout.window.width,
+  },
+
+  refreshButton: {
+    color: Colors.secondaryColor,
     padding: 10,
     textAlign: 'center',
     width: Layout.window.width,
