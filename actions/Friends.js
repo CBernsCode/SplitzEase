@@ -10,7 +10,7 @@ addFriend = (uid, friend) => {
       ...friend
     }).then((docRef) => {
       dispatch(getFriends(uid))
-      console.log("Document written with ID: ", docRef.id);
+      // console.log("Document written with ID: ", docRef.id);
     })
   }
   // return { type: FriendActTypes.ADD_FRIEND, payload: friend }

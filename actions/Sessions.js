@@ -37,6 +37,7 @@ createSession = (uid, inviteList, restaurant, paytype = PayTypes.unknown) => {
       lastChanged: Date.now(),
     }).then(() => {
       console.log("Document written with ID: ", seshRef.id);
+      dispatch(loadSessions(uid))
     }).catch(err => console.error("Unable to create a check " + err))
   }
 }

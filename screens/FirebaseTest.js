@@ -221,7 +221,7 @@ export default class FirebaseScreen extends React.Component {
 
 
   render() {
-    console.log(this.props)
+    // console.log(this.props)
     return (
       <ScrollView>
         <AcctTests {...this.props} />
