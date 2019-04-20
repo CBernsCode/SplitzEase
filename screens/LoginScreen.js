@@ -1,5 +1,5 @@
 import React from 'react';
-import { Alert, Button, Image, KeyboardAvoidingView, Platform, StyleSheet, Switch, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Alert, Image, KeyboardAvoidingView, StyleSheet, Switch, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { Constants } from 'expo';
 import Colors from '../constants/Colors';
 import Layout from '../constants/Layout';
@@ -232,7 +232,7 @@ const styles = StyleSheet.create({
 
   buttonText: {
     color: "#ffffff",
-    fontSize: 20,
+    fontSize: 15,
   },
 
   container: {
@@ -282,8 +282,4 @@ const styles = StyleSheet.create({
   switchBarLabel: {
     paddingRight: 5,
   },
-
-  switch: {
-    
-  }
 });

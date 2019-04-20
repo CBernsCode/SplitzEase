@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, FlatList, StyleSheet, Text, View } from 'react-native';
+import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 import { Constants } from 'expo';
 import Colors from '../constants/Colors';
@@ -50,11 +50,13 @@ class Body extends React.PureComponent {
   }
 
   acceptInvite = (uid, sessionId, payType) => {
+    const { account } = this.props;
     this.props.inviteActions.acceptInvite(uid, sessionId, payType);
     !!account && !!account.user && this.props.inviteActions.getInvites(account.user.uid.toString());
   }
 
   declineInvite = (uid, sessionId) => {
+    const { account } = this.props;
     this.props.inviteActions.declineInvite(uid, sessionId);
     !!account && !!account.user && this.props.inviteActions.getInvites(account.user.uid.toString());
   }
@@ -95,10 +97,19 @@ class Order extends React.Component {
               <Text style={styles.tabbedText}>
                 User # {this.props.host || 'Host'} has invited you to order food from {this.props.restaurant || 'some restaurant'}!
               </Text>
-              <View style={styles.horizontalView}>
-                <Button
-                  color={Colors.cardAffirmButton}
-                  title='Accept Free Meal'
+              <View style={styles.inviteButtons}>
+                <TouchableOpacity
+                  style={styles.inviteNegButton}
+                  onPress={() => {
+                    this.props.declineInvite(
+                      this.props.uid,
+                      this.props.sessionId
+                    )
+                  }}>
+                  <Text style={styles.inviteNegText}>Decline</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.invitePosButton}
                   onPress={() => {
                     this.props.acceptInvite(
                       this.props.uid,
@@ -106,17 +117,8 @@ class Order extends React.Component {
                       this.props.payType
                     )
                   }}>
-                </Button>
-                <Button
-                  color={Colors.cardNegaButton}
-                  title='Decline'
-                  onPress={() => {
-                    this.props.declineInvite(
-                      this.props.uid,
-                      this.props.sessionId,
-                    )
-                  }}>
-                </Button>
+                  <Text style={styles.invitePosText}>Accept Free Meal</Text>
+                </TouchableOpacity>
               </View>
             </View>
           </View>  
@@ -133,21 +135,19 @@ class Order extends React.Component {
               <Text style={styles.tabbedText}>
                 User # {this.props.host || 'Host'} has invited you to order food from {this.props.restaurant || 'some restaurant'}!
               </Text>
-              <View style={styles.horizontalView}>
-                <Button
-                  color={Colors.cardAffirmButton}
-                  title='Accept Self'
+              <View style={styles.inviteButtons}>
+                <TouchableOpacity
+                  style={styles.inviteNegButton}
                   onPress={() => {
-                    this.props.acceptInvite(
+                    this.props.declineInvite(
                       this.props.uid,
-                      this.props.sessionId,
-                      PayTypes.self
+                      this.props.sessionId
                     )
                   }}>
-                </Button>
-                <Button
-                  color={Colors.cardAffirmButton}
-                  title='Accept Share'
+                  <Text style={styles.inviteNegText}>Decline</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.invitePosButton}
                   onPress={() => {
                     this.props.acceptInvite(
                       this.props.uid,
@@ -155,17 +155,19 @@ class Order extends React.Component {
                       PayTypes.share
                     )
                   }}>
-                </Button>
-                <Button
-                  color={Colors.cardNegaButton}
-                  title='Decline'
+                  <Text style={styles.invitePosText}>Accept Share</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.invitePosButton}
                   onPress={() => {
-                    this.props.declineInvite(
+                    this.props.acceptInvite(
                       this.props.uid,
-                      this.props.sessionId
+                      this.props.sessionId,
+                      PayTypes.self
                     )
                   }}>
-                </Button>
+                  <Text style={styles.invitePosText}>Accept Self</Text>
+                </TouchableOpacity>
               </View>
             </View>
           </View>  
@@ -328,5 +330,38 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     margin: 3,
     padding: 5,
+  },
+
+  inviteButtons: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+  },
+
+  invitePosButton : {
+    alignItems: 'center',
+    backgroundColor: Colors.button,
+    borderRadius: 5,
+    marginHorizontal: 10,
+    marginVertical: 10,
+    padding: 10,
+  },
+
+  invitePosText: {
+    color: "#ffffff",
+    fontSize: 15,
+  },
+
+  inviteNegButton: {
+    alignItems: 'center',
+    borderRadius: 5,
+    color: Colors.button,
+    marginHorizontal: 10,
+    marginVertical: 10,
+    padding: 10,
+  },
+
+  inviteNegText: {
+    color: Colors.button,
+    fontSize: 15,
   },
 });

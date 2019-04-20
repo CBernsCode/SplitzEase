@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, FlatList, StyleSheet, Text, View } from 'react-native';
+import { Alert, FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Constants } from 'expo';
 import Colors from '../constants/Colors'
 import Layout from '../constants/Layout'
@@ -82,8 +82,14 @@ class Check extends React.Component {
       chkActions.payCheck(uid, id)
       this.setState({ isPaid : true });
     } else {
-      // console.log("can't pay");
-      // console.log(balance);
+      Alert.alert(
+        'Check Not Paid',
+        'Please make sure you have enough money in your balance.',
+        [
+          { text: 'OK', onPress: () => { } },
+        ],
+        { cancelable: true },
+      );
     }
   }
 
@@ -97,7 +103,14 @@ class Check extends React.Component {
                 <Text style={styles.tabbedText}>Description: {this.props.description || "Some food that was ordered." }</Text>
                 <Text style={styles.tabbedText}>Amount Due:</Text>
                 <Text style={styles.total}>${this.props.cost || "0.00"}</Text>
-                <View style={styles.button}><Button color={Colors.button} onPress={() => this.pay(this.props.cost)} title="Pay"></Button></View>
+                
+                <View style={styles.checkButtons}>
+                  <TouchableOpacity
+                    onPress={() => this.pay(this.props.cost)}
+                    style={styles.checkPosButton}>
+                    <Text style={styles.buttonText}>Pay</Text>
+                  </TouchableOpacity>
+                </View>
             </View>
         </View>
       );
@@ -131,6 +144,11 @@ const styles = StyleSheet.create({
     width: 60,
   },
 
+  buttonText: {
+    color: "#ffffff",
+    fontSize: 15,
+  },
+
   container: {
     flex: 1,
     justifyContent: 'center',
@@ -151,7 +169,6 @@ const styles = StyleSheet.create({
     borderColor: Colors.cardHeader,
     borderWidth: 1,
     margin: 10,
-    paddingBottom: 50,
     overflow: 'hidden',
   },
 
@@ -187,5 +204,28 @@ const styles = StyleSheet.create({
   total: {
     fontSize: 20,
     paddingLeft: 30,
+  },
+
+  checkButtons: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+  },
+
+  checkPosButton : {
+    alignItems: 'center',
+    backgroundColor: Colors.button,
+    borderRadius: 5,
+    marginHorizontal: 10,
+    marginVertical: 10,
+    padding: 10,
+  },
+
+  checkNegButton: {
+    alignItems: 'center',
+    borderRadius: 5,
+    color: Colors.button,
+    marginHorizontal: 10,
+    marginVertical: 10,
+    padding: 10,
   },
 });

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Alert, Button, FlatList, Modal, StyleSheet, Switch, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Alert, FlatList, Modal, StyleSheet, Switch, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
 import { Constants } from 'expo';
 import { changeSessionState, createSession, sendChecks } from '../firebase'
@@ -146,10 +146,6 @@ export default class SessionScreen extends React.Component {
                 placeholder='Restaurant'
                 returnKeyType='next'
               />
-              <View style={styles.switchBar}>
-                <Text style={styles.switchBarLabel}>Pay for guests?</Text>
-                <Switch style={styles.switch} onValueChange={() => this.setPaymentType()} value={this.state.payForGuests} />
-              </View>
               <View style={styles.friendsList}>
                 <Text style={styles.friendsListHeader}>Friends List</Text>
                 <FriendsList
@@ -158,11 +154,21 @@ export default class SessionScreen extends React.Component {
                   {...this.props}
                 />
               </View>
-              <View style={styles.modalButton}>
-                {/* Send Invite Button should actually send an invite in the future */}
-                <Button color={Colors.fabButton} title='Send Invites' onPress={() => this.sendEvent()} />
-                <Button color={Colors.fabButton} title='Cancel' onPress={() => this.resetModalMenu()} />
+              <View style={styles.switchBar}>
+                <Text style={styles.switchBarLabel}>Pay for guests?</Text>
+                <Switch style={styles.switch} onValueChange={() => this.setPaymentType()} value={this.state.payForGuests} />
               </View>
+              <TouchableOpacity
+                onPress={() => this.sendEvent()}
+                style={styles.modalPosButton}>
+                <Text style={styles.buttonText}>Send Event</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                onPress={() => this.resetModalMenu()}
+                style={styles.modalNegButton}>
+                <Text style={styles.modalNegText}>Cancel</Text>
+              </TouchableOpacity>
             </View>
           </View>
         </Modal>
@@ -233,16 +239,20 @@ class Event extends React.Component {
             <Text style={styles.tabbedText}>Payment Type: {this.props.paytype || "Payment"}</Text>
             <Text style={styles.tabbedText}>Guest List:</Text>
             <GuestList inviteList={this.props.inviteList} />
-            <Button
-              color={Colors.cardAffirmButton}
-              title='Done'
-              onPress={() => this.finishEvent(this.props.host, this.props.sessionId, this.props.inviteList, this.props.restaurant, this.props.paytype)}>
-            </Button>
-            <Button
-              color={Colors.cardNegaButton}
-              title='Cancel'
-              onPress={() => this.cancelEvent(this.props.host, this.props.sessionId)}>
-            </Button>
+  
+            <View style={styles.eventButtons}>
+              <TouchableOpacity
+                onPress={() => this.cancelEvent(this.props.host, this.props.sessionId)}
+                style={styles.modalNegButton}>
+                <Text style={styles.modalNegText}>Cancel</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                onPress={() => this.finishEvent(this.props.host, this.props.sessionId, this.props.inviteList, this.props.restaurant, this.props.paytype)}>
+                style={styles.modalPosButton}>
+                <Text style={styles.buttonText}>Done</Text>
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
       );
@@ -269,16 +279,20 @@ class Event extends React.Component {
             <Text style={styles.tabbedText}>Payment Type: {this.props.paytype || "Payment"}</Text>
             <Text style={styles.tabbedText}>Guest List:</Text>
             <GuestList inviteList={this.props.inviteList}/>
-            <Button
-              color={Colors.cardAffirmButton}
-              title='Send Invites'
-              onPress={() => this.props.inviteActions.MOCK_inviteAccept(this.props.host, this.props.sessionId)}>
-            </Button>
-            <Button
-              color={Colors.cardNegaButton}
-              title='Cancel'
-              onPress={() => this.cancelEvent(this.props.host, this.props.sessionId)}>
-            </Button>
+  
+            <View style={styles.eventButtons}>
+              <TouchableOpacity
+                onPress={() => this.cancelEvent(this.props.host, this.props.sessionId)}
+                style={styles.modalNegButton}>
+                <Text style={styles.modalNegText}>Cancel</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                onPress={() => this.props.inviteActions.MOCK_inviteAccept(this.props.host, this.props.sessionId)}
+                style={styles.modalPosButton}>
+                <Text style={styles.buttonText}>Send Invites</Text>
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
       );
@@ -362,9 +376,32 @@ const styles = StyleSheet.create({
     padding: 10,
   },
 
+  modalNegButton: {
+    alignItems: 'center',
+    borderRadius: 5,
+    color: Colors.button,
+    marginHorizontal: 10,
+    marginVertical: 10,
+    padding: 10,
+  },
+
+  modalNegText: {
+    color: Colors.button,
+    fontSize: 15,
+  },
+
+  modalPosButton: {
+    alignItems: 'center',
+    backgroundColor: Colors.button,
+    borderRadius: 5,
+    marginHorizontal: 10,
+    marginVertical: 10,
+    padding: 10,
+  },
+
   buttonText: {
     color: "#ffffff",
-    fontSize: 20,
+    fontSize: 15,
   },
 
   fab: {
@@ -431,18 +468,10 @@ const styles = StyleSheet.create({
     margin: 10,
   },
 
-  modalButton: {
-    bottom: 10,
-    justifyContent: 'center',
-    marginBottom: 5,
-    position: 'absolute',
-    width: 300,
-  },
-
   modalInner: {
     backgroundColor: Colors.background,
     borderRadius: 20,
-    height: 400,
+    height: Layout.window.height - 200,
     padding: 20,
     width: 300,
   },
@@ -501,6 +530,29 @@ const styles = StyleSheet.create({
     margin: 10,
     paddingBottom: 10,
     overflow: 'hidden',
+  },
+
+  eventButtons: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+  },
+
+  eventPosButton : {
+    alignItems: 'center',
+    backgroundColor: Colors.button,
+    borderRadius: 5,
+    marginHorizontal: 10,
+    marginVertical: 10,
+    padding: 10,
+  },
+
+  eventNegButton: {
+    alignItems: 'center',
+    borderRadius: 5,
+    color: Colors.button,
+    marginHorizontal: 10,
+    marginVertical: 10,
+    padding: 10,
   },
 
   eventHeader: {
