@@ -14,7 +14,7 @@ sendInvites = (invitation, guestList) => {
   }
 }
 
-acceptInvite = (uid, inviteId, payType = PayTypes.share) => {
+acceptInvite = (uid, inviteId, paytype = PayTypes.share) => {
   return (dispatch) => {
     if (!uid || !inviteId) return
     invites.doc(uid).collection('invites').doc(inviteId).get()
@@ -23,7 +23,7 @@ acceptInvite = (uid, inviteId, payType = PayTypes.share) => {
         if (!!payload) {
           let newInvite = {
             ...payload,
-            payType,
+            paytype,
             uid,
             id: inviteId,
             status: InviteStatus.accepted

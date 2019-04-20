@@ -76,8 +76,6 @@ export default class SessionScreen extends React.Component {
     const { account, sessionActions } = this.props
     if (!!this.state.restaurant && !!this.state.guestList[0]) {
       sessionId = sessionActions.createSession(account.user.uid, this.state.guestList, this.state.restaurant, this.state.paymentType);
-      // changeSessionState(account.user.uid, sessionId, SessionStatuses.pending);
-      // !!account && !account.user && SessionActions.loadSessions(account.user.uid);
       this.resetModalMenu();
       this.setState({ modalVisible: !this.state.modalVisible });
     } else {
@@ -194,6 +192,7 @@ class EventList extends React.Component {
             <Event
               index={index}
               {...item}
+              {...this.props}
             />
           }
         />
@@ -222,21 +221,21 @@ class Event extends React.Component {
     changeSessionState(hostId, sessionId, SessionStatuses.done);
   }
 
-  render() {
-    if (this.props.status == SessionStatuses.pending) {
+  render () {
+    if(this.props.status == SessionStatuses.pending) {
       return (
         <View style={styles.eventWrapper}>
           <View style={styles.event}>
             <Text style={styles.eventHeader}>Event ID: {this.props.sessionId || "000000000"}</Text>
             <Text style={styles.tabbedText}>Restaurant: {this.props.restaurant || "Some Restaurant"}</Text>
             <Text style={styles.tabbedText}>Status: {this.props.status || "Some Status"}</Text>
-            <Text style={styles.tabbedText}>Payment Type: {this.props.payType || "Payment"}</Text>
+            <Text style={styles.tabbedText}>Payment Type: {this.props.paytype || "Payment"}</Text>
             <Text style={styles.tabbedText}>Guest List:</Text>
             <GuestList inviteList={this.props.inviteList} />
             <Button
               color={Colors.cardAffirmButton}
               title='Done'
-              onPress={() => this.finishEvent(this.props.host, this.props.sessionId, this.props.inviteList, this.props.restaurant, this.props.payType)}>
+              onPress={() => this.finishEvent(this.props.host, this.props.sessionId, this.props.inviteList, this.props.restaurant, this.props.paytype)}>
             </Button>
             <Button
               color={Colors.cardNegaButton}
@@ -253,9 +252,32 @@ class Event extends React.Component {
             <Text style={styles.eventHeader}>Event ID: {this.props.sessionId || "000000000"}</Text>
             <Text style={styles.tabbedText}>Restaurant: {this.props.restaurant || "Some Restaurant"}</Text>
             <Text style={styles.tabbedText}>Status: {this.props.status || "Some Status"}</Text>
-            <Text style={styles.tabbedText}>Payment Type: {this.props.payType || "Payment"}</Text>
+            <Text style={styles.tabbedText}>Payment Type: {this.props.paytype || "Payment"}</Text>
             <Text style={styles.tabbedText}>Guest List:</Text>
             <GuestList inviteList={this.props.inviteList} />
+          </View>
+        </View>
+      );
+    } else if(this.props.status == SessionStatuses.started) {
+      return (
+        <View style={styles.eventWrapper}>
+          <View style={styles.event}>
+            <Text style={styles.eventHeader}>Event ID: {this.props.sessionId || "000000000"}</Text>
+            <Text style={styles.tabbedText}>Restaurant: {this.props.restaurant || "Some Restaurant"}</Text>
+            <Text style={styles.tabbedText}>Status: {this.props.status || "Some Status"}</Text>
+            <Text style={styles.tabbedText}>Payment Type: {this.props.paytype || "Payment"}</Text>
+            <Text style={styles.tabbedText}>Guest List:</Text>
+            <GuestList inviteList={this.props.inviteList}/>
+            <Button
+              color={Colors.cardAffirmButton}
+              title='Send Invites'
+              onPress={() => this.props.inviteActions.MOCK_inviteAccept(this.props.host, this.props.sessionId)}>
+            </Button>
+            <Button
+              color={Colors.cardNegaButton}
+              title='Cancel'
+              onPress={() => this.cancelEvent(this.props.host, this.props.sessionId)}>
+            </Button>
           </View>
         </View>
       );
