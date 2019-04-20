@@ -113,7 +113,7 @@ const styles = StyleSheet.create({
     bottom: 10,
     color: Colors.secondaryColor,
     fontSize: 15,
-    height: 35,
+    height: 30,
     padding: 5,
     textAlign: 'center',
     width: Layout.window.width,

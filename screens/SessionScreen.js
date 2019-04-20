@@ -71,7 +71,7 @@ export default class SessionScreen extends React.Component {
     });
   }
 
-  sendInvites = () => {
+  sendEvent = () => {
     // only do this when all fields are filled in
     const { account, sessionActions } = this.props
     if (!!this.state.restaurant && !!this.state.guestList[0]) {
@@ -159,7 +159,7 @@ export default class SessionScreen extends React.Component {
               </View>
               <View style={styles.modalButton}>
                 {/* Send Invite Button should actually send an invite in the future */}
-                <Button color={Colors.fabButton} title='Send Invites' onPress={() => this.sendInvites()} />
+                <Button color={Colors.fabButton} title='Send Invites' onPress={() => this.sendEvent()} />
                 <Button color={Colors.fabButton} title='Cancel' onPress={() => this.resetModalMenu()} />
               </View>
             </View>
@@ -180,7 +180,7 @@ class Body extends React.PureComponent {
 }
 
 class EventList extends React.Component {
-
+  
   render() {
     const { account, sessionActions } = this.props;
     if (!!this.props.session.arr[0]) {
