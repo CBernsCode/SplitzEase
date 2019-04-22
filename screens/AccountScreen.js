@@ -1,11 +1,7 @@
 import React from 'react';
-import { Alert, Button, FlatList, Image, Modal, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Alert, FlatList, Image, Modal, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import Colors from '../constants/Colors';
-
 import { Constants } from 'expo';
-
-import { createSession } from '../firebase'
-// import console = require('console');
 
 
 export default class AccountScreen extends React.Component {
@@ -25,7 +21,7 @@ export default class AccountScreen extends React.Component {
   componentDidMount () {
     const { account } = this.props;
 
-    !!account && !!account.user && this.props.frndActions.getFriends(account.user.uid);
+    !!account && this.props.frndActions.getFriends(account.user.uid);
   }
 
   setModalVisible = (visible) => {
@@ -102,7 +98,11 @@ export default class AccountScreen extends React.Component {
           <Text style={styles.friendsListHeader}>Friends List</Text>
           <FriendsList {...this.props}/>
         </View>
-        <Button color={Colors.button} title="Add Friend" onPress={() => this.setModalVisible(!this.state.modalVisible)} />
+        <TouchableOpacity
+          style={styles.customButton}
+          onPress={() => this.setModalVisible(!this.state.modalVisible)}>
+          <Text style={styles.buttonText}>Add Friend</Text>
+        </TouchableOpacity>
         <Modal
           animationType="fade"
           transparent={true}
@@ -121,10 +121,17 @@ export default class AccountScreen extends React.Component {
                 placeholder='User ID'
                 returnKeyType='send'
               />
-              <View style={styles.modalButton}>
-                <Button color={Colors.fabButton} title='Add Friend' onPress={() => this.addFriend(this.state.friend)} />
-                <Button color={Colors.fabButton} title='Cancel' onPress={() => this.setModalVisible(!this.state.modalVisible)} />
-              </View>
+              <TouchableOpacity
+                onPress={() => this.addFriend(this.state.friend)}
+                style={styles.modalPosButton}>
+                <Text style={styles.buttonText}>Add Friend</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                onPress={() => this.setModalVisible(!this.state.modalVisible)}
+                style={styles.modalNegButton}>
+                <Text style={styles.modalNegText}>Cancel</Text>
+              </TouchableOpacity>
             </View>
           </View>
         </Modal>
@@ -172,9 +179,19 @@ class Friend extends React.Component {
 }
 
 const styles = StyleSheet.create({
-  buttons: {
+  customButton: {
+    alignItems: 'center',
+    backgroundColor: Colors.button,
+    borderRadius: 5,
     bottom: 0,
-    margin: 10,
+    marginHorizontal: 10,
+    marginVertical: 10,
+    padding: 10,
+  },
+
+  buttonText: {
+    color: "#ffffff",
+    fontSize: 15,
   },
 
   container: {
@@ -202,7 +219,7 @@ const styles = StyleSheet.create({
 
   friendsList: {
     backgroundColor: Colors.cardBackground,
-    borderColor: Colors.cardAffirmButton,
+    borderColor: Colors.secondaryDarkColor,
     borderRadius: 20,
     borderStyle: 'solid',
     borderWidth: 1,
@@ -236,11 +253,27 @@ const styles = StyleSheet.create({
     paddingLeft: 10,
   },
 
-  modalButton: {
-    bottom: 20,
-    justifyContent: 'center',
-    position: 'absolute',
-    width: 300,
+  modalNegButton: {
+    alignItems: 'center',
+    borderRadius: 5,
+    color: Colors.button,
+    marginHorizontal: 10,
+    marginVertical: 10,
+    padding: 10,
+  },
+
+  modalNegText: {
+    color: Colors.button,
+    fontSize: 15,
+  },
+
+  modalPosButton: {
+    alignItems: 'center',
+    backgroundColor: Colors.button,
+    borderRadius: 5,
+    marginHorizontal: 10,
+    marginVertical: 10,
+    padding: 10,
   },
 
   modalInner: {

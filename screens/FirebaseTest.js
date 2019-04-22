@@ -78,7 +78,7 @@ const CheckTests = ({ chkActions, checks }) => {
           chkActions.createCheck(uid, {
             ...defaults.defaultCheck,
             host: 'qgay3df85tIo7aSO9qmg',
-            price: parseFloat(12.00),
+            cost: parseFloat(12.00),
             rest: 'Applebees',
             payType: PayTypes.self,
           })
@@ -127,7 +127,7 @@ const FriendTests = ({frndActions, friends}) => {
 
 const InviteTests = ({inviteActions, invites}) => {
   let uid = 'test-1a'
-  let inviteId = "C6GnveM0NeAQEkNHmPlS"
+  let inviteId = "Usq7jbHglqB2p5Icb82Q"
 
   return (
     <View style={styles.reducer}>
@@ -156,12 +156,20 @@ const InviteTests = ({inviteActions, invites}) => {
           inviteActions.getInvites(uid)
         }}>
       </Button>
+      <Button
+        color={Colors.cardAffirmButton}
+        title='Accept Invites'
+        onPress={() => {
+          inviteActions.MOCK_inviteAccept("LHtoZbLQcIgjHfnvpaVATU5j2AF3", "zOm4DnbkFRiR4Gda4uhz")
+        }}>
+      </Button>
       
     </View>
   )
 }
 
-const EventTests = () => {
+const EventTests = ({sessionActions}) => {
+
   const inviteList = [
     {paytype: PayTypes.share, uid: "LHtoZbLQcIgjHfnvpaVATU5j2AF3"},
     {paytype: PayTypes.self, uid: "09irxlCDcPbJfFMkRJa3L6JJHqh1"},
@@ -189,9 +197,16 @@ const EventTests = () => {
       </Button>
       <Button
         color={Colors.cardAffirmButton}
-        title='Send Check'
+        title='Send Checks'
         onPress={() => {
           sendChecks(bg.makeCheck('something', false))
+        }}>
+      </Button>
+      <Button
+        color={Colors.cardAffirmButton}
+        title='Get All Sessions'
+        onPress={() => {
+          sessionActions.loadSessions('LHtoZbLQcIgjHfnvpaVATU5j2AF3')
         }}>
       </Button>
     </View>

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Alert, Button, Image, KeyboardAvoidingView, Platform, StyleSheet, Switch, Text, TextInput, View } from 'react-native';
+import { Alert, Image, KeyboardAvoidingView, StyleSheet, Switch, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { Constants } from 'expo';
 import Colors from '../constants/Colors';
 import Layout from '../constants/Layout';
@@ -119,9 +119,11 @@ class LoginForm extends React.Component {
           secureTextEntry={true}
           textContentType='password'
         />
-        <View style={styles.buttons}>
-          <Button color={Colors.button} mode='outlined' title='Login' onPress={() => this.login(this.state.email, this.state.password)}></Button>
-        </View>
+        <TouchableOpacity
+          style={styles.customButton}
+          onPress={() => this.login(this.state.email, this.state.password)}>
+          <Text style={styles.buttonText}>Login</Text>
+        </TouchableOpacity>
       </View>
     );
   }
@@ -208,18 +210,29 @@ class RegisterForm extends React.Component {
           secureTextEntry={true}
           textContentType='password'
         />
-        <View style={styles.buttons}>
-          <Button color={Colors.button} mode='outlined' title='Register' onPress={() => this.register(this.state.username, this.state.password, this.state.email, this.state.phone)}></Button>
-        </View>
+        <TouchableOpacity
+          style={styles.customButton}
+          onPress={() => this.register(this.state.username, this.state.password, this.state.email, this.state.phone)}>
+          <Text style={styles.buttonText}>Register</Text>
+        </TouchableOpacity>
       </View>
     );
   }
 }
 
 const styles = StyleSheet.create({
-  buttons: {
-    //bottom: 0,
-    // margin: 10,
+  customButton: {
+    alignItems: 'center',
+    backgroundColor: Colors.button,
+    borderRadius: 5,
+    marginHorizontal: 100,
+    marginVertical: 10,
+    padding: 10,
+  },
+
+  buttonText: {
+    color: "#ffffff",
+    fontSize: 15,
   },
 
   container: {
@@ -269,8 +282,4 @@ const styles = StyleSheet.create({
   switchBarLabel: {
     paddingRight: 5,
   },
-
-  switch: {
-    
-  }
 });

@@ -1,12 +1,13 @@
+import SessionScreen from '../screens/SessionScreen';
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 
-import SessionScreen from '../screens/SessionScreen';
 import {
   AcctActions,
   CheckActions,
   FriendActions,
   InviteActions,
+  SessionActions,
 } from '../actions/'
 
 
@@ -15,6 +16,7 @@ const mapStateToProps = store => ({
   account: store.acctReducer,
   friends: store.frndReducer,
   invites: store.inviteReducer,
+  session: store.sessionReducer,
 })
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
@@ -22,6 +24,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
   chkActions: bindActionCreators(CheckActions, dispatch),
   frndActions: bindActionCreators(FriendActions, dispatch),
   inviteActions: bindActionCreators(InviteActions, dispatch),
+  sessionActions: bindActionCreators(SessionActions, dispatch)
 })
 
 export default connect(

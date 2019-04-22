@@ -1,9 +1,9 @@
 import React from 'react';
-import { Button, ButtonGroup, FlatList, Modal, StyleSheet, Switch, Text, TextInput, View } from 'react-native';
+import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 import { Constants } from 'expo';
-import { invites, sessions } from '../firebase.js'
 import Colors from '../constants/Colors';
+import Layout from '../constants/Layout';
 import { InviteStatus, PayTypes } from '../constants/Enums';
 
 export default class OrderScreen extends React.Component {
@@ -11,6 +11,11 @@ export default class OrderScreen extends React.Component {
     title: 'Invites',
     header: null,
   };
+
+  componentDidMount = () => {
+    const { account, inviteActions } = this.props
+    !!account && inviteActions.getInvites(account.user.uid);
+  }
 
   render() {
     return (
@@ -21,50 +26,21 @@ export default class OrderScreen extends React.Component {
   }
 }
 
-// const invite_data = [
-//   {
-//     key: '0000000001',
-//     host: 'user_id',
-//     restaurant: 'Applebee\'s',
-//     accepted: 'true',
-//     slot: '0',
-//     sessionId: 'aaabbb123',
-//     ts: "041519104900",
-//     payType: PayTypes.unknown,
-
-//   },
-//   {
-//     key: '0000000002',
-//     payType: PayTypes.single,
-//   },
-//   {
-//     key: '0000000003',
-//     payType: PayTypes.unknown,
-//   },
-// ];
-
 class Body extends React.PureComponent {
-  componentDidMount () {
-    const { account } = this.props;
-    !!account && !!account.user && this.props.inviteActions.getInvites(account.user.uid.toString());
-  }
-
-  acceptInvite = (uid, sessionId, payType) => {
-    this.props.inviteActions.acceptInvite(uid, sessionId, payType);
-  }
-
-  declineInvite = (uid, sessionId) => {
-    this.props.inviteActions.declineInvite(uid, sessionId);
-  }
-
   render() {
+    const { account, inviteActions } = this.props;
+
     if(!!this.props.invites.arr) {
       return (
         <FlatList
           data={this.props.invites.arr}
           keyExtractor={(item, index) => item.id.toString()}
-          renderItem={({ item }) => {
-            return <Order acceptInvite={this.acceptInvite.bind(this)} declineInvite={this.declineInvite.bind(this)} uid={this.props.account.user.uid} {...item}/>
+          renderItem={({ item, index }) => {
+            return <Order
+              uid={this.props.account.user.uid}
+              index={index}
+              {...item}
+              {...this.props}/>
           }}
           style={styles.body}
         />
@@ -72,8 +48,11 @@ class Body extends React.PureComponent {
     } else {
       return (
         <View style={styles.body}>
-          <Text>{this.props.account.balance}</Text>
-          <Text>Loading...</Text>
+          <Text style={styles.noInvites}>You currently have no invites.</Text>
+          <TouchableOpacity
+            onPress={() => { !account && inviteActions.getInvites(account.user.uid.toString())}} >
+            <Text style={styles.refreshButton}>Push to refresh.</Text>
+          </TouchableOpacity>
         </View>
       );
     }
@@ -81,41 +60,59 @@ class Body extends React.PureComponent {
 }
 
 class Order extends React.Component {
+  state = {
+    shouldDisplay: true,
+  }
+
+  acceptInvite = (uid, sessionId, payType) => {
+    console.log(this.props);
+    const { inviteActions } = this.props;
+    inviteActions.acceptInvite(uid, sessionId, payType);
+    this.setState({shouldDisplay: true});
+  }
+
+  declineInvite = (uid, sessionId) => {
+    console.log(this.props);
+    const { inviteActions } = this.props;
+    inviteActions.declineInvite(uid, sessionId);
+    this.setState({shouldDisplay: false});
+  }
+
   render() {
-    if(this.props.status == InviteStatus.pending) {
+    if(this.props.status == InviteStatus.pending && this.state.shouldDisplay) {
       // host is paying
       if(this.props.payType == PayTypes.single) {
         return (
           <View style={styles.orderWrapper}>
             <View style={styles.order} key={this.props.id}>
               <Text style={styles.orderHeader}>
-                Invite #: {this.props.id || '0000000000'}
+                Invite #: {this.props.index+1 || '1'}
               </Text>
               <Text style={styles.tabbedText}>
                 User # {this.props.host || 'Host'} has invited you to order food from {this.props.restaurant || 'some restaurant'}!
               </Text>
-              <View style={styles.horizontalView}>
-                <Button
-                  color={Colors.cardAffirmButton}
-                  title='Accept Free Meal'
+              <View style={styles.inviteButtons}>
+                <TouchableOpacity
+                  style={styles.inviteNegButton}
                   onPress={() => {
-                    this.props.acceptInvite(
+                    this.declineInvite(
+                      this.props.uid,
+                      this.props.id
+                    )
+                  }}>
+                  <Text style={styles.inviteNegText}>Decline</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.invitePosButton}
+                  onPress={() => {
+                    this.acceptInvite(
                       this.props.uid,
                       this.props.id,
                       this.props.payType
                     )
                   }}>
-                </Button>
-                <Button
-                  color={Colors.cardNegaButton}
-                  title='Decline'
-                  onPress={() => {
-                    this.props.declineInvite(
-                      this.props.uid,
-                      this.props.id,
-                    )
-                  }}>
-                </Button>
+                  <Text style={styles.invitePosText}>Accept Free Meal</Text>
+                </TouchableOpacity>
               </View>
             </View>
           </View>  
@@ -127,54 +124,61 @@ class Order extends React.Component {
           <View style={styles.orderWrapper}>
             <View style={styles.order} key={this.props.id}>
               <Text style={styles.orderHeader}>
-                Invite #: {this.props.id || '0000000000'}
+                Invite #: {this.props.index+1 || '1'}
               </Text>
               <Text style={styles.tabbedText}>
                 User # {this.props.host || 'Host'} has invited you to order food from {this.props.restaurant || 'some restaurant'}!
               </Text>
-              <View style={styles.horizontalView}>
-                <Button
-                  color={Colors.cardAffirmButton}
-                  title='Accept Self'
+              <View style={styles.inviteButtons}>
+                <TouchableOpacity
+                  style={styles.inviteNegButton}
                   onPress={() => {
-                    this.props.acceptInvite(
+                    this.declineInvite(
                       this.props.uid,
-                      this.props.id,
-                      PayTypes.self
+                      this.props.id
                     )
                   }}>
-                </Button>
-                <Button
-                  color={Colors.cardAffirmButton}
-                  title='Accept Share'
+                  <Text style={styles.inviteNegText}>Decline</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.invitePosButton}
                   onPress={() => {
-                    this.props.acceptInvite(
+                    this.acceptInvite(
                       this.props.uid,
                       this.props.id,
                       PayTypes.share
                     )
                   }}>
-                </Button>
-                <Button
-                  color={Colors.cardNegaButton}
-                  title='Decline'
+                  <Text style={styles.invitePosText}>Accept Share</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.invitePosButton}
                   onPress={() => {
-                    this.props.declineInvite(
+                    this.acceptInvite(
                       this.props.uid,
-                      this.props.id
+                      this.props.id,
+                      PayTypes.self
                     )
                   }}>
-                </Button>
+                  <Text style={styles.invitePosText}>Accept Self</Text>
+                </TouchableOpacity>
               </View>
             </View>
           </View>  
         );
       }
     } else {
-      return(
-        <View style={styles.body}>
-          <Text>Loading...</Text>
-        </View>
+      return (
+        <View style={styles.orderWrapper}>
+          <View style={styles.order} key={this.props.id}>
+            <Text style={styles.oldOrderHeader}>
+              Invite #: {this.props.index+1 || '1'} [Expired]
+            </Text>
+            <Text style={styles.tabbedText}>
+              User # {this.props.host || 'Host'} invited you to order food at {new Date(Number(this.props.sent)).toLocaleString()}.
+            </Text>
+          </View>
+        </View>  
       );
     }
   }
@@ -271,6 +275,12 @@ const styles = StyleSheet.create({
     fontSize: 25,
   },
 
+  noInvites: {
+    padding: 10,
+    textAlign: 'center',
+    width: Layout.window.width,
+  },
+
   order: {
     backgroundColor: Colors.cardBackground,
     borderRadius: 20,
@@ -283,6 +293,12 @@ const styles = StyleSheet.create({
 
   orderHeader: {
     backgroundColor: Colors.cardHeader,
+    color: Colors.cardHeaderText,
+    padding: 10,
+  },
+
+  oldOrderHeader: {
+    backgroundColor: '#999999',
     color: Colors.cardHeaderText,
     padding: 10,
   },
@@ -308,5 +324,38 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     margin: 3,
     padding: 5,
+  },
+
+  inviteButtons: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+  },
+
+  invitePosButton : {
+    alignItems: 'center',
+    backgroundColor: Colors.button,
+    borderRadius: 5,
+    marginHorizontal: 10,
+    marginVertical: 10,
+    padding: 10,
+  },
+
+  invitePosText: {
+    color: "#ffffff",
+    fontSize: 15,
+  },
+
+  inviteNegButton: {
+    alignItems: 'center',
+    borderRadius: 5,
+    color: Colors.button,
+    marginHorizontal: 10,
+    marginVertical: 10,
+    padding: 10,
+  },
+
+  inviteNegText: {
+    color: Colors.button,
+    fontSize: 15,
   },
 });
