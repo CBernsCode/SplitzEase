@@ -221,7 +221,6 @@ class Event extends React.Component {
     shouldDisplay: true,
   }
 
-
   cancelEvent = (hostId, sessionId) => {
     const { sessionActions } = this.props;
 
@@ -248,7 +247,6 @@ class Event extends React.Component {
 
   render () {
     if(this.props.status == SessionStatuses.pending && this.state.shouldDisplay) {
-      console.log(this.props);
       return (
         <View style={styles.eventWrapper}>
           <View style={styles.event}>

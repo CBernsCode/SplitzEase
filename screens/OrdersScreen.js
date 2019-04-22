@@ -12,6 +12,11 @@ export default class OrderScreen extends React.Component {
     header: null,
   };
 
+  componentDidMount = () => {
+    const { account, inviteActions } = this.props
+    !!account && inviteActions.getInvites(account.user.uid);
+  }
+
   render() {
     return (
       <View style={styles.container}>
@@ -21,54 +26,17 @@ export default class OrderScreen extends React.Component {
   }
 }
 
-// const invite_data = [
-//   {
-//     key: '0000000001',
-//     host: 'user_id',
-//     restaurant: 'Applebee\'s',
-//     accepted: 'true',
-//     slot: '0',
-//     sessionId: 'aaabbb123',
-//     ts: "041519104900",
-//     payType: PayTypes.unknown,
-
-//   },
-//   {
-//     key: '0000000002',
-//     payType: PayTypes.single,
-//   },
-//   {
-//     key: '0000000003',
-//     payType: PayTypes.unknown,
-//   },
-// ];
-
 class Body extends React.PureComponent {
-  componentDidMount () {
-    const { account } = this.props;
-    !!account && !!account.user && this.props.inviteActions.getInvites(account.user.uid.toString());
-  }
-
-  acceptInvite = (uid, sessionId, payType) => {
-    const { account } = this.props;
-    this.props.inviteActions.acceptInvite(uid, sessionId, payType);
-    !!account && !!account.user && this.props.inviteActions.getInvites(account.user.uid.toString());
-  }
-
-  declineInvite = (uid, sessionId) => {
-    const { account } = this.props;
-    this.props.inviteActions.declineInvite(uid, sessionId);
-    !!account && !!account.user && this.props.inviteActions.getInvites(account.user.uid.toString());
-  }
-
   render() {
+    const { account, inviteActions } = this.props;
+
     if(!!this.props.invites.arr) {
       return (
         <FlatList
           data={this.props.invites.arr}
           keyExtractor={(item, index) => item.id.toString()}
           renderItem={({ item }) => {
-            return <Order acceptInvite={this.acceptInvite.bind(this)} declineInvite={this.declineInvite.bind(this)} uid={this.props.account.user.uid} {...item}/>
+            return <Order uid={this.props.account.user.uid} {...item} {...this.props}/>
           }}
           style={styles.body}
         />
@@ -77,6 +45,10 @@ class Body extends React.PureComponent {
       return (
         <View style={styles.body}>
           <Text style={styles.noInvites}>You currently have no invites.</Text>
+          <TouchableOpacity
+            onPress={() => { !account && inviteActions.getInvites(account.user.uid.toString())}} >
+            <Text style={styles.refreshButton}>Push to refresh.</Text>
+          </TouchableOpacity>
         </View>
       );
     }
@@ -84,8 +56,26 @@ class Body extends React.PureComponent {
 }
 
 class Order extends React.Component {
+  state = {
+    shouldDisplay: true,
+  }
+
+  acceptInvite = (uid, sessionId, payType) => {
+    console.log(this.props);
+    const { inviteActions } = this.props;
+    inviteActions.acceptInvite(uid, sessionId, payType);
+    this.setState({shouldDisplay: true});
+  }
+
+  declineInvite = (uid, sessionId) => {
+    console.log(this.props);
+    const { inviteActions } = this.props;
+    inviteActions.declineInvite(uid, sessionId);
+    this.setState({shouldDisplay: false});
+  }
+
   render() {
-    if(this.props.status == InviteStatus.pending) {
+    if(this.props.status == InviteStatus.pending && this.state.shouldDisplay) {
       // host is paying
       if(this.props.payType == PayTypes.single) {
         return (
@@ -101,9 +91,9 @@ class Order extends React.Component {
                 <TouchableOpacity
                   style={styles.inviteNegButton}
                   onPress={() => {
-                    this.props.declineInvite(
+                    this.declineInvite(
                       this.props.uid,
-                      this.props.sessionId
+                      this.props.id
                     )
                   }}>
                   <Text style={styles.inviteNegText}>Decline</Text>
@@ -111,9 +101,9 @@ class Order extends React.Component {
                 <TouchableOpacity
                   style={styles.invitePosButton}
                   onPress={() => {
-                    this.props.acceptInvite(
+                    this.acceptInvite(
                       this.props.uid,
-                      this.props.sessionId,
+                      this.props.id,
                       this.props.payType
                     )
                   }}>
@@ -139,9 +129,9 @@ class Order extends React.Component {
                 <TouchableOpacity
                   style={styles.inviteNegButton}
                   onPress={() => {
-                    this.props.declineInvite(
+                    this.declineInvite(
                       this.props.uid,
-                      this.props.sessionId
+                      this.props.id
                     )
                   }}>
                   <Text style={styles.inviteNegText}>Decline</Text>
@@ -149,9 +139,9 @@ class Order extends React.Component {
                 <TouchableOpacity
                   style={styles.invitePosButton}
                   onPress={() => {
-                    this.props.acceptInvite(
+                    this.acceptInvite(
                       this.props.uid,
-                      this.props.sessionId,
+                      this.props.id,
                       PayTypes.share
                     )
                   }}>
@@ -160,9 +150,9 @@ class Order extends React.Component {
                 <TouchableOpacity
                   style={styles.invitePosButton}
                   onPress={() => {
-                    this.props.acceptInvite(
+                    this.acceptInvite(
                       this.props.uid,
-                      this.props.sessionId,
+                      this.props.id,
                       PayTypes.self
                     )
                   }}>
@@ -181,7 +171,7 @@ class Order extends React.Component {
               Invite #: {this.props.id || '0000000000'} [Expired]
             </Text>
             <Text style={styles.tabbedText}>
-              User # {this.props.host || 'Host'} invited you to order food at {this.props.sent}.
+              User # {this.props.host || 'Host'} invited you to order food at {new Date(Number(this.props.sent)).toLocaleString()}.
             </Text>
           </View>
         </View>  

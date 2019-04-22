@@ -30,13 +30,12 @@ acceptInvite = (uid, inviteId, paytype = PayTypes.share) => {
           }
           // Update the user's invite and refresh list
           invites.doc(uid).collection('invites').doc(inviteId).set(newInvite)
-          dispatch(getInvites(uid))
-
+          
           // Update the session's invite information
           const sessionRef = sessions.doc(payload.host).collection('sessions').doc(payload.sessionId)
           sessionRef.get().then(doc => {
             let session = doc.data()
-
+            
             // if we have an invitelist 
             if (Array.isArray(session.inviteList)) {
               let newList = []
@@ -45,6 +44,7 @@ acceptInvite = (uid, inviteId, paytype = PayTypes.share) => {
               }).concat(newInvite)
               session.inviteList = newList
               // update the session with the generated invitelist
+              dispatch(getInvites(uid))
               sessionRef.set(session)
                 .catch(err => console.error("Unable to accept invite in Session " + err))
             }
