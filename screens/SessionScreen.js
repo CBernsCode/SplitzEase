@@ -229,12 +229,12 @@ class Event extends React.Component {
     let billGenerator = new BillGenerator(hostId, restaurant, inviteList);
     sendChecks(billGenerator.makeCheck(sessionId, payType));
     changeSessionState(hostId, sessionId, SessionStatuses.done);
-    this.setState({shouldDisplay: false});
+    this.setState({shouldDisplay: true});
   }
 
   sendInvites = (host, sessionId) => {
     this.props.inviteActions.MOCK_inviteAccept(host, sessionId);
-    this.setState({shouldDisplay: false});
+    this.setState({shouldDisplay: true});
   }
 
   render () {
