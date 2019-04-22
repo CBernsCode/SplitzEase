@@ -2,7 +2,7 @@ import React from 'react';
 import { Alert, FlatList, Modal, StyleSheet, Switch, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
 import { Constants } from 'expo';
-import { changeSessionState, createSession, sendChecks } from '../firebase'
+import { sendChecks } from '../firebase'
 import Colors from '../constants/Colors';
 import Layout from '../constants/Layout';
 import { PayTypes, SessionStatuses } from '../constants/Enums'
@@ -206,7 +206,8 @@ class EventList extends React.Component {
       return (
         <View style={styles.body}>
           <Text style={styles.noEvents}>You currently have no sessions.</Text>
-          <TouchableOpacity onPress={() => { !account && sessionActions.loadSessions(account.user.uid) }} >
+          <TouchableOpacity
+            onPress={() => { !account && sessionActions.loadSessions(account.user.uid) }}>
             <Text style={styles.refreshButton}>Push to refresh.</Text>
           </TouchableOpacity>
         </View>
@@ -220,25 +221,34 @@ class Event extends React.Component {
     shouldDisplay: true,
   }
 
+
   cancelEvent = (hostId, sessionId) => {
-    changeSessionState(hostId, sessionId, SessionStatuses.cancelled);
+    const { sessionActions } = this.props;
+
+    sessionActions.changeSessionState(hostId, sessionId, SessionStatuses.cancelled);
     this.setState({shouldDisplay: false});
   }
 
   finishEvent = (hostId, sessionId, inviteList, restaurant, payType) => {
+    const { sessionActions } = this.props;
+
     let billGenerator = new BillGenerator(hostId, restaurant, inviteList);
     sendChecks(billGenerator.makeCheck(sessionId, payType));
-    changeSessionState(hostId, sessionId, SessionStatuses.done);
+    sessionActions.changeSessionState(hostId, sessionId, SessionStatuses.done);
     this.setState({shouldDisplay: true});
   }
 
-  sendInvites = (host, sessionId) => {
-    this.props.inviteActions.MOCK_inviteAccept(host, sessionId);
+  sendInvites = (hostId, sessionId) => {
+    const { sessionActions } = this.props;
+    
+    this.props.inviteActions.MOCK_inviteAccept(hostId, sessionId);
+    sessionActions.changeSessionState(hostId, sessionId, SessionStatuses.pending);
     this.setState({shouldDisplay: true});
   }
 
   render () {
     if(this.props.status == SessionStatuses.pending && this.state.shouldDisplay) {
+      console.log(this.props);
       return (
         <View style={styles.eventWrapper}>
           <View style={styles.event}>
@@ -257,7 +267,7 @@ class Event extends React.Component {
               </TouchableOpacity>
 
               <TouchableOpacity
-                onPress={() => this.finishEvent(this.props.host, this.props.sessionId, this.props.inviteList, this.props.restaurant, this.props.paytype)}>
+                onPress={() => this.finishEvent(this.props.host, this.props.sessionId, this.props.inviteList, this.props.restaurant, this.props.paytype)}
                 style={styles.modalPosButton}>
                 <Text style={styles.buttonText}>Done</Text>
               </TouchableOpacity>
