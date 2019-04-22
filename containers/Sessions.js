@@ -24,7 +24,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
   chkActions: bindActionCreators(CheckActions, dispatch),
   frndActions: bindActionCreators(FriendActions, dispatch),
   inviteActions: bindActionCreators(InviteActions, dispatch),
-  SessionActions: bindActionCreators(SessionActions, dispatch)
+  sessionActions: bindActionCreators(SessionActions, dispatch)
 })
 
 export default connect(

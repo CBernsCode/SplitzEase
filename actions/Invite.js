@@ -14,7 +14,7 @@ sendInvites = (invitation, guestList) => {
   }
 }
 
-acceptInvite = (uid, inviteId, payType = PayTypes.share) => {
+acceptInvite = (uid, inviteId, paytype = PayTypes.share) => {
   return (dispatch) => {
     if (!uid || !inviteId) return
     invites.doc(uid).collection('invites').doc(inviteId).get()
@@ -23,20 +23,19 @@ acceptInvite = (uid, inviteId, payType = PayTypes.share) => {
         if (!!payload) {
           let newInvite = {
             ...payload,
-            payType,
+            paytype,
             uid,
             id: inviteId,
             status: InviteStatus.accepted
           }
           // Update the user's invite and refresh list
           invites.doc(uid).collection('invites').doc(inviteId).set(newInvite)
-          dispatch(getInvites(uid))
-
+          
           // Update the session's invite information
           const sessionRef = sessions.doc(payload.host).collection('sessions').doc(payload.sessionId)
           sessionRef.get().then(doc => {
             let session = doc.data()
-
+            
             // if we have an invitelist 
             if (Array.isArray(session.inviteList)) {
               let newList = []
@@ -45,6 +44,7 @@ acceptInvite = (uid, inviteId, payType = PayTypes.share) => {
               }).concat(newInvite)
               session.inviteList = newList
               // update the session with the generated invitelist
+              dispatch(getInvites(uid))
               sessionRef.set(session)
                 .catch(err => console.error("Unable to accept invite in Session " + err))
             }
@@ -112,7 +112,7 @@ MOCK_inviteAccept = (uid, sessionId) => {
     const sessionRef = sessions.doc(uid).collection('sessions').doc(sessionId)
     sessionRef.get().then(doc => {
       let session = doc.data()
-      console.log( doc.data())
+      // console.log( doc.data())
       if (Array.isArray(session.inviteList)) {
         session.inviteList.map(it => {
           dispatch(acceptInvite(it.guest, it.id))

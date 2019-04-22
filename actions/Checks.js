@@ -21,7 +21,7 @@ getCheck = (uid, id) => {
 // This is for an async function
 payCheck = (uid, id) => {
   return (dispatch) => {
-    console.log(uid, id)
+    // console.log(uid, id)
     if(!uid || !id) return
     const checkRef = checks.doc(uid).collection('checks').doc(id)
     checkRef.delete().then(() => {
@@ -42,7 +42,7 @@ createCheck = (uid, check) => {
     }
     checkRef.set(check).then(() => {
       dispatch(getChecks(uid))
-      console.log("Document written with ID: ", checkRef.id);
+      // console.log("Document written with ID: ", checkRef.id);
     }).catch(err => { console.error("Unable to create a check " + err) })
   }
 }

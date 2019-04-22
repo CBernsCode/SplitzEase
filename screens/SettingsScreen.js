@@ -1,10 +1,7 @@
 import React from 'react';
-import { Button, Dimensions, Image, Platform, ScrollView, StyleSheet, Switch, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Button, StyleSheet, Switch, Text, View } from 'react-native';
 
 import { Constants, WebBrowser } from 'expo';
-import { MonoText } from '../components/StyledText';
-
-import { invites } from '../firebase.js'
 import Colors from '../constants/Colors';
 
 export default class SettingsScreen extends React.Component {

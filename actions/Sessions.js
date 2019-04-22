@@ -37,6 +37,7 @@ createSession = (uid, inviteList, restaurant, paytype = PayTypes.unknown) => {
       lastChanged: Date.now(),
     }).then(() => {
       console.log("Document written with ID: ", seshRef.id);
+      dispatch(loadSessions(uid))
     }).catch(err => console.error("Unable to create a check " + err))
   }
 }
@@ -103,7 +104,21 @@ loadSessions = (uid) => {
   }
 }
 
+changeSessionState = (uid, sessionId, state) => {
+  return dispatch => {
+    const sessionRef = sessions.doc(uid).collection('sessions').doc(sessionId)
+    sessionRef.get().then(doc => {
+      let session = doc.data()
+      session.status = state
+      sessionRef.set(session).then(() => {
+        dispatch(loadSessions(uid));
+      })
+    })
+  }
+}
+
 export default {
+  changeSessionState,
   createSession,
   loadSessions,
   sendChecks,

@@ -13,7 +13,6 @@ import Account from '../containers/Account';
 import Orders from '../containers/Orders';
 import Colors from '../constants/Colors';
 import Sessions from '../containers/Sessions'
-import FirebaseTesting from '../containers/FirebaseTesting'
 
 const AccountStack = createStackNavigator({
   Account: Account,
@@ -99,26 +98,26 @@ CheckStack.navigationOptions = {
   },
 };
 
-const FirebaseStack = createStackNavigator({
-  FirebaseTesting: FirebaseTesting,
-});
+// const FirebaseStack = createStackNavigator({
+//   FirebaseTesting: FirebaseTesting,
+// });
 
-FirebaseStack.navigationOptions = {
-  tabBarLabel: 'Firebase Test',
-  tabBarIcon: ({ focused }) => (
-    <TabBarIcon
-      focused={focused}
-      name={
-        Platform.OS === 'ios'
-          ? 'ios-flame'
-          : 'md-flame'
-      }
-    />
-  ),
-  tabBarOptions: {
-    activeTintColor: Colors.tabBarSelectedBorder,
-  },
-};
+// FirebaseStack.navigationOptions = {
+//   tabBarLabel: 'Firebase Test',
+//   tabBarIcon: ({ focused }) => (
+//     <TabBarIcon
+//       focused={focused}
+//       name={
+//         Platform.OS === 'ios'
+//           ? 'ios-flame'
+//           : 'md-flame'
+//       }
+//     />
+//   ),
+//   tabBarOptions: {
+//     activeTintColor: Colors.tabBarSelectedBorder,
+//   },
+// };
 
 const SessionStack = createStackNavigator({
   Sessions: Sessions,
@@ -148,6 +147,6 @@ export default createBottomTabNavigator(
     SessionStack,
     CheckStack,
     // SettingsStack,
-    FirebaseStack
+    // FirebaseStack
   },
 );
