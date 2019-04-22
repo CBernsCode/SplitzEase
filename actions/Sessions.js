@@ -104,7 +104,21 @@ loadSessions = (uid) => {
   }
 }
 
+changeSessionState = (uid, sessionId, state) => {
+  return dispatch => {
+    const sessionRef = sessions.doc(uid).collection('sessions').doc(sessionId)
+    sessionRef.get().then(doc => {
+      let session = doc.data()
+      session.status = state
+      sessionRef.set(session).then(() => {
+        dispatch(loadSessions(uid));
+      })
+    })
+  }
+}
+
 export default {
+  changeSessionState,
   createSession,
   loadSessions,
   sendChecks,
