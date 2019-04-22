@@ -35,8 +35,12 @@ class Body extends React.PureComponent {
         <FlatList
           data={this.props.invites.arr}
           keyExtractor={(item, index) => item.id.toString()}
-          renderItem={({ item }) => {
-            return <Order uid={this.props.account.user.uid} {...item} {...this.props}/>
+          renderItem={({ item, index }) => {
+            return <Order
+              uid={this.props.account.user.uid}
+              index={index}
+              {...item}
+              {...this.props}/>
           }}
           style={styles.body}
         />
@@ -82,7 +86,7 @@ class Order extends React.Component {
           <View style={styles.orderWrapper}>
             <View style={styles.order} key={this.props.id}>
               <Text style={styles.orderHeader}>
-                Invite #: {this.props.id || '0000000000'}
+                Invite #: {this.props.index+1 || '1'}
               </Text>
               <Text style={styles.tabbedText}>
                 User # {this.props.host || 'Host'} has invited you to order food from {this.props.restaurant || 'some restaurant'}!
@@ -120,7 +124,7 @@ class Order extends React.Component {
           <View style={styles.orderWrapper}>
             <View style={styles.order} key={this.props.id}>
               <Text style={styles.orderHeader}>
-                Invite #: {this.props.id || '0000000000'}
+                Invite #: {this.props.index+1 || '1'}
               </Text>
               <Text style={styles.tabbedText}>
                 User # {this.props.host || 'Host'} has invited you to order food from {this.props.restaurant || 'some restaurant'}!
@@ -168,7 +172,7 @@ class Order extends React.Component {
         <View style={styles.orderWrapper}>
           <View style={styles.order} key={this.props.id}>
             <Text style={styles.oldOrderHeader}>
-              Invite #: {this.props.id || '0000000000'} [Expired]
+              Invite #: {this.props.index+1 || '1'} [Expired]
             </Text>
             <Text style={styles.tabbedText}>
               User # {this.props.host || 'Host'} invited you to order food at {new Date(Number(this.props.sent)).toLocaleString()}.

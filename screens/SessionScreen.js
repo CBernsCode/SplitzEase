@@ -196,6 +196,7 @@ class EventList extends React.Component {
           keyExtractor={(item, index) => index.toString()}
           renderItem={({ item, index }) =>
             <Event
+              index={index}
               {...item}
               {...this.props}
             />
@@ -250,7 +251,7 @@ class Event extends React.Component {
       return (
         <View style={styles.eventWrapper}>
           <View style={styles.event}>
-            <Text style={styles.eventHeader}>Event ID: {this.props.sessionId || "000000000"}</Text>
+            <Text style={styles.eventHeader}>Event #: {this.props.index+1 || "1"}</Text>
             <Text style={styles.tabbedText}>Restaurant: {this.props.restaurant || "Some Restaurant"}</Text>
             <Text style={styles.tabbedText}>Status: {this.props.status || "Some Status"}</Text>
             <Text style={styles.tabbedText}>Payment Type: {this.props.paytype || "Payment"}</Text>
@@ -277,7 +278,7 @@ class Event extends React.Component {
       return (
         <View style={styles.eventWrapper}>
           <View style={styles.event}>
-            <Text style={styles.eventHeader}>Event ID: {this.props.sessionId || "000000000"}</Text>
+            <Text style={styles.eventHeader}>Event #: {this.props.index+1 || "1"}</Text>
             <Text style={styles.tabbedText}>Restaurant: {this.props.restaurant || "Some Restaurant"}</Text>
             <Text style={styles.tabbedText}>Status: {this.props.status || "Some Status"}</Text>
             <Text style={styles.tabbedText}>Payment Type: {this.props.paytype || "Payment"}</Text>
@@ -290,7 +291,7 @@ class Event extends React.Component {
       return (
         <View style={styles.eventWrapper}>
           <View style={styles.event}>
-            <Text style={styles.eventHeader}>Event ID: {this.props.sessionId || "000000000"}</Text>
+            <Text style={styles.eventHeader}>Event #: {this.props.index+1 || "1"}</Text>
             <Text style={styles.tabbedText}>Restaurant: {this.props.restaurant || "Some Restaurant"}</Text>
             <Text style={styles.tabbedText}>Status: {this.props.status || "Some Status"}</Text>
             <Text style={styles.tabbedText}>Payment Type: {this.props.paytype || "Payment"}</Text>
