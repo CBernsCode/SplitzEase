@@ -450,7 +450,7 @@ const styles = StyleSheet.create({
 
   friendsList: {
     backgroundColor: Colors.cardBackground,
-    borderColor: Colors.cardAffirmButton,
+    borderColor: Colors.secondaryDarkColor,
     borderRadius: 20,
     borderStyle: 'solid',
     borderWidth: 1,
